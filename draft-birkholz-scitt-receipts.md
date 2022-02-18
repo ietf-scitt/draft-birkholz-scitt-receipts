@@ -168,7 +168,7 @@ Value type: bstr
 A new registry is established with the following initial leaf algorithms:
 
 * 1: Identity leaf algorithm
-* 2: Component leaf algorithm
+* 2: Derivation leaf algorithm
 
 ### Identity leaf algorithm
 
@@ -234,7 +234,7 @@ The DerivedBytes value is computed as follows:
             ]
         ]
 
-    body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
+    body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
 
     Note: This structure is identical to standard COSE V2 countersignatures.
 
