@@ -48,175 +48,161 @@ A transparent and authentic ledger service in support of a supply chain's integr
 
 # Introduction
 
-Introduction
-
-My cool solution [FIXME ref] is cool.
+This document defines a method for countersigning of COSE_Sign1 messages using CBOR Merkle Tree Signing.
 
 ## Requirements Notation
 
 {::boilerplate bcp14-tagged}
 
 {: #mybody}
-# Trust Assertions about Ledger Operations
 
-;~~~~
-;{::include simple-diagram.ascii}
-;~~~~
+## CBOR Merkle Tree Signing (CMTS)
 
-# Trust Assertions using COSE Receipts
+This document defines signing with a single signer (CMTS_Sign1).
 
-[TODO] Explain what the point is, why are we binding a cose_sign1 to a leaf that's part of a merkle tree?
+### CMTS_Sign1 Structure
 
-In SCITT, the existence of a countersignature at a minimum means that:
+The CMTS_Sign1 structure is a CBOR array. The fields of the array in order are:
 
-- the COSE message signature has been validated by the countersigner according to a policy,
-- the countersigner stored the COSE message and all validation evidence in an immutable ledger represented by a Merkle tree.
+protected: The set of protected header parameters wrapped in a bstr.
 
-The trustworthiness of these properties relies on the trustwortiness of the countersigner, which in SCITT are the hardware and governance roots of trust.
+unprotected: The set of unprotected header parameters as a map.
 
-# SCITT Receipt Structure
+leaf: The Merkle Tree leaf content. The Leaf Algorithm header parameter determines how the content is preprocessed before passing it to the hash algorithm to produce the leaf digest.
 
-A SCITT Receipt is conceptually a variant of regular COSE countersigning {{-countersign}}. In COSE, a signature is generated over the payload and the protected header. In COSE Countersigning, the signature is generated over the payload and protected header of the COSE message to be countersigned and an optional protected header of the countersigner. In SCITT receipts, a signature is generated over a Merkle tree root. Together with a Merkle proof the signature confirms that a COSE message has been countersigned in a particular tree leaf. Typically, a single signature covers multiple countersigned COSE messages in the tree, but a given receipt always refers to a single COSE message.
+proof: The Merkle proof as an array of [left, digest] pairs.
 
-In SCITT, the leaf of a Merkle tree is generated from a sequence of components, each with a specific purpose. This provides extensibility and flexibility for implementations. In this document, an initial set of standard components are defined.
+signature: The computed signature value as a bstr.
 
-Different to COSE (Counter)signatures, a SCITT Receipt is a tagged CBOR map. Map members with their integer labels and value types are described in the next section.
+The CDDL fragment that represents the above text for Merkle_Sign1 follows.
 
-~~~
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
+~~~ cddl
+CMTS_Sign1 = [
+  protected: empty_or_serialized_map,
+  unprotected: header_map,
+  leaf: bstr,
+  proof: [+ ProofElement],
+  signature: bstr
+]
 
-SCITT_Receipt = {
-    int => any
+header_map = {
+  * int => any
 }
-~~~
 
-## SCITT Receipt members
+empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
 
-This section defines the SCITT Receipt members.
-
-### The Service Key Member
-
-[TODO] should this rather be a service id?
-
-Label: 1
-Value type: bstr
-
-
-### Signing Algorithm member
-
-The algorithm used for the signing operation.
-
-Label: 2
-Value type: int
-
-The value is taken from the "COSE Algorithms" registry and must be one of the following:
-
-- TBD does this list make sense?
-- -7 (ES256)
-- -35 (ES384)
-- -8 (EdDSA)
-
-### Merkle Tree Algorithm member
-
-The algorithm used for the digest operation in the Merkle tree.
-
-Label: 3
-Value type: int
-
-The value is taken from the "Named Information" registry and must be one of the following:
-
-- 1 (sha-256)
-- 7 (sha-384)
-- TBD sha-512?
-- TBD sha3?
-
-### Merkle proof member
-
-The Merkle proof. Used to compute the Merkle tree root starting from a leaf digest.
-
-Label: 4
-Value type: \[ + ProofElement \]
-
-~~~
 ProofElement = [
     left: bool
-    digest: bstr
+    hash: bstr
 ]
 ~~~
 
+### Common Header Parameters
 
-### Leaf components member
+#### Signing Algorithm member
 
-The components of the leaf. Used to compute the leaf digest. Each leaf component has a type where the type defines how to compute a digest of the component. This document defines a set of common types.
+The algorithm used for the signing operation.
+
+Label: 1
+
+Value type: int
+
+The value is taken from the "COSE Algorithms" registry.
+
+#### Hash Algorithm member
+
+The algorithm used for the digest operation in the Merkle tree.
+
+Label: 2
+
+Value type: int
+
+The value is taken from the "Named Information" registry.
+
+#### Leaf Algorithm member
+
+The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation.
+
+Label: 3
+
+Value type: int
+
+Each algorithm must define a value for ToBeHashed which is the input to the leaf digest operation.
+
+This document establishes a registry with initial members.
+
+#### X.509 certificate chain
+
+The X.509 certificate chain used for signing.
+
+Label: 4
+
+Value type: COSE_X509
+
+#### Issuer
+
+The issuer of the signed message. Syntax and semantics are application specific.
 
 Label: 5
-Value type: \[ + LeafComponent \]
+
+Value type: tstr
+
+#### Key ID
+
+The key identifier. Syntax and semantics are application specific.
+
+Label: 6
+
+Value type: bstr
+
+### Leaf Algorithms
+
+A new registry is established with the following initial leaf algorithms:
+
+* 1: Identity leaf algorithm
+* 2: Component leaf algorithm
+
+#### Identity leaf algorithm
+
+Value: 1
+
+The leaf content is not processed further.
 
 ~~~
-LeafComponent = [
+ToBeHashed = leaf
+~~~
+
+#### Component leaf algorithm
+
+Value: 2
+
+The leaf field must have the following structure:
+
+bstr .cbor \[ + LeafComponent \]
+
+~~~ cddl
+LeafComponent = bstr / [
     type: int   ; type of leaf component
     * any       ; data specific to type
 ]
 ~~~
 
-### Common leaf component types
-
-#### COSE_Sign1 countersigning
-
-Type value: 1
-
-The COSE_Sign1 countersigning type defines how to bind to an existing COSE_Sign1 message.
+Each leaf component is either an opaque digest or a structure with a type and optional data where the type defines how to compute a ComponentDigest.  The concatenation of all digests is the input to the leaf digest operation.
 
 ~~~
-COSESign1CounterSignLeafComponent = [
-    type: 1
-    sign_phdr: empty_or_serialized_map
-]
-; see RFC 8152 for empty_or_serialized_map
+ToBeHashed := C_1 + C_2 + ... + C_n
 ~~~
 
-The component digest is computed as H(cbor(\[sign_phdr,phdr,payload,signature\])) where sign_phdr is included in the component itself, while phdr, payload, and signature are the fields from the COSE_Sign1 message to be countersigned.
+This document establishes a registry with initial members.
 
-#### CCF Ledger write-set digest
+### Signing and Verification Process
 
-Type value: 2
+In order to create a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:
 
+1. Compute leaf digest with input computed according to the Leaf Algorithm
 ~~~
-CCFWritesetDigestLeafComponent = [
-    type: 2     ; CCF writeset digest
-    digest: bstr
-]
+LeafDigest := H(LeafAlgorithm(leaf))
 ~~~
-
-The component digest is the digest field included in the component itself.
-
-#### CCF Ledger commit evidence
-
-Type value: 3
-
-~~~
-CCFCommitEvidenceLeafComponent = [
-    type: 3      ; CCF commit evidence
-    transaction_id: tstr
-    hmac: bstr
-]
-~~~
-
-The component digest is computed as H("ce:" + transaction_id + ":" + hex(hmac)).
-
-
-## Signing and Verification Process
-
-[TODO] is the ToBeSigned array a good idea?
-
-In order to create a signature, a well-defined byte string ToBeSigned is needed. The following steps must be followed to generate ToBeSigned:
-
-1. Compute leaf digest from leaf components:
-~~~
-LeafDigest := H(C_1 + C_2 + ... + C_n)
-~~~
-
-where C_i is the digest of the leaf component according to the type-specific algorithm.
 
 2. Compute root digest from leaf digest and Merkle proof
 
@@ -225,25 +211,93 @@ h := LeafDigest
 for [left, hash] in proof:
   h := H(hash + h) if left
        H(h + hash) else
-root := h 
+root := h
 ~~~
 
-3. Compute final ToBeSigned: cbor(\[sig_alg, hash_alg, root\])
+3. Compute Sig_structure:
 
-How to compute a countersignature:
+~~~ cddl
+Sig_structure = [
+  context: "Signature1",
+  protected: empty_or_serialized_map,
+  external_aad: bstr,
+  root: bstr
+]
+~~~
 
-1. Compute ToBeSigned using the steps described earlier.
+How to compute a signature:
 
-2. Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).
+1. Generate a Sig_structure using the steps described earlier.
 
-3. Place the signature in the signature member of the SCITT receipt.
+2. Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.
 
-The steps for verifying a countersignature are:
+3. Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).
 
-1. Compute ToBeSigned using the steps described earlier.
+The steps for verifying a signature are:
 
-2. Call the signature verification algorithm passing in K (the service key to verify with), sign_alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).
+1. Generate a Sig_structure using the steps described earlier.
 
+2. Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.
+
+3. Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).
+
+## COSE_Sign1 countersigning leaf component
+
+Type value: 1
+
+The COSE_Sign1 countersigning leaf component type defines how to bind to an existing COSE_Sign1 message.
+
+~~~
+COSESign1CounterSignLeafComponent = [
+    type: 1
+    sign_phdr: empty_or_serialized_map
+]
+~~~
+
+The digest of this leaf component is computed as:
+
+~~~ cddl
+Countersign_structure = [
+  context: "CounterSignatureV2",
+  body_protected: empty_or_serialized_map,
+  sign_protected: empty_or_serialized_map,
+  external_aad: bstr,
+  payload: bstr,
+  other_fields: [
+    signature: bstr
+  ]
+]
+ComponentDigest = H(cbor(Countersign_structure)
+~~~
+
+Note: This structure is identical to standard COSE V2 countersignatures.
+
+body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
+
+H is the Hash Algorithm used for the CMTS_Sign1 message.
+
+## SCITT Receipt
+
+A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteristics:
+
+1. One of the following Signing Algorithms is used:
+
+  - -7 (ES256)
+  - -35 (ES384)
+  - -8 (EdDSA)
+
+2. One of the following Hash Algorithms is used:
+
+  - 1 (sha-256)
+  - 7 (sha-384)
+
+3. The Leaf Component algorithm is used.
+
+4. The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.
+
+~~~ cddl
+SCITT_Receipt = CMTS_Sign1
+~~~
 
 ## COSE header parameter
 
@@ -254,64 +308,6 @@ Label: TBD
 Value Type: SCITT_Receipt / \[+ SCITT_Receipt\]
 Value Registry: ?
 Description: TBD
-
-## The Full CDDL
-
-TODO: CCF node vs service keys
-
-~~~~ CDDL
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
-
-SCITT_Receipt = {
-    log_id: bstr // TODO what is this, UUID? advertise keys somewhere? DID? signed CTL?
-    x5chain: bstr[] // node cert for CCF
-    //service_key => bstr
-    signature => bstr               ; Signature over root hash
-    sign_alg => int
-    merkle_alg => int
-    proof => [ + ProofElement]      ; Merkle proof
-    leaf_components => [ + LeafComponent]
-}
-
-ProofElement = [
-    left: bool
-    hash: Digest
-]
-
-Digest = bstr
-
-; Each leaf component *type* defines how to derive
-; a leaf component hash from the leaf component data.
-LeafComponent = [
-    type: int   ; type of leaf component
-    * any       ; data specific to type
-]
-
-;; COSE-related leaf component types:
-
-COSESign1CounterSignLeafComponent = [
-    type: 1      ; COSE_Sign1 binding
-    sign_phdr: empty_or_serialized_map
-]
-empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
-; H(COSESign1CounterSignLeafComponent) = H(cbor([phdr,sign_phdr,payload,signature]))
-; Note: phdr, payload, signature are all external
-
-;; CCF leaf component types:
-
-CCFWritesetDigestLeafComponent = [
-    type: 2     ; CCF writeset digest
-    digest: bstr
-]
-; H(CCFWritesetDigestLeafComponent) = digest
-
-CCFCommitEvidenceLeafComponent = [
-    type: 3      ; CCF commit evidence
-    transaction_id: tstr
-    hmac: bstr
-]
-; H(CCFCommitEvidenceLeafComponent) = H("ce:" + transaction_id + ":" + hex(hmac))
-~~~~
 
 # Privacy Considerations
 
@@ -326,29 +322,4 @@ Security Considerations
 See Body {{mybody}}.
 
 --- back
-    
-# Attic
-    
-~~~~ CDDL
 
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
-
-SCITT_receipt = {
-  ; FIXME how is alg authenticated?
-  alg => int, ; hash alg applies to all digests
-  service_key => bstr,
-  signature => bstr,
-  proof => bstr .cbor [ + ProofElement ],
-  transaction_id => tstr,
-  hmac => SHA_256, ; make this agile
-  writeset-digest => SHA_256, ; make this agile
-}
-
-ProofElement = [
-  left: bool,
-  digest: SHA_256,
-]
-
-SHA_256 = bstr .size 32
-
-~~~~
