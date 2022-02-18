@@ -290,7 +290,7 @@ A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteri
     - 1 (sha-256)
     - 7 (sha-384)
 
-3. The Leaf Component algorithm is used.
+3. The Component leaf algorithm is used.
 
 4. The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.
 
