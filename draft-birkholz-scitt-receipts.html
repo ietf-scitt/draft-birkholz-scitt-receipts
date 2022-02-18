@@ -1243,64 +1243,65 @@ ProofElement = [
           <h4 id="name-common-header-parameters">
 <a href="#section-1.2.2" class="section-number selfRef">1.2.2. </a><a href="#name-common-header-parameters" class="section-name selfRef">Common Header Parameters</a>
           </h4>
-<div id="signing-algorithm-member">
+<p id="section-1.2.2-1">[TODO] Add wording that all parameters are optional and may be known from context, same as in COSE<a href="#section-1.2.2-1" class="pilcrow">¶</a></p>
+<div id="signing-algorithm-parameter">
 <section id="section-1.2.2.1">
-            <h5 id="name-signing-algorithm-member">
-<a href="#section-1.2.2.1" class="section-number selfRef">1.2.2.1. </a><a href="#name-signing-algorithm-member" class="section-name selfRef">Signing Algorithm member</a>
+            <h5 id="name-signing-algorithm-parameter">
+<a href="#section-1.2.2.1" class="section-number selfRef">1.2.2.1. </a><a href="#name-signing-algorithm-parameter" class="section-name selfRef">Signing Algorithm parameter</a>
             </h5>
-<p id="section-1.2.2.1-1">The algorithm used for the signing operation.<a href="#section-1.2.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.1-1">The algorithm used for the signing operation. When present, this parameter <span class="bcp14">MUST</span> be placed in the protected header bucket.<a href="#section-1.2.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.1-2">Label: 1<a href="#section-1.2.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.1-3">Value type: int<a href="#section-1.2.2.1-3" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.1-4">The value is taken from the "COSE Algorithms" registry.<a href="#section-1.2.2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="hash-algorithm-member">
+<div id="hash-algorithm-parameter">
 <section id="section-1.2.2.2">
-            <h5 id="name-hash-algorithm-member">
-<a href="#section-1.2.2.2" class="section-number selfRef">1.2.2.2. </a><a href="#name-hash-algorithm-member" class="section-name selfRef">Hash Algorithm member</a>
+            <h5 id="name-hash-algorithm-parameter">
+<a href="#section-1.2.2.2" class="section-number selfRef">1.2.2.2. </a><a href="#name-hash-algorithm-parameter" class="section-name selfRef">Hash Algorithm parameter</a>
             </h5>
-<p id="section-1.2.2.2-1">The algorithm used for the digest operation in the Merkle tree.<a href="#section-1.2.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.2-1">The algorithm used for the digest operation in the Merkle tree. When present, this parameter <span class="bcp14">MUST</span> be placed in the protected header bucket.<a href="#section-1.2.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.2-2">Label: 2<a href="#section-1.2.2.2-2" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.2-3">Value type: int<a href="#section-1.2.2.2-3" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.2-4">The value is taken from the "Named Information" registry.<a href="#section-1.2.2.2-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="leaf-algorithm-member">
+<div id="leaf-algorithm-parameter">
 <section id="section-1.2.2.3">
-            <h5 id="name-leaf-algorithm-member">
-<a href="#section-1.2.2.3" class="section-number selfRef">1.2.2.3. </a><a href="#name-leaf-algorithm-member" class="section-name selfRef">Leaf Algorithm member</a>
+            <h5 id="name-leaf-algorithm-parameter">
+<a href="#section-1.2.2.3" class="section-number selfRef">1.2.2.3. </a><a href="#name-leaf-algorithm-parameter" class="section-name selfRef">Leaf Algorithm parameter</a>
             </h5>
-<p id="section-1.2.2.3-1">The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation.<a href="#section-1.2.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-1">The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation. When present, this parameter <span class="bcp14">MUST</span> be placed in the protected header bucket.<a href="#section-1.2.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.3-2">Label: 3<a href="#section-1.2.2.3-2" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.3-3">Value type: int<a href="#section-1.2.2.3-3" class="pilcrow">¶</a></p>
-<p id="section-1.2.2.3-4">Each algorithm must define a value for ToBeHashed which is the input to the leaf digest operation.<a href="#section-1.2.2.3-4" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-4">Each algorithm must define a value for LeafToBeHashed which is the input to the leaf digest operation.<a href="#section-1.2.2.3-4" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.3-5">This document establishes a registry with initial members.<a href="#section-1.2.2.3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="x509-certificate-chain">
+<div id="x509-certificate-chain-parameter">
 <section id="section-1.2.2.4">
-            <h5 id="name-x509-certificate-chain">
-<a href="#section-1.2.2.4" class="section-number selfRef">1.2.2.4. </a><a href="#name-x509-certificate-chain" class="section-name selfRef">X.509 certificate chain</a>
+            <h5 id="name-x509-certificate-chain-para">
+<a href="#section-1.2.2.4" class="section-number selfRef">1.2.2.4. </a><a href="#name-x509-certificate-chain-para" class="section-name selfRef">X.509 certificate chain parameter</a>
             </h5>
 <p id="section-1.2.2.4-1">The X.509 certificate chain used for signing.<a href="#section-1.2.2.4-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.4-2">Label: 4<a href="#section-1.2.2.4-2" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.4-3">Value type: COSE_X509<a href="#section-1.2.2.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="issuer">
+<div id="issuer-parameter">
 <section id="section-1.2.2.5">
-            <h5 id="name-issuer">
-<a href="#section-1.2.2.5" class="section-number selfRef">1.2.2.5. </a><a href="#name-issuer" class="section-name selfRef">Issuer</a>
+            <h5 id="name-issuer-parameter">
+<a href="#section-1.2.2.5" class="section-number selfRef">1.2.2.5. </a><a href="#name-issuer-parameter" class="section-name selfRef">Issuer parameter</a>
             </h5>
 <p id="section-1.2.2.5-1">The issuer of the signed message. Syntax and semantics are application specific.<a href="#section-1.2.2.5-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.5-2">Label: 5<a href="#section-1.2.2.5-2" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.5-3">Value type: tstr<a href="#section-1.2.2.5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="key-id">
+<div id="key-id-parameter">
 <section id="section-1.2.2.6">
-            <h5 id="name-key-id">
-<a href="#section-1.2.2.6" class="section-number selfRef">1.2.2.6. </a><a href="#name-key-id" class="section-name selfRef">Key ID</a>
+            <h5 id="name-key-id-parameter">
+<a href="#section-1.2.2.6" class="section-number selfRef">1.2.2.6. </a><a href="#name-key-id-parameter" class="section-name selfRef">Key ID parameter</a>
             </h5>
 <p id="section-1.2.2.6-1">The key identifier. Syntax and semantics are application specific.<a href="#section-1.2.2.6-1" class="pilcrow">¶</a></p>
 <p id="section-1.2.2.6-2">Label: 6<a href="#section-1.2.2.6-2" class="pilcrow">¶</a></p>
@@ -1331,7 +1332,7 @@ ProofElement = [
 <p id="section-1.2.3.1-3">The leaf content is not processed further.<a href="#section-1.2.3.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-1.2.3.1-4">
 <pre>
-ToBeHashed := leaf
+LeafToBeHashed := leaf
 </pre><a href="#section-1.2.3.1-4" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1351,13 +1352,20 @@ LeafComponent = bstr / [
 ]
 </pre><a href="#section-1.2.3.2-3" class="pilcrow">¶</a>
 </div>
-<p id="section-1.2.3.2-4">Each leaf component is either an opaque digest or a structure with a type and optional data where the type defines how to compute a ComponentDigest.  The concatenation of all digests is the input to the leaf digest operation.<a href="#section-1.2.3.2-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-1.2.3.2-5">
+<p id="section-1.2.3.2-4">Each leaf component C_i is either:<a href="#section-1.2.3.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.3.2-5.1">an opaque digest, or<a href="#section-1.2.3.2-5.1" class="pilcrow">¶</a>
+</li>
+              <li class="normal" id="section-1.2.3.2-5.2">a structure with a type and optional data where the type defines an algorithm to compute the input ComponentToBeHashed to the digest operation.<a href="#section-1.2.3.2-5.2" class="pilcrow">¶</a>
+</li>
+            </ul>
+<p id="section-1.2.3.2-6">The concatenation of all digests H_i is the input to the leaf digest operation:<a href="#section-1.2.3.2-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.3.2-7">
 <pre>
-ToBeHashed := C_1 + C_2 + ... + C_n
-</pre><a href="#section-1.2.3.2-5" class="pilcrow">¶</a>
+LeafToBeHashed := H_1 + H_2 + ... + H_n
+</pre><a href="#section-1.2.3.2-7" class="pilcrow">¶</a>
 </div>
-<p id="section-1.2.3.2-6">This document establishes a registry with initial members.<a href="#section-1.2.3.2-6" class="pilcrow">¶</a></p>
+<p id="section-1.2.3.2-8">This document establishes a registry with initial members.<a href="#section-1.2.3.2-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1422,7 +1430,7 @@ ToBeHashed := C_1 + C_2 + ... + C_n
 <a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-cose_sign1-countersigning-l" class="section-name selfRef">COSE_Sign1 countersigning leaf component</a>
         </h3>
 <p id="section-1.3-1">Type value: 1<a href="#section-1.3-1" class="pilcrow">¶</a></p>
-<p id="section-1.3-2">The COSE_Sign1 countersigning leaf component type defines how to bind to an existing COSE_Sign1 message.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">The COSE_Sign1 countersigning leaf component type defines how to countersign an existing COSE_Sign1 message. It has the following structure:<a href="#section-1.3-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-1.3-3">
 <pre>
 COSESign1CounterSignLeafComponent = [
@@ -1431,25 +1439,32 @@ COSESign1CounterSignLeafComponent = [
 ]
 </pre><a href="#section-1.3-3" class="pilcrow">¶</a>
 </div>
-<p id="section-1.3-4">The digest of this leaf component is computed as:<a href="#section-1.3-4" class="pilcrow">¶</a></p>
-<div id="section-1.3-5">
-<pre class="lang-cddl sourcecode">
-Countersign_structure = [
-    context: "CounterSignatureV2",
-    body_protected: empty_or_serialized_map,
-    sign_protected: empty_or_serialized_map,
-    external_aad: bstr,
-    payload: bstr,
-    other_fields: [
-       signature: bstr
-    ]
-]
-ComponentDigest = H(cbor(Countersign_structure)
-</pre><a href="#section-1.3-5" class="pilcrow">¶</a>
+<p id="section-1.3-4">The ComponentToBeHashed value is computed as follows:<a href="#section-1.3-4" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.3-5">
+<li id="section-1.3-5.1">
+            <p id="section-1.3-5.1.1">Create a Countersign_structure:<a href="#section-1.3-5.1.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.3-5.1.2">
+<pre>
+ Countersign_structure = [
+     context: "CounterSignatureV2",
+     body_protected: empty_or_serialized_map,
+     sign_protected: empty_or_serialized_map,
+     external_aad: bstr,
+     payload: bstr,
+     other_fields: [
+         signature: bstr
+     ]
+ ]
+</pre><a href="#section-1.3-5.1.2" class="pilcrow">¶</a>
 </div>
-<p id="section-1.3-6">Note: This structure is identical to standard COSE V2 countersignatures.<a href="#section-1.3-6" class="pilcrow">¶</a></p>
-<p id="section-1.3-7">body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-1.3-7" class="pilcrow">¶</a></p>
-<p id="section-1.3-8">H is the Hash Algorithm used for the CMTS_Sign1 message.<a href="#section-1.3-8" class="pilcrow">¶</a></p>
+<p id="section-1.3-5.1.3">
+body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-1.3-5.1.3" class="pilcrow">¶</a></p>
+<p id="section-1.3-5.1.4">
+Note: This structure is identical to standard COSE V2 countersignatures.<a href="#section-1.3-5.1.4" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-1.3-5.2">Create the value ComponentToBeHashed by encoding the Countersign_structure to a byte string, using the encoding described in Section X.<a href="#section-1.3-5.2" class="pilcrow">¶</a>
+</li>
+        </ol>
 </section>
 </div>
 <div id="scitt-receipt">
