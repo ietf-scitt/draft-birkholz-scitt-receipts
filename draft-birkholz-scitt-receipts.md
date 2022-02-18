@@ -74,7 +74,7 @@ proof: The Merkle proof as an array of [left, digest] pairs.
 
 signature: The computed signature value as a bstr.
 
-The CDDL fragment that represents the above text for Merkle_Sign1 follows.
+The CDDL fragment that represents the above text for CMTS_Sign1 follows.
 
 ~~~ cddl
 CMTS_Sign1 = [
