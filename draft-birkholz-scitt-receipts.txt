@@ -78,18 +78,17 @@ Table of Contents
        2.2.6.  Key ID parameter
      2.3.  Leaf Algorithms
        2.3.1.  Identity leaf algorithm
-       2.3.2.  Component leaf algorithm
+       2.3.2.  Derivation leaf algorithm
      2.4.  Verification Process
-   3.  COSE_Sign1 countersigning leaf component
-   4.  SCITT Receipt
-   5.  CBOR Encoding Restrictions
-   6.  Privacy Considerations
-   7.  Security Considerations
-   8.  IANA Considerations
-     8.1.  COSE header parameters
-   9.  References
-     9.1.  Normative References
-     9.2.  Informative References
+   3.  SCITT Receipt
+   4.  CBOR Encoding Restrictions
+   5.  Privacy Considerations
+   6.  Security Considerations
+   7.  IANA Considerations
+     7.1.  COSE header parameters
+   8.  References
+     8.1.  Normative References
+     8.2.  Informative References
    Authors' Addresses
 
 1.  Introduction
@@ -243,31 +242,69 @@ Table of Contents
 
    LeafToBeHashed := leaf
 
-2.3.2.  Component leaf algorithm
+2.3.2.  Derivation leaf algorithm
 
    Value: 2
 
-   Leaf type: bstr .cbor [ + LeafComponent ]
+   Leaf type: bstr .cbor [ Opaque, DerivationInfo ]
 
-   LeafComponent = bstr / [
-       type: int   ; type of leaf component
+   Opaque = bstr   ; implementation-specific
+   DerivationInfo = [
+       type: int   ; type of derivation
        * any       ; data specific to type
    ]
 
-   Each leaf component C_i is either:
+   DerivationInfo is a structure with a type and optional data where the
+   type defines an algorithm to derive a stream DerivedBytes of bytes
+   that is included in the leaf digest operation.
 
-   *  an opaque digest, or
+   The input to the leaf digest operation is defined as follows:
 
-   *  a structure with a type and optional data where the type defines
-      an algorithm to compute the input ComponentToBeHashed to the
-      digest operation.
+   LeafToBeHashed := opaque + H(cbor([type, DerivedBytes])
 
-   The concatenation of all digests H_i is the input to the leaf digest
-   operation:
+   This document establishes a registry of derivation types, with a
+   single member used for COSE_Sign1 countersigning.
 
-   LeafToBeHashed := H_1 + H_2 + ... + H_n
+2.3.2.1.  COSE_Sign1 countersigning derivation type
 
-   This document establishes a registry with initial members.
+   Type value: 1
+
+   The COSE_Sign1 countersigning derivation type defines how to
+   countersign an existing COSE_Sign1 message.  It has the following
+   structure:
+
+   [
+       type: 1,
+       sign_protected: empty_or_serialized_map
+   ]
+
+   The DerivedBytes value is computed as follows:
+
+   1.  Create a Countersign_structure:
+
+       Countersign_structure = [
+           context: "CounterSignatureV2",
+           body_protected: empty_or_serialized_map,
+           sign_protected: empty_or_serialized_map,
+           external_aad: bstr,
+           payload: bstr,
+           other_fields: [
+               signature: bstr
+           ]
+       ]
+
+       body_protected, payload, and signature are of the target
+       COSE_Sign1 message.  sign_protected is from the signer within the
+       leaf component structure. external_aad is externally supplied
+       data from the application encoded in a bstr.  If this field is
+       not supplied, it defaults to a zero-length byte string.
+
+       Note: This structure is identical to standard COSE V2
+       countersignatures.
+
+   2.  Create the value DerivedBytes by encoding the
+       Countersign_structure to a byte string, using the encoding
+       described in Section 4.
 
 2.4.  Verification Process
 
@@ -302,54 +339,13 @@ Table of Contents
    1.  Generate a Sig_structure using the steps described earlier.
 
    2.  Create the value ToBeSigned by encoding the Sig_structure to a
-       byte string, , using the encoding described in Section 5.
+       byte string, , using the encoding described in Section 4.
 
    3.  Call the signature verification algorithm passing in K (the key
        to verify with), alg (the algorithm used sign with), ToBeSigned
        (the value to sign), and sign (the signature to be verified).
 
-3.  COSE_Sign1 countersigning leaf component
-
-   Type value: 1
-
-   The COSE_Sign1 countersigning leaf component type defines how to
-   countersign an existing COSE_Sign1 message.  It has the following
-   structure:
-
-   COSESign1CounterSignLeafComponent = [
-       type: 1
-       sign_phdr: empty_or_serialized_map
-   ]
-
-   The ComponentToBeHashed value is computed as follows:
-
-   1.  Create a Countersign_structure:
-
-       Countersign_structure = [
-           context: "CounterSignatureV2",
-           body_protected: empty_or_serialized_map,
-           sign_protected: empty_or_serialized_map,
-           external_aad: bstr,
-           payload: bstr,
-           other_fields: [
-               signature: bstr
-           ]
-       ]
-
-       body_protected, payload, and signature are of the target
-       COSE_Sign1 message.  sign_protected is from the signer within the
-       leaf component structure. external_aad is externally supplied
-       data from the application encoded in a bstr.  If this field is
-       not supplied, it defaults to a zero-length byte string.
-
-       Note: This structure is identical to standard COSE V2
-       countersignatures.
-
-   2.  Create the value ComponentToBeHashed by encoding the
-       Countersign_structure to a byte string, using the encoding
-       described in Section 5.
-
-4.  SCITT Receipt
+3.  SCITT Receipt
 
    A SCITT Receipt is defined as a CMTS_Sign1 message with the following
    characteristics:
@@ -368,30 +364,27 @@ Table of Contents
 
        *  7 (sha-384)
 
-   3.  The Component leaf algorithm is used.
-
-   4.  The leaf components contain exactly one COSE_Sign1 countersigning
-       leaf component.  Additional leaf components may be included.
+   3.  The Derivation leaf algorithm is used with type 1.
 
    SCITT_Receipt = CMTS_Sign1
 
-5.  CBOR Encoding Restrictions
+4.  CBOR Encoding Restrictions
 
    In order to always regenerate the same byte string for the "to be
    signed" and "to be hashed" values, the core deterministic encoding
    rules defined in Section 4.2.1 of [RFC8949] MUST be used.
 
-6.  Privacy Considerations
+5.  Privacy Considerations
 
    Privacy Considerations
 
-7.  Security Considerations
+6.  Security Considerations
 
    Security Considerations
 
-8.  IANA Considerations
+7.  IANA Considerations
 
-8.1.  COSE header parameters
+7.1.  COSE header parameters
 
    This section defines a COSE header parameter for embedding one or
    more SCITT Receipts in the unprotected header of a COSE message:
@@ -406,9 +399,9 @@ Table of Contents
 
    Description: TBD
 
-9.  References
+8.  References
 
-9.1.  Normative References
+8.1.  Normative References
 
    [IANA.COSE-header-parameters]
               "*** BROKEN REFERENCE ***".
@@ -427,7 +420,7 @@ Table of Contents
               DOI 10.17487/RFC8949, December 2020,
               <https://www.rfc-editor.org/rfc/rfc8949>.
 
-9.2.  Informative References
+8.2.  Informative References
 
    [I-D.ietf-cose-countersign]
               Schaad, J. and R. Housley, "CBOR Object Signing and
