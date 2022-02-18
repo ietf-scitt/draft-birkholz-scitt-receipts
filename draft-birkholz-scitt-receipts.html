@@ -1331,7 +1331,7 @@ ProofElement = [
 <p id="section-1.2.3.1-3">The leaf content is not processed further.<a href="#section-1.2.3.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-1.2.3.1-4">
 <pre>
-ToBeHashed = leaf
+ToBeHashed := leaf
 </pre><a href="#section-1.2.3.1-4" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1369,48 +1369,47 @@ ToBeHashed := C_1 + C_2 + ... + C_n
           </h4>
 <p id="section-1.2.4-1">In order to verify a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:<a href="#section-1.2.4-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-1.2.4-2">
-<li id="section-1.2.4-2.1">Compute leaf digest with input computed according to the Leaf Algorithm<a href="#section-1.2.4-2.1" class="pilcrow">¶</a>
-</li>
-          </ol>
-<div class="alignLeft art-text artwork" id="section-1.2.4-3">
+<li id="section-1.2.4-2.1">
+              <p id="section-1.2.4-2.1.1">Compute leaf digest with input computed according to the Leaf Algorithm<a href="#section-1.2.4-2.1.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.4-2.1.2">
 <pre>
-LeafDigest := H(LeafAlgorithm(leaf))
-</pre><a href="#section-1.2.4-3" class="pilcrow">¶</a>
+ LeafDigest := H(LeafAlgorithm(leaf))
+</pre><a href="#section-1.2.4-2.1.2" class="pilcrow">¶</a>
 </div>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-4">
-<li id="section-1.2.4-4.1">Compute root digest from leaf digest and Merkle proof<a href="#section-1.2.4-4.1" class="pilcrow">¶</a>
 </li>
-          </ol>
-<div class="alignLeft art-text artwork" id="section-1.2.4-5">
+            <li id="section-1.2.4-2.2">
+              <p id="section-1.2.4-2.2.1">Compute root digest from leaf digest and Merkle proof<a href="#section-1.2.4-2.2.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.4-2.2.2">
 <pre>
-h := LeafDigest
-for [left, hash] in proof:
-  h := H(hash + h) if left
+ h := LeafDigest
+ for [left, hash] in proof:
+   h := H(hash + h) if left
        H(h + hash) else
-root := h
-</pre><a href="#section-1.2.4-5" class="pilcrow">¶</a>
+ root := h
+</pre><a href="#section-1.2.4-2.2.2" class="pilcrow">¶</a>
 </div>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-6">
-<li id="section-1.2.4-6.1">Compute Sig_structure:<a href="#section-1.2.4-6.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-1.2.4-2.3">
+              <p id="section-1.2.4-2.3.1">Compute Sig_structure:<a href="#section-1.2.4-2.3.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.4-2.3.2">
+<pre>
+ Sig_structure = [
+   context: "Signature1",
+   protected: empty_or_serialized_map,
+   external_aad: bstr,
+   root: bstr
+ ]
+</pre><a href="#section-1.2.4-2.3.2" class="pilcrow">¶</a>
+</div>
 </li>
           </ol>
-<div id="section-1.2.4-7">
-<pre class="lang-cddl sourcecode">
-Sig_structure = [
-  context: "Signature1",
-  protected: empty_or_serialized_map,
-  external_aad: bstr,
-  root: bstr
-]
-</pre><a href="#section-1.2.4-7" class="pilcrow">¶</a>
-</div>
-<p id="section-1.2.4-8">The steps for verifying a signature are:<a href="#section-1.2.4-8" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-9">
-<li id="section-1.2.4-9.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-9.1" class="pilcrow">¶</a>
+<p id="section-1.2.4-3">The steps for verifying a signature are:<a href="#section-1.2.4-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-4">
+<li id="section-1.2.4-4.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-4.1" class="pilcrow">¶</a>
 </li>
-            <li id="section-1.2.4-9.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-9.2" class="pilcrow">¶</a>
+            <li id="section-1.2.4-4.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-4.2" class="pilcrow">¶</a>
 </li>
-            <li id="section-1.2.4-9.3">Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-1.2.4-9.3" class="pilcrow">¶</a>
+            <li id="section-1.2.4-4.3">Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-1.2.4-4.3" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
@@ -1460,37 +1459,35 @@ ComponentDigest = H(cbor(Countersign_structure)
         </h3>
 <p id="section-1.4-1">A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteristics:<a href="#section-1.4-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-1.4-2">
-<li id="section-1.4-2.1">One of the following Signing Algorithms is used:<a href="#section-1.4-2.1" class="pilcrow">¶</a>
-</li>
-        </ol>
+<li id="section-1.4-2.1">
+            <p id="section-1.4-2.1.1">One of the following Signing Algorithms is used:<a href="#section-1.4-2.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-1.4-3.1">-7 (ES256)<a href="#section-1.4-3.1" class="pilcrow">¶</a>
+<li class="normal" id="section-1.4-2.1.2.1">-7 (ES256)<a href="#section-1.4-2.1.2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-1.4-3.2">-35 (ES384)<a href="#section-1.4-3.2" class="pilcrow">¶</a>
+              <li class="normal" id="section-1.4-2.1.2.2">-35 (ES384)<a href="#section-1.4-2.1.2.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-1.4-3.3">-8 (EdDSA)<a href="#section-1.4-3.3" class="pilcrow">¶</a>
+              <li class="normal" id="section-1.4-2.1.2.3">-8 (EdDSA)<a href="#section-1.4-2.1.2.3" class="pilcrow">¶</a>
 </li>
-        </ul>
-<ol start="1" type="1" class="normal type-1" id="section-1.4-4">
-<li id="section-1.4-4.1">One of the following Hash Algorithms is used:<a href="#section-1.4-4.1" class="pilcrow">¶</a>
+            </ul>
 </li>
-        </ol>
+          <li id="section-1.4-2.2">
+            <p id="section-1.4-2.2.1">One of the following Hash Algorithms is used:<a href="#section-1.4-2.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-1.4-5.1">1 (sha-256)<a href="#section-1.4-5.1" class="pilcrow">¶</a>
+<li class="normal" id="section-1.4-2.2.2.1">1 (sha-256)<a href="#section-1.4-2.2.2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-1.4-5.2">7 (sha-384)<a href="#section-1.4-5.2" class="pilcrow">¶</a>
+              <li class="normal" id="section-1.4-2.2.2.2">7 (sha-384)<a href="#section-1.4-2.2.2.2" class="pilcrow">¶</a>
 </li>
-        </ul>
-<ol start="1" type="1" class="normal type-1" id="section-1.4-6">
-<li id="section-1.4-6.1">The Leaf Component algorithm is used.<a href="#section-1.4-6.1" class="pilcrow">¶</a>
+            </ul>
 </li>
-          <li id="section-1.4-6.2">The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.<a href="#section-1.4-6.2" class="pilcrow">¶</a>
+          <li id="section-1.4-2.3">The Leaf Component algorithm is used.<a href="#section-1.4-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-1.4-2.4">The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.<a href="#section-1.4-2.4" class="pilcrow">¶</a>
 </li>
         </ol>
-<div id="section-1.4-7">
+<div id="section-1.4-3">
 <pre class="lang-cddl sourcecode">
 SCITT_Receipt = CMTS_Sign1
-</pre><a href="#section-1.4-7" class="pilcrow">¶</a>
+</pre><a href="#section-1.4-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1500,11 +1497,11 @@ SCITT_Receipt = CMTS_Sign1
 <a href="#section-1.5" class="section-number selfRef">1.5. </a><a href="#name-cose-header-parameter" class="section-name selfRef">COSE header parameter</a>
         </h3>
 <p id="section-1.5-1">This section defines a COSE header parameter for embedding one or more SCITT Receipts in the unprotected header of a COSE message:<a href="#section-1.5-1" class="pilcrow">¶</a></p>
-<p id="section-1.5-2">Name: SCITT receipt
-Label: TBD
-Value Type: SCITT_Receipt / [+ SCITT_Receipt]
-Value Registry: ?
-Description: TBD<a href="#section-1.5-2" class="pilcrow">¶</a></p>
+<p id="section-1.5-2">Name: SCITT receipt<a href="#section-1.5-2" class="pilcrow">¶</a></p>
+<p id="section-1.5-3">Label: TBD<a href="#section-1.5-3" class="pilcrow">¶</a></p>
+<p id="section-1.5-4">Value Type: SCITT_Receipt / [+ SCITT_Receipt]<a href="#section-1.5-4" class="pilcrow">¶</a></p>
+<p id="section-1.5-5">Value Registry: ?<a href="#section-1.5-5" class="pilcrow">¶</a></p>
+<p id="section-1.5-6">Description: TBD<a href="#section-1.5-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
