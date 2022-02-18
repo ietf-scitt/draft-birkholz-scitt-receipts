@@ -176,7 +176,7 @@ Leaf type: bstr
 The leaf content is not processed further.
 
 ~~~
-ToBeHashed = leaf
+ToBeHashed := leaf
 ~~~
 
 #### Component leaf algorithm
@@ -206,30 +206,24 @@ In order to verify a signature, a well-defined byte stream is needed. The Sig_st
 
 1. Compute leaf digest with input computed according to the Leaf Algorithm
 
-~~~
-LeafDigest := H(LeafAlgorithm(leaf))
-~~~
+        LeafDigest := H(LeafAlgorithm(leaf))
 
 2. Compute root digest from leaf digest and Merkle proof
 
-~~~
-h := LeafDigest
-for [left, hash] in proof:
-  h := H(hash + h) if left
-       H(h + hash) else
-root := h
-~~~
+        h := LeafDigest
+        for [left, hash] in proof:
+          h := H(hash + h) if left
+              H(h + hash) else
+        root := h
 
 3. Compute Sig_structure:
 
-~~~ cddl
-Sig_structure = [
-  context: "Signature1",
-  protected: empty_or_serialized_map,
-  external_aad: bstr,
-  root: bstr
-]
-~~~
+        Sig_structure = [
+          context: "Signature1",
+          protected: empty_or_serialized_map,
+          external_aad: bstr,
+          root: bstr
+        ]
 
 The steps for verifying a signature are:
 
@@ -280,14 +274,14 @@ A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteri
 
 1. One of the following Signing Algorithms is used:
 
-  - -7 (ES256)
-  - -35 (ES384)
-  - -8 (EdDSA)
+    - -7 (ES256)
+    - -35 (ES384)
+    - -8 (EdDSA)
 
 2. One of the following Hash Algorithms is used:
 
-  - 1 (sha-256)
-  - 7 (sha-384)
+    - 1 (sha-256)
+    - 7 (sha-384)
 
 3. The Leaf Component algorithm is used.
 
@@ -302,9 +296,13 @@ SCITT_Receipt = CMTS_Sign1
 This section defines a COSE header parameter for embedding one or more SCITT Receipts in the unprotected header of a COSE message:
 
 Name: SCITT receipt
+
 Label: TBD
+
 Value Type: SCITT_Receipt / \[+ SCITT_Receipt\]
+
 Value Registry: ?
+
 Description: TBD
 
 # Privacy Considerations
