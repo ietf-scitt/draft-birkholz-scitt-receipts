@@ -11,11 +11,11 @@
 <meta content="
        A transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on merkle-tree based operations for global supply chain ledgers. A generic procedure how to produce payloads for signing and validation is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space. 
     " name="description">
-<meta content="xml2rfc 3.12.1" name="generator">
+<meta content="xml2rfc 3.12.2" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-birkholz-scitt-receipts-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.12.1
+  xml2rfc 3.12.2
     Python 3.9.7
     appdirs 1.4.4
     ConfigArgParse 1.3
@@ -1018,7 +1018,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 20 August 2022</td>
+<td class="center">Expires 22 August 2022</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1031,12 +1031,12 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <dd class="internet-draft">draft-birkholz-scitt-receipts-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2022-02-16" class="published">16 February 2022</time>
+<time datetime="2022-02-18" class="published">18 February 2022</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2022-08-20">20 August 2022</time></dd>
+<dd class="expires"><time datetime="2022-08-22">22 August 2022</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1086,7 +1086,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 20 August 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 August 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1116,81 +1116,61 @@ svg [stroke="fill"], svg [fill^="#fff"] {
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
                 <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-requirements-notation" class="xref">Requirements Notation</a></p>
 </li>
-            </ul>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-trust-assertions-about-ledg" class="xref">Trust Assertions about Ledger Operations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-trust-assertions-using-cose" class="xref">Trust Assertions using COSE Receipts</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-scitt-receipt-structure" class="xref">SCITT Receipt Structure</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1"><a href="#section-1.2" class="xref">1.2</a>.  <a href="#name-cbor-merkle-tree-signing-cm" class="xref">CBOR Merkle Tree Signing (CMTS)</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-scitt-receipt-members" class="xref">SCITT Receipt members</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
-                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="xref">4.1.1</a>.  <a href="#name-the-service-key-member" class="xref">The Service Key Member</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.1">
+                    <p id="section-toc.1-1.1.2.2.2.1.1" class="keepWithNext"><a href="#section-1.2.1" class="xref">1.2.1</a>.  <a href="#name-cmts_sign1-structure" class="xref">CMTS_Sign1 Structure</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
-                    <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="xref">4.1.2</a>.  <a href="#name-signing-algorithm-member" class="xref">Signing Algorithm member</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.2">
+                    <p id="section-toc.1-1.1.2.2.2.2.1" class="keepWithNext"><a href="#section-1.2.2" class="xref">1.2.2</a>.  <a href="#name-common-header-parameters" class="xref">Common Header Parameters</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.3">
-                    <p id="section-toc.1-1.4.2.1.2.3.1"><a href="#section-4.1.3" class="xref">4.1.3</a>.  <a href="#name-merkle-tree-algorithm-membe" class="xref">Merkle Tree Algorithm member</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.3">
+                    <p id="section-toc.1-1.1.2.2.2.3.1"><a href="#section-1.2.3" class="xref">1.2.3</a>.  <a href="#name-leaf-algorithms" class="xref">Leaf Algorithms</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.4">
-                    <p id="section-toc.1-1.4.2.1.2.4.1"><a href="#section-4.1.4" class="xref">4.1.4</a>.  <a href="#name-merkle-proof-member" class="xref">Merkle proof member</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.5">
-                    <p id="section-toc.1-1.4.2.1.2.5.1"><a href="#section-4.1.5" class="xref">4.1.5</a>.  <a href="#name-leaf-components-member" class="xref">Leaf components member</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.6">
-                    <p id="section-toc.1-1.4.2.1.2.6.1"><a href="#section-4.1.6" class="xref">4.1.6</a>.  <a href="#name-common-leaf-component-types" class="xref">Common leaf component types</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.4">
+                    <p id="section-toc.1-1.1.2.2.2.4.1"><a href="#section-1.2.4" class="xref">1.2.4</a>.  <a href="#name-signing-and-verification-pr" class="xref">Signing and Verification Process</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-signing-and-verification-pr" class="xref">Signing and Verification Process</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1"><a href="#section-1.3" class="xref">1.3</a>.  <a href="#name-cose_sign1-countersigning-l" class="xref">COSE_Sign1 countersigning leaf component</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
-                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="xref">4.3</a>.  <a href="#name-cose-header-parameter" class="xref">COSE header parameter</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4">
+                <p id="section-toc.1-1.1.2.4.1"><a href="#section-1.4" class="xref">1.4</a>.  <a href="#name-scitt-receipt" class="xref">SCITT Receipt</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
-                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="xref">4.4</a>.  <a href="#name-the-full-cddl" class="xref">The Full CDDL</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.5">
+                <p id="section-toc.1-1.1.2.5.1"><a href="#section-1.5" class="xref">1.5</a>.  <a href="#name-cose-header-parameter" class="xref">COSE header parameter</a></p>
 </li>
             </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-privacy-considerations" class="xref">Privacy Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-privacy-considerations" class="xref">Privacy Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-references" class="xref">References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-references" class="xref">References</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
-                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="xref">8.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="xref">5.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
-                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="xref">8.2</a>.  <a href="#name-informative-references" class="xref">Informative References</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="xref">5.2</a>.  <a href="#name-informative-references" class="xref">Informative References</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="xref">Appendix A</a>.  <a href="#name-attic" class="xref">Attic</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1201,8 +1181,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Introduction<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">My cool solution [FIXME ref] is cool.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-1">This document defines a method for countersigning of COSE_Sign1 messages using CBOR Merkle Tree Signing.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <div id="requirements-notation">
 <section id="section-1.1">
         <h3 id="name-requirements-notation">
@@ -1214,367 +1193,355 @@ described in BCP 14 <span>[<a href="#RFC2119" class="xref">RFC2119</a>]</span> 
 appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-</section>
-</div>
 <div id="mybody">
-<section id="section-2">
-      <h2 id="name-trust-assertions-about-ledg">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-trust-assertions-about-ledg" class="section-name selfRef">Trust Assertions about Ledger Operations</a>
-      </h2>
-<p id="section-2-1">;~~~~
-;{::include simple-diagram.ascii}
-;~~~~<a href="#section-2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="trust-assertions-using-cose-receipts">
-<section id="section-3">
-      <h2 id="name-trust-assertions-using-cose">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-trust-assertions-using-cose" class="section-name selfRef">Trust Assertions using COSE Receipts</a>
-      </h2>
-<p id="section-3-1">[TODO] Explain what the point is, why are we binding a cose_sign1 to a leaf that's part of a merkle tree?<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">In SCITT, the existence of a countersignature at a minimum means that:<a href="#section-3-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-3.1">the COSE message signature has been validated by the countersigner according to a policy,<a href="#section-3-3.1" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-3-3.2">the countersigner stored the COSE message and all validation evidence in an immutable ledger represented by a Merkle tree.<a href="#section-3-3.2" class="pilcrow">¶</a>
-</li>
-      </ul>
-<p id="section-3-4">The trustworthiness of these properties relies on the trustwortiness of the countersigner, which in SCITT are the hardware and governance roots of trust.<a href="#section-3-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="scitt-receipt-structure">
-<section id="section-4">
-      <h2 id="name-scitt-receipt-structure">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-scitt-receipt-structure" class="section-name selfRef">SCITT Receipt Structure</a>
-      </h2>
-<p id="section-4-1">A SCITT Receipt is conceptually a variant of regular COSE countersigning <span>[<a href="#I-D.ietf-cose-countersign" class="xref">I-D.ietf-cose-countersign</a>]</span>. In COSE, a signature is generated over the payload and the protected header. In COSE Countersigning, the signature is generated over the payload and protected header of the COSE message to be countersigned and an optional protected header of the countersigner. In SCITT receipts, a signature is generated over a Merkle tree root. Together with a Merkle proof the signature confirms that a COSE message has been countersigned in a particular tree leaf. Typically, a single signature covers multiple countersigned COSE messages in the tree, but a given receipt always refers to a single COSE message.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">In SCITT, the leaf of a Merkle tree is generated from a sequence of components, each with a specific purpose. This provides extensibility and flexibility for implementations. In this document, an initial set of standard components are defined.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">Different to COSE (Counter)signatures, a SCITT Receipt is a tagged CBOR map. Map members with their integer labels and value types are described in the next section.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-4">
-<pre>
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
-
-SCITT_Receipt = {
-    int =&gt; any
-}
-</pre><a href="#section-4-4" class="pilcrow">¶</a>
-</div>
-<div id="scitt-receipt-members">
-<section id="section-4.1">
-        <h3 id="name-scitt-receipt-members">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-scitt-receipt-members" class="section-name selfRef">SCITT Receipt members</a>
+<section id="section-1.2">
+        <h3 id="name-cbor-merkle-tree-signing-cm">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-cbor-merkle-tree-signing-cm" class="section-name selfRef">CBOR Merkle Tree Signing (CMTS)</a>
         </h3>
-<p id="section-4.1-1">This section defines the SCITT Receipt members.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<div id="the-service-key-member">
-<section id="section-4.1.1">
-          <h4 id="name-the-service-key-member">
-<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-the-service-key-member" class="section-name selfRef">The Service Key Member</a>
+<p id="section-1.2-1">This document defines signing with a single signer (CMTS_Sign1).<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<div id="cmtssign1-structure">
+<section id="section-1.2.1">
+          <h4 id="name-cmts_sign1-structure">
+<a href="#section-1.2.1" class="section-number selfRef">1.2.1. </a><a href="#name-cmts_sign1-structure" class="section-name selfRef">CMTS_Sign1 Structure</a>
           </h4>
-<p id="section-4.1.1-1">[TODO] should this rather be a service id?<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-2">Label: 1
-Value type: bstr<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="signing-algorithm-member">
-<section id="section-4.1.2">
-          <h4 id="name-signing-algorithm-member">
-<a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-signing-algorithm-member" class="section-name selfRef">Signing Algorithm member</a>
-          </h4>
-<p id="section-4.1.2-1">The algorithm used for the signing operation.<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-2">Label: 2
-Value type: int<a href="#section-4.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.2-3">The value is taken from the "COSE Algorithms" registry and must be one of the following:<a href="#section-4.1.2-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.1.2-4.1">TBD does this list make sense?<a href="#section-4.1.2-4.1" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.2-4.2">-7 (ES256)<a href="#section-4.1.2-4.2" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.2-4.3">-35 (ES384)<a href="#section-4.1.2-4.3" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.2-4.4">-8 (EdDSA)<a href="#section-4.1.2-4.4" class="pilcrow">¶</a>
-</li>
-          </ul>
-</section>
-</div>
-<div id="merkle-tree-algorithm-member">
-<section id="section-4.1.3">
-          <h4 id="name-merkle-tree-algorithm-membe">
-<a href="#section-4.1.3" class="section-number selfRef">4.1.3. </a><a href="#name-merkle-tree-algorithm-membe" class="section-name selfRef">Merkle Tree Algorithm member</a>
-          </h4>
-<p id="section-4.1.3-1">The algorithm used for the digest operation in the Merkle tree.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.3-2">Label: 3
-Value type: int<a href="#section-4.1.3-2" class="pilcrow">¶</a></p>
-<p id="section-4.1.3-3">The value is taken from the "Named Information" registry and must be one of the following:<a href="#section-4.1.3-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.1.3-4.1">1 (sha-256)<a href="#section-4.1.3-4.1" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.3-4.2">7 (sha-384)<a href="#section-4.1.3-4.2" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.3-4.3">TBD sha-512?<a href="#section-4.1.3-4.3" class="pilcrow">¶</a>
-</li>
-            <li class="normal" id="section-4.1.3-4.4">TBD sha3?<a href="#section-4.1.3-4.4" class="pilcrow">¶</a>
-</li>
-          </ul>
-</section>
-</div>
-<div id="merkle-proof-member">
-<section id="section-4.1.4">
-          <h4 id="name-merkle-proof-member">
-<a href="#section-4.1.4" class="section-number selfRef">4.1.4. </a><a href="#name-merkle-proof-member" class="section-name selfRef">Merkle proof member</a>
-          </h4>
-<p id="section-4.1.4-1">The Merkle proof. Used to compute the Merkle tree root starting from a leaf digest.<a href="#section-4.1.4-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.4-2">Label: 4
-Value type: [ + ProofElement ]<a href="#section-4.1.4-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1.4-3">
-<pre>
+<p id="section-1.2.1-1">The CMTS_Sign1 structure is a CBOR array. The fields of the array in order are:<a href="#section-1.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-2">protected: The set of protected header parameters wrapped in a bstr.<a href="#section-1.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-3">unprotected: The set of unprotected header parameters as a map.<a href="#section-1.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-4">leaf: The Merkle Tree leaf content. The Leaf Algorithm header parameter determines how the content is preprocessed before passing it to the hash algorithm to produce the leaf digest.<a href="#section-1.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-5">proof: The Merkle proof as an array of [left, digest] pairs.<a href="#section-1.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-6">signature: The computed signature value as a bstr.<a href="#section-1.2.1-6" class="pilcrow">¶</a></p>
+<p id="section-1.2.1-7">The CDDL fragment that represents the above text for Merkle_Sign1 follows.<a href="#section-1.2.1-7" class="pilcrow">¶</a></p>
+<div id="section-1.2.1-8">
+<pre class="lang-cddl sourcecode">
+CMTS_Sign1 = [
+  protected: empty_or_serialized_map,
+  unprotected: header_map,
+  leaf: bstr,
+  proof: [+ ProofElement],
+  signature: bstr
+]
+
+header_map = {
+  * int =&gt; any
+}
+
+empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
+
 ProofElement = [
     left: bool
-    digest: bstr
+    hash: bstr
 ]
-</pre><a href="#section-4.1.4-3" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.1-8" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
-<div id="leaf-components-member">
-<section id="section-4.1.5">
-          <h4 id="name-leaf-components-member">
-<a href="#section-4.1.5" class="section-number selfRef">4.1.5. </a><a href="#name-leaf-components-member" class="section-name selfRef">Leaf components member</a>
+<div id="common-header-parameters">
+<section id="section-1.2.2">
+          <h4 id="name-common-header-parameters">
+<a href="#section-1.2.2" class="section-number selfRef">1.2.2. </a><a href="#name-common-header-parameters" class="section-name selfRef">Common Header Parameters</a>
           </h4>
-<p id="section-4.1.5-1">The components of the leaf. Used to compute the leaf digest. Each leaf component has a type where the type defines how to compute a digest of the component. This document defines a set of common types.<a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.5-2">Label: 5
-Value type: [ + LeafComponent ]<a href="#section-4.1.5-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1.5-3">
+<div id="signing-algorithm-member">
+<section id="section-1.2.2.1">
+            <h5 id="name-signing-algorithm-member">
+<a href="#section-1.2.2.1" class="section-number selfRef">1.2.2.1. </a><a href="#name-signing-algorithm-member" class="section-name selfRef">Signing Algorithm member</a>
+            </h5>
+<p id="section-1.2.2.1-1">The algorithm used for the signing operation.<a href="#section-1.2.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.1-2">Label: 1<a href="#section-1.2.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.1-3">Value type: int<a href="#section-1.2.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.1-4">The value is taken from the "COSE Algorithms" registry.<a href="#section-1.2.2.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="hash-algorithm-member">
+<section id="section-1.2.2.2">
+            <h5 id="name-hash-algorithm-member">
+<a href="#section-1.2.2.2" class="section-number selfRef">1.2.2.2. </a><a href="#name-hash-algorithm-member" class="section-name selfRef">Hash Algorithm member</a>
+            </h5>
+<p id="section-1.2.2.2-1">The algorithm used for the digest operation in the Merkle tree.<a href="#section-1.2.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.2-2">Label: 2<a href="#section-1.2.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.2-3">Value type: int<a href="#section-1.2.2.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.2-4">The value is taken from the "Named Information" registry.<a href="#section-1.2.2.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="leaf-algorithm-member">
+<section id="section-1.2.2.3">
+            <h5 id="name-leaf-algorithm-member">
+<a href="#section-1.2.2.3" class="section-number selfRef">1.2.2.3. </a><a href="#name-leaf-algorithm-member" class="section-name selfRef">Leaf Algorithm member</a>
+            </h5>
+<p id="section-1.2.2.3-1">The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation.<a href="#section-1.2.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-2">Label: 3<a href="#section-1.2.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-3">Value type: int<a href="#section-1.2.2.3-3" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-4">Each algorithm must define a value for ToBeHashed which is the input to the leaf digest operation.<a href="#section-1.2.2.3-4" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.3-5">This document establishes a registry with initial members.<a href="#section-1.2.2.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="x509-certificate-chain">
+<section id="section-1.2.2.4">
+            <h5 id="name-x509-certificate-chain">
+<a href="#section-1.2.2.4" class="section-number selfRef">1.2.2.4. </a><a href="#name-x509-certificate-chain" class="section-name selfRef">X.509 certificate chain</a>
+            </h5>
+<p id="section-1.2.2.4-1">The X.509 certificate chain used for signing.<a href="#section-1.2.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.4-2">Label: 4<a href="#section-1.2.2.4-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.4-3">Value type: COSE_X509<a href="#section-1.2.2.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="issuer">
+<section id="section-1.2.2.5">
+            <h5 id="name-issuer">
+<a href="#section-1.2.2.5" class="section-number selfRef">1.2.2.5. </a><a href="#name-issuer" class="section-name selfRef">Issuer</a>
+            </h5>
+<p id="section-1.2.2.5-1">The issuer of the signed message. Syntax and semantics are application specific.<a href="#section-1.2.2.5-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.5-2">Label: 5<a href="#section-1.2.2.5-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.5-3">Value type: tstr<a href="#section-1.2.2.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="key-id">
+<section id="section-1.2.2.6">
+            <h5 id="name-key-id">
+<a href="#section-1.2.2.6" class="section-number selfRef">1.2.2.6. </a><a href="#name-key-id" class="section-name selfRef">Key ID</a>
+            </h5>
+<p id="section-1.2.2.6-1">The key identifier. Syntax and semantics are application specific.<a href="#section-1.2.2.6-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.6-2">Label: 6<a href="#section-1.2.2.6-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.2.6-3">Value type: bstr<a href="#section-1.2.2.6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="leaf-algorithms">
+<section id="section-1.2.3">
+          <h4 id="name-leaf-algorithms">
+<a href="#section-1.2.3" class="section-number selfRef">1.2.3. </a><a href="#name-leaf-algorithms" class="section-name selfRef">Leaf Algorithms</a>
+          </h4>
+<p id="section-1.2.3-1">A new registry is established with the following initial leaf algorithms:<a href="#section-1.2.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2.3-2.1">1: Identity leaf algorithm<a href="#section-1.2.3-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="normal" id="section-1.2.3-2.2">2: Component leaf algorithm<a href="#section-1.2.3-2.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+<div id="identity-leaf-algorithm">
+<section id="section-1.2.3.1">
+            <h5 id="name-identity-leaf-algorithm">
+<a href="#section-1.2.3.1" class="section-number selfRef">1.2.3.1. </a><a href="#name-identity-leaf-algorithm" class="section-name selfRef">Identity leaf algorithm</a>
+            </h5>
+<p id="section-1.2.3.1-1">Value: 1<a href="#section-1.2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.3.1-2">The leaf content is not processed further.<a href="#section-1.2.3.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.3.1-3">
 <pre>
-LeafComponent = [
+ToBeHashed = leaf
+</pre><a href="#section-1.2.3.1-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="component-leaf-algorithm">
+<section id="section-1.2.3.2">
+            <h5 id="name-component-leaf-algorithm">
+<a href="#section-1.2.3.2" class="section-number selfRef">1.2.3.2. </a><a href="#name-component-leaf-algorithm" class="section-name selfRef">Component leaf algorithm</a>
+            </h5>
+<p id="section-1.2.3.2-1">Value: 2<a href="#section-1.2.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.3.2-2">The leaf field must have the following structure:<a href="#section-1.2.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2.3.2-3">bstr .cbor [ + LeafComponent ]<a href="#section-1.2.3.2-3" class="pilcrow">¶</a></p>
+<div id="section-1.2.3.2-4">
+<pre class="lang-cddl sourcecode">
+LeafComponent = bstr / [
     type: int   ; type of leaf component
     * any       ; data specific to type
 ]
-</pre><a href="#section-4.1.5-3" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.3.2-4" class="pilcrow">¶</a>
 </div>
-</section>
-</div>
-<div id="common-leaf-component-types">
-<section id="section-4.1.6">
-          <h4 id="name-common-leaf-component-types">
-<a href="#section-4.1.6" class="section-number selfRef">4.1.6. </a><a href="#name-common-leaf-component-types" class="section-name selfRef">Common leaf component types</a>
-          </h4>
-<div id="cosesign1-countersigning">
-<section id="section-4.1.6.1">
-            <h5 id="name-cose_sign1-countersigning">
-<a href="#section-4.1.6.1" class="section-number selfRef">4.1.6.1. </a><a href="#name-cose_sign1-countersigning" class="section-name selfRef">COSE_Sign1 countersigning</a>
-            </h5>
-<p id="section-4.1.6.1-1">Type value: 1<a href="#section-4.1.6.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1.6.1-2">The COSE_Sign1 countersigning type defines how to bind to an existing COSE_Sign1 message.<a href="#section-4.1.6.1-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1.6.1-3">
+<p id="section-1.2.3.2-5">Each leaf component is either an opaque digest or a structure with a type and optional data where the type defines how to compute a ComponentDigest.  The concatenation of all digests is the input to the leaf digest operation.<a href="#section-1.2.3.2-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.2.3.2-6">
 <pre>
-COSESign1CounterSignLeafComponent = [
-    type: 1
-    sign_phdr: empty_or_serialized_map
-]
-; see RFC 8152 for empty_or_serialized_map
-</pre><a href="#section-4.1.6.1-3" class="pilcrow">¶</a>
+ToBeHashed := C_1 + C_2 + ... + C_n
+</pre><a href="#section-1.2.3.2-6" class="pilcrow">¶</a>
 </div>
-<p id="section-4.1.6.1-4">The component digest is computed as H(cbor([sign_phdr,phdr,payload,signature])) where sign_phdr is included in the component itself, while phdr, payload, and signature are the fields from the COSE_Sign1 message to be countersigned.<a href="#section-4.1.6.1-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="ccf-ledger-write-set-digest">
-<section id="section-4.1.6.2">
-            <h5 id="name-ccf-ledger-write-set-digest">
-<a href="#section-4.1.6.2" class="section-number selfRef">4.1.6.2. </a><a href="#name-ccf-ledger-write-set-digest" class="section-name selfRef">CCF Ledger write-set digest</a>
-            </h5>
-<p id="section-4.1.6.2-1">Type value: 2<a href="#section-4.1.6.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1.6.2-2">
-<pre>
-CCFWritesetDigestLeafComponent = [
-    type: 2     ; CCF writeset digest
-    digest: bstr
-]
-</pre><a href="#section-4.1.6.2-2" class="pilcrow">¶</a>
-</div>
-<p id="section-4.1.6.2-3">The component digest is the digest field included in the component itself.<a href="#section-4.1.6.2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="ccf-ledger-commit-evidence">
-<section id="section-4.1.6.3">
-            <h5 id="name-ccf-ledger-commit-evidence">
-<a href="#section-4.1.6.3" class="section-number selfRef">4.1.6.3. </a><a href="#name-ccf-ledger-commit-evidence" class="section-name selfRef">CCF Ledger commit evidence</a>
-            </h5>
-<p id="section-4.1.6.3-1">Type value: 3<a href="#section-4.1.6.3-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4.1.6.3-2">
-<pre>
-CCFCommitEvidenceLeafComponent = [
-    type: 3      ; CCF commit evidence
-    transaction_id: tstr
-    hmac: bstr
-]
-</pre><a href="#section-4.1.6.3-2" class="pilcrow">¶</a>
-</div>
-<p id="section-4.1.6.3-3">The component digest is computed as H("ce:" + transaction_id + ":" + hex(hmac)).<a href="#section-4.1.6.3-3" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-1.2.3.2-7">This document establishes a registry with initial members.<a href="#section-1.2.3.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="signing-and-verification-process">
-<section id="section-4.2">
-        <h3 id="name-signing-and-verification-pr">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-signing-and-verification-pr" class="section-name selfRef">Signing and Verification Process</a>
-        </h3>
-<p id="section-4.2-1">[TODO] is the ToBeSigned array a good idea?<a href="#section-4.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2-2">In order to create a signature, a well-defined byte string ToBeSigned is needed. The following steps must be followed to generate ToBeSigned:<a href="#section-4.2-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.2-3">
-<li id="section-4.2-3.1">Compute leaf digest from leaf components:
+<section id="section-1.2.4">
+          <h4 id="name-signing-and-verification-pr">
+<a href="#section-1.2.4" class="section-number selfRef">1.2.4. </a><a href="#name-signing-and-verification-pr" class="section-name selfRef">Signing and Verification Process</a>
+          </h4>
+<p id="section-1.2.4-1">In order to create a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:<a href="#section-1.2.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-2">
+<li id="section-1.2.4-2.1">Compute leaf digest with input computed according to the Leaf Algorithm
 ~~~
-LeafDigest := H(C_1 + C_2 + ... + C_n)
-~~~<a href="#section-4.2-3.1" class="pilcrow">¶</a>
+LeafDigest := H(LeafAlgorithm(leaf))
+~~~<a href="#section-1.2.4-2.1" class="pilcrow">¶</a>
 </li>
-        </ol>
-<p id="section-4.2-4">where C_i is the digest of the leaf component according to the type-specific algorithm.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.2-5">
-<li id="section-4.2-5.1">Compute root digest from leaf digest and Merkle proof<a href="#section-4.2-5.1" class="pilcrow">¶</a>
+            <li id="section-1.2.4-2.2">Compute root digest from leaf digest and Merkle proof<a href="#section-1.2.4-2.2" class="pilcrow">¶</a>
 </li>
-        </ol>
-<div class="alignLeft art-text artwork" id="section-4.2-6">
+          </ol>
+<div class="alignLeft art-text artwork" id="section-1.2.4-3">
 <pre>
 h := LeafDigest
 for [left, hash] in proof:
   h := H(hash + h) if left
        H(h + hash) else
 root := h
-</pre><a href="#section-4.2-6" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.4-3" class="pilcrow">¶</a>
 </div>
-<ol start="1" type="1" class="normal type-1" id="section-4.2-7">
-<li id="section-4.2-7.1">Compute final ToBeSigned: cbor([sig_alg, hash_alg, root])<a href="#section-4.2-7.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-4">
+<li id="section-1.2.4-4.1">Compute Sig_structure:<a href="#section-1.2.4-4.1" class="pilcrow">¶</a>
+</li>
+          </ol>
+<div id="section-1.2.4-5">
+<pre class="lang-cddl sourcecode">
+Sig_structure = [
+  context: "Signature1",
+  protected: empty_or_serialized_map,
+  external_aad: bstr,
+  root: bstr
+]
+</pre><a href="#section-1.2.4-5" class="pilcrow">¶</a>
+</div>
+<p id="section-1.2.4-6">How to compute a signature:<a href="#section-1.2.4-6" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-7">
+<li id="section-1.2.4-7.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-7.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-1.2.4-7.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-7.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-1.2.4-7.3">Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).<a href="#section-1.2.4-7.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+<p id="section-1.2.4-8">The steps for verifying a signature are:<a href="#section-1.2.4-8" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-9">
+<li id="section-1.2.4-9.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-9.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-1.2.4-9.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-9.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-1.2.4-9.3">Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-1.2.4-9.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="cosesign1-countersigning-leaf-component">
+<section id="section-1.3">
+        <h3 id="name-cose_sign1-countersigning-l">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-cose_sign1-countersigning-l" class="section-name selfRef">COSE_Sign1 countersigning leaf component</a>
+        </h3>
+<p id="section-1.3-1">Type value: 1<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">The COSE_Sign1 countersigning leaf component type defines how to bind to an existing COSE_Sign1 message.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-1.3-3">
+<pre>
+COSESign1CounterSignLeafComponent = [
+    type: 1
+    sign_phdr: empty_or_serialized_map
+]
+</pre><a href="#section-1.3-3" class="pilcrow">¶</a>
+</div>
+<p id="section-1.3-4">The digest of this leaf component is computed as:<a href="#section-1.3-4" class="pilcrow">¶</a></p>
+<div id="section-1.3-5">
+<pre class="lang-cddl sourcecode">
+Countersign_structure = [
+  context: "CounterSignatureV2",
+  body_protected: empty_or_serialized_map,
+  sign_protected: empty_or_serialized_map,
+  external_aad: bstr,
+  payload: bstr,
+  other_fields: [
+    signature: bstr
+  ]
+]
+ComponentDigest = H(cbor(Countersign_structure)
+</pre><a href="#section-1.3-5" class="pilcrow">¶</a>
+</div>
+<p id="section-1.3-6">Note: This structure is identical to standard COSE V2 countersignatures.<a href="#section-1.3-6" class="pilcrow">¶</a></p>
+<p id="section-1.3-7">body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-1.3-7" class="pilcrow">¶</a></p>
+<p id="section-1.3-8">H is the Hash Algorithm used for the CMTS_Sign1 message.<a href="#section-1.3-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="scitt-receipt">
+<section id="section-1.4">
+        <h3 id="name-scitt-receipt">
+<a href="#section-1.4" class="section-number selfRef">1.4. </a><a href="#name-scitt-receipt" class="section-name selfRef">SCITT Receipt</a>
+        </h3>
+<p id="section-1.4-1">A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteristics:<a href="#section-1.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.4-2">
+<li id="section-1.4-2.1">One of the following Signing Algorithms is used:<a href="#section-1.4-2.1" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-4.2-8">How to compute a countersignature:<a href="#section-4.2-8" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.2-9">
-<li id="section-4.2-9.1">Compute ToBeSigned using the steps described earlier.<a href="#section-4.2-9.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-1.4-3.1">-7 (ES256)<a href="#section-1.4-3.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.2-9.2">Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).<a href="#section-4.2-9.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-1.4-3.2">-35 (ES384)<a href="#section-1.4-3.2" class="pilcrow">¶</a>
 </li>
-          <li id="section-4.2-9.3">Place the signature in the signature member of the SCITT receipt.<a href="#section-4.2-9.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-1.4-3.3">-8 (EdDSA)<a href="#section-1.4-3.3" class="pilcrow">¶</a>
 </li>
-        </ol>
-<p id="section-4.2-10">The steps for verifying a countersignature are:<a href="#section-4.2-10" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4.2-11">
-<li id="section-4.2-11.1">Compute ToBeSigned using the steps described earlier.<a href="#section-4.2-11.1" class="pilcrow">¶</a>
-</li>
-          <li id="section-4.2-11.2">Call the signature verification algorithm passing in K (the service key to verify with), sign_alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-4.2-11.2" class="pilcrow">¶</a>
+        </ul>
+<ol start="1" type="1" class="normal type-1" id="section-1.4-4">
+<li id="section-1.4-4.1">One of the following Hash Algorithms is used:<a href="#section-1.4-4.1" class="pilcrow">¶</a>
 </li>
         </ol>
+<ul class="normal">
+<li class="normal" id="section-1.4-5.1">1 (sha-256)<a href="#section-1.4-5.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-1.4-5.2">7 (sha-384)<a href="#section-1.4-5.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<ol start="1" type="1" class="normal type-1" id="section-1.4-6">
+<li id="section-1.4-6.1">The Leaf Component algorithm is used.<a href="#section-1.4-6.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-1.4-6.2">The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.<a href="#section-1.4-6.2" class="pilcrow">¶</a>
+</li>
+        </ol>
+<div id="section-1.4-7">
+<pre class="lang-cddl sourcecode">
+SCITT_Receipt = CMTS_Sign1
+</pre><a href="#section-1.4-7" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="cose-header-parameter">
-<section id="section-4.3">
+<section id="section-1.5">
         <h3 id="name-cose-header-parameter">
-<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-cose-header-parameter" class="section-name selfRef">COSE header parameter</a>
+<a href="#section-1.5" class="section-number selfRef">1.5. </a><a href="#name-cose-header-parameter" class="section-name selfRef">COSE header parameter</a>
         </h3>
-<p id="section-4.3-1">This section defines a COSE header parameter for embedding one or more SCITT Receipts in the unprotected header of a COSE message:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
-<p id="section-4.3-2">Name: SCITT receipt
+<p id="section-1.5-1">This section defines a COSE header parameter for embedding one or more SCITT Receipts in the unprotected header of a COSE message:<a href="#section-1.5-1" class="pilcrow">¶</a></p>
+<p id="section-1.5-2">Name: SCITT receipt
 Label: TBD
 Value Type: SCITT_Receipt / [+ SCITT_Receipt]
 Value Registry: ?
-Description: TBD<a href="#section-4.3-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="the-full-cddl">
-<section id="section-4.4">
-        <h3 id="name-the-full-cddl">
-<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-the-full-cddl" class="section-name selfRef">The Full CDDL</a>
-        </h3>
-<p id="section-4.4-1">TODO: CCF node vs service keys<a href="#section-4.4-1" class="pilcrow">¶</a></p>
-<div id="section-4.4-2">
-<pre class="lang-CDDL sourcecode">
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
-
-SCITT_Receipt = {
-    log_id: bstr // TODO what is this, UUID? advertise keys somewhere? DID? signed CTL?
-    x5chain: bstr[] // node cert for CCF
-    //service_key =&gt; bstr
-    signature =&gt; bstr               ; Signature over root hash
-    sign_alg =&gt; int
-    merkle_alg =&gt; int
-    proof =&gt; [ + ProofElement]      ; Merkle proof
-    leaf_components =&gt; [ + LeafComponent]
-}
-
-ProofElement = [
-    left: bool
-    hash: Digest
-]
-
-Digest = bstr
-
-; Each leaf component *type* defines how to derive
-; a leaf component hash from the leaf component data.
-LeafComponent = [
-    type: int   ; type of leaf component
-    * any       ; data specific to type
-]
-
-;; COSE-related leaf component types:
-
-COSESign1CounterSignLeafComponent = [
-    type: 1      ; COSE_Sign1 binding
-    sign_phdr: empty_or_serialized_map
-]
-empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
-; H(COSESign1CounterSignLeafComponent) = H(cbor([phdr,sign_phdr,payload,signature]))
-; Note: phdr, payload, signature are all external
-
-;; CCF leaf component types:
-
-CCFWritesetDigestLeafComponent = [
-    type: 2     ; CCF writeset digest
-    digest: bstr
-]
-; H(CCFWritesetDigestLeafComponent) = digest
-
-CCFCommitEvidenceLeafComponent = [
-    type: 3      ; CCF commit evidence
-    transaction_id: tstr
-    hmac: bstr
-]
-; H(CCFCommitEvidenceLeafComponent) = H("ce:" + transaction_id + ":" + hex(hmac))
-</pre><a href="#section-4.4-2" class="pilcrow">¶</a>
-</div>
+Description: TBD<a href="#section-1.5-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="privacy-considerations">
-<section id="section-5">
+<section id="section-2">
       <h2 id="name-privacy-considerations">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
       </h2>
-<p id="section-5-1">Privacy Considerations<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-2-1">Privacy Considerations<a href="#section-2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-6">
+<section id="section-3">
       <h2 id="name-security-considerations">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-6-1">Security Considerations<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">Security Considerations<a href="#section-3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-7">
+<section id="section-4">
       <h2 id="name-iana-considerations">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-7-1">See Body <a href="#mybody" class="xref">Section 2</a>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">See Body <a href="#mybody" class="xref">Section 1.2</a>.<a href="#section-4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<section id="section-8">
+<section id="section-5">
       <h2 id="name-references">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
-<section id="section-8.1">
+<section id="section-5.1">
         <h3 id="name-normative-references">
-<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
 <dt id="IANA.COSE-header-parameters">[IANA.COSE-header-parameters]</dt>
@@ -1591,9 +1558,9 @@ CCFCommitEvidenceLeafComponent = [
 <dd class="break"></dd>
 </dl>
 </section>
-<section id="section-8.2">
+<section id="section-5.2">
         <h3 id="name-informative-references">
-<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
 <dt id="I-D.ietf-cose-countersign">[I-D.ietf-cose-countersign]</dt>
@@ -1603,39 +1570,8 @@ CCFCommitEvidenceLeafComponent = [
 </dl>
 </section>
 </section>
-<div id="attic">
-<section id="appendix-A">
-      <h2 id="name-attic">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-attic" class="section-name selfRef">Attic</a>
-      </h2>
-<div id="appendix-A-1">
-<pre class="lang-CDDL sourcecode">
-tagged_SCITT_receipt = #6.TBD(SCITT_receipt)
-
-SCITT_receipt = {
-  ; FIXME how is alg authenticated?
-  alg =&gt; int, ; hash alg applies to all digests
-  service_key =&gt; bstr,
-  signature =&gt; bstr,
-  proof =&gt; bstr .cbor [ + ProofElement ],
-  transaction_id =&gt; tstr,
-  hmac =&gt; SHA_256, ; make this agile
-  writeset-digest =&gt; SHA_256, ; make this agile
-}
-
-ProofElement = [
-  left: bool,
-  digest: SHA_256,
-]
-
-SHA_256 = bstr .size 32
-
-</pre><a href="#appendix-A-1" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-A">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
