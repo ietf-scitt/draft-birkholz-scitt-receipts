@@ -182,31 +182,63 @@ The leaf content is not processed further.
 LeafToBeHashed := leaf
 ~~~
 
-### Component leaf algorithm
+### Derivation leaf algorithm
 
 Value: 2
 
-Leaf type: bstr .cbor \[ + LeafComponent \]
+Leaf type: bstr .cbor \[ Opaque, DerivationInfo \]
 
 ~~~ cddl
-LeafComponent = bstr / [
-    type: int   ; type of leaf component
+Opaque = bstr   ; implementation-specific
+DerivationInfo = [
+    type: int   ; type of derivation
     * any       ; data specific to type
 ]
 ~~~
 
-Each leaf component C_i is either:
+DerivationInfo is a structure with a type and optional data where the type defines an algorithm to derive a stream DerivedBytes of bytes that is included in the leaf digest operation.
 
-- an opaque digest, or
-- a structure with a type and optional data where the type defines an algorithm to compute the input ComponentToBeHashed to the digest operation.
-
-The concatenation of all digests H_i is the input to the leaf digest operation:
+The input to the leaf digest operation is defined as follows:
 
 ~~~
-LeafToBeHashed := H_1 + H_2 + ... + H_n
+LeafToBeHashed := opaque + H(cbor([type, DerivedBytes])
 ~~~
 
-This document establishes a registry with initial members.
+This document establishes a registry of derivation types, with a single member used for COSE_Sign1 countersigning.
+
+#### COSE_Sign1 countersigning derivation type
+
+Type value: 1
+
+The COSE_Sign1 countersigning derivation type defines how to countersign an existing COSE_Sign1 message. It has the following structure:
+
+~~~
+[
+    type: 1,
+    sign_protected: empty_or_serialized_map
+]
+~~~
+
+The DerivedBytes value is computed as follows:
+
+1. Create a Countersign_structure:
+
+        Countersign_structure = [
+            context: "CounterSignatureV2",
+            body_protected: empty_or_serialized_map,
+            sign_protected: empty_or_serialized_map,
+            external_aad: bstr,
+            payload: bstr,
+            other_fields: [
+                signature: bstr
+            ]
+        ]
+
+    body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
+
+    Note: This structure is identical to standard COSE V2 countersignatures.
+
+2. Create the value DerivedBytes by encoding the Countersign_structure to a byte string, using the encoding described in {{deterministic-cbor}}.
 
 ## Verification Process
 
@@ -241,40 +273,6 @@ The steps for verifying a signature are:
 
 3. Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).
 
-# COSE_Sign1 countersigning leaf component
-
-Type value: 1
-
-The COSE_Sign1 countersigning leaf component type defines how to countersign an existing COSE_Sign1 message. It has the following structure:
-
-~~~
-COSESign1CounterSignLeafComponent = [
-    type: 1
-    sign_phdr: empty_or_serialized_map
-]
-~~~
-
-The ComponentToBeHashed value is computed as follows:
-
-1. Create a Countersign_structure:
-
-        Countersign_structure = [
-            context: "CounterSignatureV2",
-            body_protected: empty_or_serialized_map,
-            sign_protected: empty_or_serialized_map,
-            external_aad: bstr,
-            payload: bstr,
-            other_fields: [
-                signature: bstr
-            ]
-        ]
-
-    body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
-
-    Note: This structure is identical to standard COSE V2 countersignatures.
-
-2. Create the value ComponentToBeHashed by encoding the Countersign_structure to a byte string, using the encoding described in {{deterministic-cbor}}.
-
 # SCITT Receipt
 
 A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteristics:
@@ -290,9 +288,7 @@ A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteri
     - 1 (sha-256)
     - 7 (sha-384)
 
-3. The Component leaf algorithm is used.
-
-4. The leaf components contain exactly one COSE_Sign1 countersigning leaf component. Additional leaf components may be included.
+3. The Derivation leaf algorithm is used with type 1.
 
 ~~~ cddl
 SCITT_Receipt = CMTS_Sign1
