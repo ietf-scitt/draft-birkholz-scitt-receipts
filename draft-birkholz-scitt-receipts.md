@@ -83,15 +83,15 @@ The CDDL fragment that represents the above text for CMTS_Sign1 follows.
 
 ~~~ cddl
 CMTS_Sign1 = [
-  protected: empty_or_serialized_map,
-  unprotected: header_map,
-  leaf: bstr,
-  proof: [+ ProofElement],
-  signature: bstr
+    protected: empty_or_serialized_map,
+    unprotected: header_map,
+    leaf: bstr,
+    proof: [+ ProofElement],
+    signature: bstr
 ]
 
 header_map = {
-  * int => any
+    * int => any
 }
 
 empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
@@ -212,17 +212,17 @@ In order to verify a signature, a well-defined byte stream is needed. The Sig_st
 
         h := LeafDigest
         for [left, hash] in proof:
-          h := H(hash + h) if left
-              H(h + hash) else
+            h := H(hash + h) if left
+                 H(h + hash) else
         root := h
 
 3. Compute Sig_structure:
 
         Sig_structure = [
-          context: "Signature1",
-          protected: empty_or_serialized_map,
-          external_aad: bstr,
-          root: bstr
+            context: "Signature1",
+            protected: empty_or_serialized_map,
+            external_aad: bstr,
+            root: bstr
         ]
 
 The steps for verifying a signature are:
@@ -250,14 +250,14 @@ The digest of this leaf component is computed as:
 
 ~~~ cddl
 Countersign_structure = [
-  context: "CounterSignatureV2",
-  body_protected: empty_or_serialized_map,
-  sign_protected: empty_or_serialized_map,
-  external_aad: bstr,
-  payload: bstr,
-  other_fields: [
-    signature: bstr
-  ]
+    context: "CounterSignatureV2",
+    body_protected: empty_or_serialized_map,
+    sign_protected: empty_or_serialized_map,
+    external_aad: bstr,
+    payload: bstr,
+    other_fields: [
+       signature: bstr
+    ]
 ]
 ComponentDigest = H(cbor(Countersign_structure)
 ~~~
