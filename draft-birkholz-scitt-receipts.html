@@ -1351,7 +1351,7 @@ ProofElement = [
 <ul class="normal">
 <li class="normal" id="section-2.3-2.1">1: Identity leaf algorithm<a href="#section-2.3-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-2.3-2.2">2: Component leaf algorithm<a href="#section-2.3-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.3-2.2">2: Derivation leaf algorithm<a href="#section-2.3-2.2" class="pilcrow">¶</a>
 </li>
         </ul>
 <div id="identity-leaf-algorithm">
@@ -1427,7 +1427,7 @@ LeafToBeHashed := opaque + H(cbor([type, DerivedBytes])
 </pre><a href="#section-2.3.2.1-5.1.2" class="pilcrow">¶</a>
 </div>
 <p id="section-2.3.2.1-5.1.3">
-body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-2.3.2.1-5.1.3" class="pilcrow">¶</a></p>
+body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-2.3.2.1-5.1.3" class="pilcrow">¶</a></p>
 <p id="section-2.3.2.1-5.1.4">
 Note: This structure is identical to standard COSE V2 countersignatures.<a href="#section-2.3.2.1-5.1.4" class="pilcrow">¶</a></p>
 </li>
