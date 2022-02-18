@@ -36,6 +36,7 @@ author:
 
 normative:
   IANA.COSE-header-parameters:
+  RFC8949:
 
 informative:
   I-D.ietf-cose-countersign: countersign
@@ -56,7 +57,7 @@ This document defines a method for countersigning of COSE_Sign1 messages using C
 
 {: #mybody}
 
-## CBOR Merkle Tree Signing (CMTS)
+# CBOR Merkle Tree Signing (CMTS)
 
 When signing a Merkle tree, a list of leaves (payloads) are signed producing a single signature.
 
@@ -65,7 +66,7 @@ This document introduces this structure (CMTS_Sign1) for the case where there is
 
 TODO refactor so that we can talk about signature generation.
 
-### CMTS_Sign1 Structure
+## CMTS_Sign1 Structure
 
 The CMTS_Sign1 structure is a CBOR array. The fields of the array in order are:
 
@@ -102,11 +103,11 @@ ProofElement = [
 ]
 ~~~
 
-### Common Header Parameters
+## Common Header Parameters
 
 [TODO] Add wording that all parameters are optional and may be known from context, same as in COSE
 
-#### Signing Algorithm parameter
+### Signing Algorithm parameter
 
 The algorithm used for the signing operation. When present, this parameter MUST be placed in the protected header bucket.
 
@@ -116,7 +117,7 @@ Value type: int
 
 The value is taken from the "COSE Algorithms" registry.
 
-#### Hash Algorithm parameter
+### Hash Algorithm parameter
 
 The algorithm used for the digest operation in the Merkle tree. When present, this parameter MUST be placed in the protected header bucket.
 
@@ -126,7 +127,7 @@ Value type: int
 
 The value is taken from the "Named Information" registry.
 
-#### Leaf Algorithm parameter
+### Leaf Algorithm parameter
 
 The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation. When present, this parameter MUST be placed in the protected header bucket.
 
@@ -138,7 +139,7 @@ Each algorithm must define a value for LeafToBeHashed which is the input to the 
 
 This document establishes a registry with initial members.
 
-#### X.509 certificate chain parameter
+### X.509 certificate chain parameter
 
 The X.509 certificate chain used for signing.
 
@@ -146,7 +147,7 @@ Label: 4
 
 Value type: COSE_X509
 
-#### Issuer parameter
+### Issuer parameter
 
 The issuer of the signed message. Syntax and semantics are application specific.
 
@@ -154,7 +155,7 @@ Label: 5
 
 Value type: tstr
 
-#### Key ID parameter
+### Key ID parameter
 
 The key identifier. Syntax and semantics are application specific.
 
@@ -162,14 +163,14 @@ Label: 6
 
 Value type: bstr
 
-### Leaf Algorithms
+## Leaf Algorithms
 
 A new registry is established with the following initial leaf algorithms:
 
 * 1: Identity leaf algorithm
 * 2: Component leaf algorithm
 
-#### Identity leaf algorithm
+### Identity leaf algorithm
 
 Value: 1
 
@@ -181,7 +182,7 @@ The leaf content is not processed further.
 LeafToBeHashed := leaf
 ~~~
 
-#### Component leaf algorithm
+### Component leaf algorithm
 
 Value: 2
 
@@ -207,7 +208,7 @@ LeafToBeHashed := H_1 + H_2 + ... + H_n
 
 This document establishes a registry with initial members.
 
-### Verification Process
+## Verification Process
 
 In order to verify a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:
 
@@ -236,11 +237,11 @@ The steps for verifying a signature are:
 
 1. Generate a Sig_structure using the steps described earlier.
 
-2. Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.
+2. Create the value ToBeSigned by encoding the Sig_structure to a byte string, , using the encoding described in {{deterministic-cbor}}.
 
 3. Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).
 
-## COSE_Sign1 countersigning leaf component
+# COSE_Sign1 countersigning leaf component
 
 Type value: 1
 
@@ -272,9 +273,9 @@ The ComponentToBeHashed value is computed as follows:
 
     Note: This structure is identical to standard COSE V2 countersignatures.
 
-2. Create the value ComponentToBeHashed by encoding the Countersign_structure to a byte string, using the encoding described in Section X.
+2. Create the value ComponentToBeHashed by encoding the Countersign_structure to a byte string, using the encoding described in {{deterministic-cbor}}.
 
-## SCITT Receipt
+# SCITT Receipt
 
 A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteristics:
 
@@ -297,7 +298,21 @@ A SCITT Receipt is defined as a CMTS_Sign1 message with the following characteri
 SCITT_Receipt = CMTS_Sign1
 ~~~
 
-## COSE header parameter
+# CBOR Encoding Restrictions    {#deterministic-cbor}
+
+In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in {{Section 4.2.1 of RFC8949}} MUST be used.
+
+# Privacy Considerations
+
+Privacy Considerations
+
+# Security Considerations
+
+Security Considerations
+
+# IANA Considerations
+
+## COSE header parameters
 
 This section defines a COSE header parameter for embedding one or more SCITT Receipts in the unprotected header of a COSE message:
 
@@ -310,18 +325,6 @@ Value Type: SCITT_Receipt / \[+ SCITT_Receipt\]
 Value Registry: ?
 
 Description: TBD
-
-# Privacy Considerations
-
-Privacy Considerations
-
-# Security Considerations
-
-Security Considerations
-
-# IANA Considerations
-
-See Body {{mybody}}.
 
 --- back
 
