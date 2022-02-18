@@ -166,6 +166,8 @@ A new registry is established with the following initial leaf algorithms:
 
 Value: 1
 
+Leaf type: bstr
+
 The leaf content is not processed further.
 
 ~~~
@@ -176,9 +178,7 @@ ToBeHashed = leaf
 
 Value: 2
 
-The leaf field must have the following structure:
-
-bstr .cbor \[ + LeafComponent \]
+Leaf type: bstr .cbor \[ + LeafComponent \]
 
 ~~~ cddl
 LeafComponent = bstr / [
@@ -199,7 +199,10 @@ This document establishes a registry with initial members.
 
 In order to create a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:
 
+**TODO** This is confusing. Signing should be defined for a list of leaves from which a Merkle tree is constructured. Verification of a message for a single leaf is roughly what is written below.
+
 1. Compute leaf digest with input computed according to the Leaf Algorithm
+
 ~~~
 LeafDigest := H(LeafAlgorithm(leaf))
 ~~~
