@@ -213,6 +213,8 @@ Table of Contents
 
    Value: 1
 
+   Leaf type: bstr
+
    The leaf content is not processed further.
 
    ToBeHashed = leaf
@@ -221,9 +223,7 @@ Table of Contents
 
    Value: 2
 
-   The leaf field must have the following structure:
-
-   bstr .cbor [ + LeafComponent ]
+   Leaf type: bstr .cbor [ + LeafComponent ]
 
    LeafComponent = bstr / [
        type: int   ; type of leaf component
@@ -245,10 +245,16 @@ Table of Contents
    The Sig_structure is used to create the canonical form.  The
    following steps must be followed to generate Sig_structure:
 
-   1.  Compute leaf digest with input computed according to the Leaf
-       Algorithm ~~~ LeafDigest := H(LeafAlgorithm(leaf)) ~~~
+   *TODO* This is confusing.  Signing should be defined for a list of
+   leaves from which a Merkle tree is constructured.  Verification of a
+   message for a single leaf is roughly what is written below.
 
-   2.  Compute root digest from leaf digest and Merkle proof
+   1.  Compute leaf digest with input computed according to the Leaf
+       Algorithm
+
+   LeafDigest := H(LeafAlgorithm(leaf))
+
+   1.  Compute root digest from leaf digest and Merkle proof
 
    h := LeafDigest
    for [left, hash] in proof:
