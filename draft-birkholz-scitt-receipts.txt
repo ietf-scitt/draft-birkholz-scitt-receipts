@@ -117,7 +117,7 @@ Table of Contents
 
    signature: The computed signature value as a bstr.
 
-   The CDDL fragment that represents the above text for Merkle_Sign1
+   The CDDL fragment that represents the above text for CMTS_Sign1
    follows.
 
    CMTS_Sign1 = [
