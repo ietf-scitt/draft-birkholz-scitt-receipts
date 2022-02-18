@@ -104,9 +104,11 @@ ProofElement = [
 
 ### Common Header Parameters
 
-#### Signing Algorithm member
+[TODO] Add wording that all parameters are optional and may be known from context, same as in COSE
 
-The algorithm used for the signing operation.
+#### Signing Algorithm parameter
+
+The algorithm used for the signing operation. When present, this parameter MUST be placed in the protected header bucket.
 
 Label: 1
 
@@ -114,9 +116,9 @@ Value type: int
 
 The value is taken from the "COSE Algorithms" registry.
 
-#### Hash Algorithm member
+#### Hash Algorithm parameter
 
-The algorithm used for the digest operation in the Merkle tree.
+The algorithm used for the digest operation in the Merkle tree. When present, this parameter MUST be placed in the protected header bucket.
 
 Label: 2
 
@@ -124,19 +126,19 @@ Value type: int
 
 The value is taken from the "Named Information" registry.
 
-#### Leaf Algorithm member
+#### Leaf Algorithm parameter
 
-The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation.
+The algorithm used for preprocessing the leaf content to produce the input to the leaf digest operation. When present, this parameter MUST be placed in the protected header bucket.
 
 Label: 3
 
 Value type: int
 
-Each algorithm must define a value for ToBeHashed which is the input to the leaf digest operation.
+Each algorithm must define a value for LeafToBeHashed which is the input to the leaf digest operation.
 
 This document establishes a registry with initial members.
 
-#### X.509 certificate chain
+#### X.509 certificate chain parameter
 
 The X.509 certificate chain used for signing.
 
@@ -144,7 +146,7 @@ Label: 4
 
 Value type: COSE_X509
 
-#### Issuer
+#### Issuer parameter
 
 The issuer of the signed message. Syntax and semantics are application specific.
 
@@ -152,7 +154,7 @@ Label: 5
 
 Value type: tstr
 
-#### Key ID
+#### Key ID parameter
 
 The key identifier. Syntax and semantics are application specific.
 
@@ -176,7 +178,7 @@ Leaf type: bstr
 The leaf content is not processed further.
 
 ~~~
-ToBeHashed := leaf
+LeafToBeHashed := leaf
 ~~~
 
 #### Component leaf algorithm
@@ -192,10 +194,15 @@ LeafComponent = bstr / [
 ]
 ~~~
 
-Each leaf component is either an opaque digest or a structure with a type and optional data where the type defines how to compute a ComponentDigest.  The concatenation of all digests is the input to the leaf digest operation.
+Each leaf component C_i is either:
+
+- an opaque digest, or
+- a structure with a type and optional data where the type defines an algorithm to compute the input ComponentToBeHashed to the digest operation.
+
+The concatenation of all digests H_i is the input to the leaf digest operation:
 
 ~~~
-ToBeHashed := C_1 + C_2 + ... + C_n
+LeafToBeHashed := H_1 + H_2 + ... + H_n
 ~~~
 
 This document establishes a registry with initial members.
@@ -237,7 +244,7 @@ The steps for verifying a signature are:
 
 Type value: 1
 
-The COSE_Sign1 countersigning leaf component type defines how to bind to an existing COSE_Sign1 message.
+The COSE_Sign1 countersigning leaf component type defines how to countersign an existing COSE_Sign1 message. It has the following structure:
 
 ~~~
 COSESign1CounterSignLeafComponent = [
@@ -246,27 +253,26 @@ COSESign1CounterSignLeafComponent = [
 ]
 ~~~
 
-The digest of this leaf component is computed as:
+The ComponentToBeHashed value is computed as follows:
 
-~~~ cddl
-Countersign_structure = [
-    context: "CounterSignatureV2",
-    body_protected: empty_or_serialized_map,
-    sign_protected: empty_or_serialized_map,
-    external_aad: bstr,
-    payload: bstr,
-    other_fields: [
-       signature: bstr
-    ]
-]
-ComponentDigest = H(cbor(Countersign_structure)
-~~~
+1. Create a Countersign_structure:
 
-Note: This structure is identical to standard COSE V2 countersignatures.
+        Countersign_structure = [
+            context: "CounterSignatureV2",
+            body_protected: empty_or_serialized_map,
+            sign_protected: empty_or_serialized_map,
+            external_aad: bstr,
+            payload: bstr,
+            other_fields: [
+                signature: bstr
+            ]
+        ]
 
-body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
+    body_protected, payload, and signature are of the target COSE_Sign1 message.  sign_protected is from the signer within the leaf component structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
 
-H is the Hash Algorithm used for the CMTS_Sign1 message.
+    Note: This structure is identical to standard COSE V2 countersignatures.
+
+2. Create the value ComponentToBeHashed by encoding the Countersign_structure to a byte string, using the encoding described in Section X.
 
 ## SCITT Receipt
 
