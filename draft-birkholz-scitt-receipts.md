@@ -201,8 +201,10 @@ DerivationInfo is a structure with a type and optional data where the type defin
 The input to the leaf digest operation is defined as follows:
 
 ~~~
-LeafToBeHashed := opaque + H(cbor([type, DerivedBytes])
+LeafToBeHashed := bytes(opaque) + H(cbor([type, DerivedBytes])
 ~~~
+
+bytes(bstr) returns the raw bytes within the bstr.
 
 This document establishes a registry of derivation types, with a single member used for COSE_Sign1 countersigning.
 
