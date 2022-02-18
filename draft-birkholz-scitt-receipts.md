@@ -58,7 +58,9 @@ This document defines a method for countersigning of COSE_Sign1 messages using C
 
 ## CBOR Merkle Tree Signing (CMTS)
 
-This document defines signing with a single signer (CMTS_Sign1).
+When signing a Merkle tree, a list of leaves (payloads) are signed producing a single signature.
+Each leaf together with the tree signature and a Merkle proof specific to the leaf are then packaged in a stand-alone structure for individual verification.
+This document introduces this structure (CMTS_Sign1) for the case where there is a single signer.
 
 ### CMTS_Sign1 Structure
 
@@ -195,11 +197,9 @@ ToBeHashed := C_1 + C_2 + ... + C_n
 
 This document establishes a registry with initial members.
 
-### Signing and Verification Process
+### Verification Process
 
-In order to create a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:
-
-**TODO** This is confusing. Signing should be defined for a list of leaves from which a Merkle tree is constructured. Verification of a message for a single leaf is roughly what is written below.
+In order to verify a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:
 
 1. Compute leaf digest with input computed according to the Leaf Algorithm
 
@@ -227,14 +227,6 @@ Sig_structure = [
   root: bstr
 ]
 ~~~
-
-How to compute a signature:
-
-1. Generate a Sig_structure using the steps described earlier.
-
-2. Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.
-
-3. Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).
 
 The steps for verifying a signature are:
 
