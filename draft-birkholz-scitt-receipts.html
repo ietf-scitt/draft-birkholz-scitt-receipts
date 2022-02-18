@@ -1134,7 +1134,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
                     <p id="section-toc.1-1.1.2.2.2.3.1"><a href="#section-1.2.3" class="xref">1.2.3</a>.  <a href="#name-leaf-algorithms" class="xref">Leaf Algorithms</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2.2.4">
-                    <p id="section-toc.1-1.1.2.2.2.4.1"><a href="#section-1.2.4" class="xref">1.2.4</a>.  <a href="#name-signing-and-verification-pr" class="xref">Signing and Verification Process</a></p>
+                    <p id="section-toc.1-1.1.2.2.2.4.1"><a href="#section-1.2.4" class="xref">1.2.4</a>.  <a href="#name-verification-process" class="xref">Verification Process</a></p>
 </li>
                 </ul>
 </li>
@@ -1198,7 +1198,9 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
         <h3 id="name-cbor-merkle-tree-signing-cm">
 <a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-cbor-merkle-tree-signing-cm" class="section-name selfRef">CBOR Merkle Tree Signing (CMTS)</a>
         </h3>
-<p id="section-1.2-1">This document defines signing with a single signer (CMTS_Sign1).<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-1">When signing a Merkle tree, a list of leaves (payloads) are signed producing a single signature.
+Each leaf together with the tree signature and a Merkle proof specific to the leaf are then packaged in a stand-alone structure for individual verification.
+This document introduces this structure (CMTS_Sign1) for the case where there is a single signer.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
 <div id="cmtssign1-structure">
 <section id="section-1.2.1">
           <h4 id="name-cmts_sign1-structure">
@@ -1359,40 +1361,39 @@ ToBeHashed := C_1 + C_2 + ... + C_n
 </div>
 </section>
 </div>
-<div id="signing-and-verification-process">
+<div id="verification-process">
 <section id="section-1.2.4">
-          <h4 id="name-signing-and-verification-pr">
-<a href="#section-1.2.4" class="section-number selfRef">1.2.4. </a><a href="#name-signing-and-verification-pr" class="section-name selfRef">Signing and Verification Process</a>
+          <h4 id="name-verification-process">
+<a href="#section-1.2.4" class="section-number selfRef">1.2.4. </a><a href="#name-verification-process" class="section-name selfRef">Verification Process</a>
           </h4>
-<p id="section-1.2.4-1">In order to create a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:<a href="#section-1.2.4-1" class="pilcrow">¶</a></p>
-<p id="section-1.2.4-2"><strong>TODO</strong> This is confusing. Signing should be defined for a list of leaves from which a Merkle tree is constructured. Verification of a message for a single leaf is roughly what is written below.<a href="#section-1.2.4-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-3">
-<li id="section-1.2.4-3.1">Compute leaf digest with input computed according to the Leaf Algorithm<a href="#section-1.2.4-3.1" class="pilcrow">¶</a>
+<p id="section-1.2.4-1">In order to verify a signature, a well-defined byte stream is needed. The Sig_structure is used to create the canonical form. The following steps must be followed to generate Sig_structure:<a href="#section-1.2.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-2">
+<li id="section-1.2.4-2.1">Compute leaf digest with input computed according to the Leaf Algorithm<a href="#section-1.2.4-2.1" class="pilcrow">¶</a>
 </li>
           </ol>
-<div class="alignLeft art-text artwork" id="section-1.2.4-4">
+<div class="alignLeft art-text artwork" id="section-1.2.4-3">
 <pre>
 LeafDigest := H(LeafAlgorithm(leaf))
-</pre><a href="#section-1.2.4-4" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.4-3" class="pilcrow">¶</a>
 </div>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-5">
-<li id="section-1.2.4-5.1">Compute root digest from leaf digest and Merkle proof<a href="#section-1.2.4-5.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-4">
+<li id="section-1.2.4-4.1">Compute root digest from leaf digest and Merkle proof<a href="#section-1.2.4-4.1" class="pilcrow">¶</a>
 </li>
           </ol>
-<div class="alignLeft art-text artwork" id="section-1.2.4-6">
+<div class="alignLeft art-text artwork" id="section-1.2.4-5">
 <pre>
 h := LeafDigest
 for [left, hash] in proof:
   h := H(hash + h) if left
        H(h + hash) else
 root := h
-</pre><a href="#section-1.2.4-6" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.4-5" class="pilcrow">¶</a>
 </div>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-7">
-<li id="section-1.2.4-7.1">Compute Sig_structure:<a href="#section-1.2.4-7.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-6">
+<li id="section-1.2.4-6.1">Compute Sig_structure:<a href="#section-1.2.4-6.1" class="pilcrow">¶</a>
 </li>
           </ol>
-<div id="section-1.2.4-8">
+<div id="section-1.2.4-7">
 <pre class="lang-cddl sourcecode">
 Sig_structure = [
   context: "Signature1",
@@ -1400,24 +1401,15 @@ Sig_structure = [
   external_aad: bstr,
   root: bstr
 ]
-</pre><a href="#section-1.2.4-8" class="pilcrow">¶</a>
+</pre><a href="#section-1.2.4-7" class="pilcrow">¶</a>
 </div>
-<p id="section-1.2.4-9">How to compute a signature:<a href="#section-1.2.4-9" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-10">
-<li id="section-1.2.4-10.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-10.1" class="pilcrow">¶</a>
+<p id="section-1.2.4-8">The steps for verifying a signature are:<a href="#section-1.2.4-8" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2.4-9">
+<li id="section-1.2.4-9.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-9.1" class="pilcrow">¶</a>
 </li>
-            <li id="section-1.2.4-10.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-10.2" class="pilcrow">¶</a>
+            <li id="section-1.2.4-9.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-9.2" class="pilcrow">¶</a>
 </li>
-            <li id="section-1.2.4-10.3">Call the signature creation algorithm passing in K (the key to sign with), alg (the algorithm to sign with), and ToBeSigned (the value to sign).<a href="#section-1.2.4-10.3" class="pilcrow">¶</a>
-</li>
-          </ol>
-<p id="section-1.2.4-11">The steps for verifying a signature are:<a href="#section-1.2.4-11" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-1.2.4-12">
-<li id="section-1.2.4-12.1">Generate a Sig_structure using the steps described earlier.<a href="#section-1.2.4-12.1" class="pilcrow">¶</a>
-</li>
-            <li id="section-1.2.4-12.2">Create the value ToBeSigned by encoding the Sig_structure to a byte string, using the encoding described in Section X.<a href="#section-1.2.4-12.2" class="pilcrow">¶</a>
-</li>
-            <li id="section-1.2.4-12.3">Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-1.2.4-12.3" class="pilcrow">¶</a>
+            <li id="section-1.2.4-9.3">Call the signature verification algorithm passing in K (the key to verify with), alg (the algorithm used sign with), ToBeSigned (the value to sign), and sign (the signature to be verified).<a href="#section-1.2.4-9.3" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
