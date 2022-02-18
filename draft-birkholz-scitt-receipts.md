@@ -59,8 +59,11 @@ This document defines a method for countersigning of COSE_Sign1 messages using C
 ## CBOR Merkle Tree Signing (CMTS)
 
 When signing a Merkle tree, a list of leaves (payloads) are signed producing a single signature.
+
 Each leaf together with the tree signature and a Merkle proof specific to the leaf are then packaged in a stand-alone structure for individual verification.
 This document introduces this structure (CMTS_Sign1) for the case where there is a single signer.
+
+TODO refactor so that we can talk about signature generation.
 
 ### CMTS_Sign1 Structure
 
