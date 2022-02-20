@@ -75,12 +75,15 @@ Table of Contents
      3.1.  COSE_Sign1 Countersign type
    4.  Receipts
      4.1.  Verification Process
-     4.2.  Recommended signing and hash algorithms
+     4.2.  SCITT Countersign Receipt
+     4.3.  Recommended signing and hash algorithms
    5.  CBOR Encoding Restrictions
    6.  Privacy Considerations
    7.  Security Considerations
    8.  IANA Considerations
      8.1.  COSE header parameters
+       8.1.1.  SCITT Merkle Tree hash algorithm parameter
+       8.1.2.  SCITT Countersign Receipts parameter
    9.  References
      9.1.  Normative References
      9.2.  Informative References
@@ -115,7 +118,7 @@ Table of Contents
 
    *  verification
 
-   Note: This is mostly RFC 9162 except that the Merkle Tree Hash
+   Note: This is mostly [RFC9162] except that the Merkle Tree Hash
    algorithm currently treats leaves and intermediate nodes the same
    during hashing.
 
@@ -128,9 +131,9 @@ Table of Contents
 
    SignedRoot = COSE_Sign1
 
-   Comparison: Sect. 4.10 in RFC9162, which signs over the timestamp,
-   tree size, root, and optional extensions using a DER-encoded
-   structure.
+   Comparison: Section 4.10 of [RFC9162], which signs over the
+   timestamp, tree size, root, and optional extensions using a DER-
+   encoded structure.
 
 2.2.1.  Hash Algorithm parameter
 
@@ -139,13 +142,25 @@ Table of Contents
    bucket.
 
    This parameter is used for verifying inclusion proofs, see Receipts
-   in section X.
+   in Section 4.
 
    Label: TBD
 
    Value type: int
 
-   The value is taken from the "Named Information" registry.
+   The value is taken from the [IANA.named-information] registry.
+
+   [TODO] Alternatively, this could be moved into the payload which
+   could be made into a structure rather than the raw root hash.  This
+   would reduce pressure to register COSE parameters if more metadata
+   needs to be added that is not necessarily related to the COSE layer
+   but rather the interaction with inclusion proofs / receipts.
+
+   [TODO] Yet another alternative may be to add a single extendable
+   SCITT header parameter that acts as an extendable bucket for anything
+   related to SCITT Merkle Trees and their associated deployments, a bit
+   like CWT payloads.  For example, where would hardware attestations go
+   if those were to be included?
 
 3.  Merkle Tree Leaves
 
@@ -168,8 +183,8 @@ Table of Contents
    LeafEntryType = int
    LeafEntryData = any
 
-   Comparison: See Sect. 4.5 of RFC9162 where leaves are represented as
-   a DER-encoded structure containing type, and type-dependent data.
+   Comparison: See Section 4.5 of [RFC9162] where leaves are represented
+   as a DER-encoded structure containing type, and type-dependent data.
 
    A specification of a leaf entry type must define the following:
 
@@ -178,7 +193,7 @@ Table of Contents
    *  The type of LeafEntryData
 
    *  The type of LeafReceiptData, which defines what to include in a
-      receipt (see section X)
+      receipt (see Section 4)
 
    *  A procedure to re-construct the value of LeafEntryData
 
@@ -234,9 +249,9 @@ Table of Contents
 
 4.  Receipts
 
-   A SCITT Receipt is an inclusion proof backed by a signed tree root.
-   The SCITT_Receipt structure is a CBOR array.  The fields of the array
-   in order are:
+   A Receipt is an inclusion proof backed by a signed tree root.  The
+   Receipt structure is a CBOR array.  The fields of the array in order
+   are:
 
    *  signed_root: The signed root (COSE_Sign1).
 
@@ -249,10 +264,10 @@ Table of Contents
    The CDDL fragment that represents the above text for SCITT_Receipt
    follows.
 
-   SCITT_Receipt = [
-     signed_root: SignedRoot,
-     inclusion_proof: [+ ProofElement],
-     leaf: LeafInfo
+   Receipt = [
+       signed_root: SignedRoot,
+       inclusion_proof: [+ ProofElement],
+       leaf: LeafInfo
    ]
 
    LeafInfo = [
@@ -268,7 +283,7 @@ Table of Contents
 
 4.1.  Verification Process
 
-   The following steps must be followed to verify a SCITT receipt:
+   The following steps must be followed to verify a Receipt:
 
    1.  Verify the signature of the signed root using standard COSE
        signature validation.
@@ -300,7 +315,14 @@ Table of Contents
 
    7.  Verify that root matches the payload of the signed root message.
 
-4.2.  Recommended signing and hash algorithms
+4.2.  SCITT Countersign Receipt
+
+   A SCITT Countersign Receipt is a receipt where the leaf entry type is
+   1 (COSE_Sign1 Countersign type).
+
+   SCITT_Countersign_Receipt = Receipt
+
+4.3.  Recommended signing and hash algorithms
 
    The following signing and hash algorithms are recommended for secure
    use.  Implementations that verify receipts MAY reject other
@@ -338,25 +360,47 @@ Table of Contents
 
 8.1.  COSE header parameters
 
-   This section defines a COSE header parameter for embedding one or
-   more SCITT Receipts in the unprotected header of a COSE message:
+8.1.1.  SCITT Merkle Tree hash algorithm parameter
 
-   Name: SCITT receipt
+   IANA is requested to register the new COSE Header parameter defined
+   below in the "COSE Header Parameters" registry.  The new parameter is
+   used within the protected header to identify the Merkle Tree hash
+   algorithm in a signed Merkle tree root message.
+
+   Name: SCITT Merkle Tree Hash Algorithm
 
    Label: TBD
 
-   Value Type: SCITT_Receipt / [+ SCITT_Receipt]
+   Value Type: int
 
-   Value Registry: ?
+   Value Registry: [IANA.named-information]
 
-   Description: TBD
+   Description: The Merkle Tree Hash Algorithm used in a signed Merkle
+   tree root message.
+
+8.1.2.  SCITT Countersign Receipts parameter
+
+   IANA is requested to register the new COSE Header parameter defined
+   below in the "COSE Header Parameters" registry.  The new parameter is
+   used for embedding one or more SCITT Countersign Receipts in the
+   unprotected header of a COSE message.
+
+   Name: SCITT Countersign receipt
+
+   Label: TBD
+
+   Value Type: SCITT_Countersign_Receipt / [+ SCITT_Countersign_Receipt]
+
+   Description: A SCITT Countersign Receipt to be embedded in the
+   unprotected header of the countersigned COSE_Sign1 message.
 
 9.  References
 
 9.1.  Normative References
 
-   [IANA.COSE-header-parameters]
-              "*** BROKEN REFERENCE ***".
+   [IANA.named-information]
+              IANA, "Named Information",
+              <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -371,6 +415,10 @@ Table of Contents
               Representation (CBOR)", STD 94, RFC 8949,
               DOI 10.17487/RFC8949, December 2020,
               <https://www.rfc-editor.org/rfc/rfc8949>.
+
+   [RFC9162]  Laurie, B., Messeri, E., and R. Stradling, "Certificate
+              Transparency Version 2.0", RFC 9162, DOI 10.17487/RFC9162,
+              December 2021, <https://www.rfc-editor.org/rfc/rfc9162>.
 
 9.2.  Informative References
 
