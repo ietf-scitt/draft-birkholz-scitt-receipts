@@ -1225,10 +1225,14 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <p id="section-2.1-1">NOTE: This section is purely mathematical, no CBOR here!<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 <p id="section-2.1-2">leaves (opaque content)<a href="#section-2.1-2" class="pilcrow">¶</a></p>
 <p id="section-2.1-3">computation of root (Merkle tree hash)<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">inclusion proofs
-- generation
-- verfication<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">Note: This is mostly RFC 9162 except that the Merkle Tree Hash algorithm currently treats leaves and intermediate nodes the same during hashing.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">inclusion proofs:<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.1-5.1">generation<a href="#section-2.1-5.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-2.1-5.2">verification<a href="#section-2.1-5.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-2.1-6">Note: This is mostly RFC 9162 except that the Merkle Tree Hash algorithm currently treats leaves and intermediate nodes the same during hashing.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="signing-of-the-tree-root">
@@ -1237,8 +1241,8 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-signing-of-the-tree-root" class="section-name selfRef">Signing of the tree root</a>
         </h3>
 <p id="section-2.2-1">COSE_Sign1 is used for signing the tree root. The unprotected header must be empty. The payload is the binary root digest, for example 32 bytes for SHA-256. A new COSE header parameter to identify the Merkle tree hash algorithm is registered, see next section.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-2.2-2">
-<pre>
+<div id="section-2.2-2">
+<pre class="lang-cddl sourcecode">
 SignedRoot = COSE_Sign1
 </pre><a href="#section-2.2-2" class="pilcrow">¶</a>
 </div>
@@ -1265,7 +1269,11 @@ SignedRoot = COSE_Sign1
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-merkle-tree-leaves" class="section-name selfRef">Merkle Tree Leaves</a>
       </h2>
 <p id="section-3-1">The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and a CBOR-encoded LeafEntry structure:<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">LeafBytes = prefix + LeafEntryBytes<a href="#section-3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-2">
+<pre>
+LeafBytes = prefix + LeafEntryBytes
+</pre><a href="#section-3-2" class="pilcrow">¶</a>
+</div>
 <p id="section-3-3">LeafEntryBytes is created by encoding LeafEntry to a byte string, using the encoding described in <a href="#deterministic-cbor" class="xref">Section 5</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">LeafEntry is a structure that contains the entry type and type-specific data:<a href="#section-3-4" class="pilcrow">¶</a></p>
 <div id="section-3-5">
@@ -1279,20 +1287,33 @@ LeafEntryData = any
 </pre><a href="#section-3-5" class="pilcrow">¶</a>
 </div>
 <p id="section-3-6">Comparison: See Sect. 4.5 of RFC9162 where leaves are represented as a DER-encoded structure containing type, and type-dependent data.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">A specification of a leaf entry type must define LeafEntryType, LeafEntryData, and LeafReceiptData, where LeafReceiptData defines what to include in a receipt (see section X) together with a procedure to re-construct LeafEntryData.<a href="#section-3-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3-8">
-<pre>
+<p id="section-3-7">A specification of a leaf entry type must define the following:<a href="#section-3-7" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-8.1">The value of LeafEntryType<a href="#section-3-8.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-3-8.2">The type of LeafEntryData<a href="#section-3-8.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-3-8.3">The type of LeafReceiptData, which defines what to include in a receipt (see section X)<a href="#section-3-8.3" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-3-8.4">A procedure to re-construct the value of LeafEntryData<a href="#section-3-8.4" class="pilcrow">¶</a>
+</li>
+      </ul>
+<div id="section-3-9">
+<pre class="lang-cddl sourcecode">
 LeafReceiptData = any
-</pre><a href="#section-3-8" class="pilcrow">¶</a>
+</pre><a href="#section-3-9" class="pilcrow">¶</a>
 </div>
 <div id="cosesign1-countersign-type">
 <section id="section-3.1">
         <h3 id="name-cose_sign1-countersign-type">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-cose_sign1-countersign-type" class="section-name selfRef">COSE_Sign1 Countersign type</a>
         </h3>
-<p id="section-3.1-1">LeafEntryType = 1<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">LeafEntryData = Countersign_structure<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">Countersign_structure = [
+<p id="section-3.1-1">LeafEntryType value: 1<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">LeafEntryData type: Countersign_structure<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">LeafReceiptData type: SignerData<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<div id="section-3.1-4">
+<pre class="lang-cddl sourcecode">
+Countersign_structure = [
     context: "CounterSignatureV2",
     body_protected: empty_or_serialized_map,
     sign_protected: empty_or_serialized_map,
@@ -1301,12 +1322,15 @@ LeafReceiptData = any
     other_fields: [
         signature: bstr
     ]
-]<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Comparison: Countersign_structure is identical to COSE V2 countersigning.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">LeafReceiptData = [
+]
+
+SignerData = [
     sign_protected: empty_or_serialized_map
-]<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+]
+</pre><a href="#section-3.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-5">body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">Comparison: Countersign_structure is identical to COSE V2 countersigning.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 <p id="section-3.1-7">Procedure for reconstruction of LeafEntryData:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-3.1-8">
 <li id="section-3.1-8.1">Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.<a href="#section-3.1-8.1" class="pilcrow">¶</a>
@@ -1326,12 +1350,17 @@ LeafReceiptData = any
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-receipts" class="section-name selfRef">Receipts</a>
       </h2>
 <p id="section-4-1">A SCITT Receipt is an inclusion proof backed by a signed tree root. The SCITT_Receipt structure is a CBOR array. The fields of the array in order are:<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">signed_root: The signed root (COSE_Sign1).<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">inclusion_proof: The Merkle proof for the leaf as an array of [left, digest] pairs.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">leaf: Information about the leaf that is needed to reconstruct LeafEntryData.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">The CDDL fragment that represents the above text for SCITT_Receipt follows.<a href="#section-4-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-4-6">
-<pre>
+<ul class="normal">
+<li class="normal" id="section-4-2.1">signed_root: The signed root (COSE_Sign1).<a href="#section-4-2.1" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-2.2">inclusion_proof: The Merkle proof for the leaf as an array of [left, digest] pairs.<a href="#section-4-2.2" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-4-2.3">leaf: Information about the leaf that is needed to reconstruct LeafEntryData.<a href="#section-4-2.3" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="section-4-3">The CDDL fragment that represents the above text for SCITT_Receipt follows.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<div id="section-4-4">
+<pre class="lang-cddl sourcecode">
 SCITT_Receipt = [
   signed_root: SignedRoot,
   inclusion_proof: [+ ProofElement],
@@ -1348,7 +1377,7 @@ ProofElement = [
     left: bool
     hash: bstr
 ]
-</pre><a href="#section-4-6" class="pilcrow">¶</a>
+</pre><a href="#section-4-4" class="pilcrow">¶</a>
 </div>
 <div id="verification-process">
 <section id="section-4.1">
