@@ -174,13 +174,17 @@ Procedure for reconstruction of LeafEntryData:
 
 # Receipts      {#receipts}
 
-A Receipt is an inclusion proof backed by a signed tree root. The Receipt structure is a CBOR array. The fields of the array in order are:
+A Receipt is an inclusion proof for a leaf backed by a signed tree root. It can be considered as efficient batch signing that allows to present each signed payload (leaf) in an individual message suitable for independent verification.
+
+## Receipt Structure
+
+The Receipt structure is a CBOR array. The fields of the array in order are:
 
 - signed_root: The signed root (COSE_Sign1).
 
 - inclusion_proof: The Merkle proof for the leaf as an array of [left, digest] pairs.
 
-- leaf: Information about the leaf that is needed to reconstruct LeafEntryData.
+- leaf_info: Information about the leaf that is needed to reconstruct LeafEntryData.
 
 The CDDL fragment that represents the above text for SCITT_Receipt follows.
 
@@ -188,7 +192,12 @@ The CDDL fragment that represents the above text for SCITT_Receipt follows.
 Receipt = [
     signed_root: SignedRoot,
     inclusion_proof: [+ ProofElement],
-    leaf: LeafInfo
+    leaf_info: LeafInfo
+]
+
+ProofElement = [
+    left: bool
+    hash: bstr
 ]
 
 LeafInfo = [
@@ -196,14 +205,9 @@ LeafInfo = [
     type: LeafEntryType,
     data: LeafReceiptData
 ]
-
-ProofElement = [
-    left: bool
-    hash: bstr
-]
 ~~~
 
-## Verification Process
+## Receipt Verification
 
 The following steps must be followed to verify a Receipt:
 
@@ -221,7 +225,7 @@ The following steps must be followed to verify a Receipt:
 
         LeafDigest := H(LeafBytes)
 
-6. Compute root digest from leaf digest and Merkle proof
+6. Compute the root digest from leaf digest and Merkle proof:
 
         h := LeafDigest
         for [left, hash] in proof:
@@ -229,7 +233,7 @@ The following steps must be followed to verify a Receipt:
                  H(h + hash) else
         root := h
 
-7. Verify that root matches the payload of the signed root message.
+7. Verify that the computed root digest matches the payload of the signed root message.
 
 ## SCITT Countersign Receipt
 
@@ -239,7 +243,7 @@ A SCITT Countersign Receipt is a receipt where the leaf entry type is 1 (COSE_Si
 SCITT_Countersign_Receipt = Receipt
 ~~~
 
-## Recommended signing and hash algorithms
+# Recommended signing and hash algorithms
 
 The following signing and hash algorithms are recommended for secure use. Implementations that verify receipts MAY reject other algorithms.
 
