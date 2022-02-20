@@ -67,9 +67,10 @@ leaves (opaque content)
 
 computation of root (Merkle tree hash)
 
-inclusion proofs
+inclusion proofs:
+
 - generation
-- verfication
+- verification
 
 Note: This is mostly RFC 9162 except that the Merkle Tree Hash algorithm currently treats leaves and intermediate nodes the same during hashing.
 
@@ -77,7 +78,7 @@ Note: This is mostly RFC 9162 except that the Merkle Tree Hash algorithm current
 
 COSE_Sign1 is used for signing the tree root. The unprotected header must be empty. The payload is the binary root digest, for example 32 bytes for SHA-256. A new COSE header parameter to identify the Merkle tree hash algorithm is registered, see next section.
 
-~~~
+~~~ cddl
 SignedRoot = COSE_Sign1
 ~~~
 
@@ -99,7 +100,9 @@ The value is taken from the "Named Information" registry.
 
 The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and a CBOR-encoded LeafEntry structure:
 
+~~~
 LeafBytes = prefix + LeafEntryBytes
+~~~
 
 LeafEntryBytes is created by encoding LeafEntry to a byte string, using the encoding described in {{deterministic-cbor}}.
 
@@ -116,18 +119,26 @@ LeafEntryData = any
 
 Comparison: See Sect. 4.5 of RFC9162 where leaves are represented as a DER-encoded structure containing type, and type-dependent data.
 
-A specification of a leaf entry type must define LeafEntryType, LeafEntryData, and LeafReceiptData, where LeafReceiptData defines what to include in a receipt (see section X) together with a procedure to re-construct LeafEntryData.
+A specification of a leaf entry type must define the following:
 
-~~~
+- The value of LeafEntryType
+- The type of LeafEntryData
+- The type of LeafReceiptData, which defines what to include in a receipt (see section X)
+- A procedure to re-construct the value of LeafEntryData
+
+~~~ cddl
 LeafReceiptData = any
 ~~~
 
 ## COSE_Sign1 Countersign type
 
-LeafEntryType = 1
+LeafEntryType value: 1
 
-LeafEntryData = Countersign_structure
+LeafEntryData type: Countersign_structure
 
+LeafReceiptData type: SignerData
+
+~~~ cddl
 Countersign_structure = [
     context: "CounterSignatureV2",
     body_protected: empty_or_serialized_map,
@@ -139,13 +150,14 @@ Countersign_structure = [
     ]
 ]
 
+SignerData = [
+    sign_protected: empty_or_serialized_map
+]
+~~~
+
 body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is externally supplied data from the application encoded in a bstr. If this field is not supplied, it defaults to a zero-length byte string.
 
 Comparison: Countersign_structure is identical to COSE V2 countersigning.
-
-LeafReceiptData = [
-    sign_protected: empty_or_serialized_map
-]
 
 Procedure for reconstruction of LeafEntryData:
 
@@ -159,15 +171,15 @@ Procedure for reconstruction of LeafEntryData:
 
 A SCITT Receipt is an inclusion proof backed by a signed tree root. The SCITT_Receipt structure is a CBOR array. The fields of the array in order are:
 
-signed_root: The signed root (COSE_Sign1).
+- signed_root: The signed root (COSE_Sign1).
 
-inclusion_proof: The Merkle proof for the leaf as an array of [left, digest] pairs.
+- inclusion_proof: The Merkle proof for the leaf as an array of [left, digest] pairs.
 
-leaf: Information about the leaf that is needed to reconstruct LeafEntryData.
+- leaf: Information about the leaf that is needed to reconstruct LeafEntryData.
 
 The CDDL fragment that represents the above text for SCITT_Receipt follows.
 
-~~~
+~~~ cddl
 SCITT_Receipt = [
   signed_root: SignedRoot,
   inclusion_proof: [+ ProofElement],
