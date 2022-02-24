@@ -66,7 +66,7 @@ A Transparency Service backed by a Merkle tree is defined by a collection of imm
 
 - Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and all other parameters.
 
-- Tree algorithm: The tree algorithm used. This document creates a registry with an initial set of tree algorithms that are described in this document.
+- Tree algorithm: The tree algorithm used. This document creates a registry (see {{tree-alg-registry}}) with an initial set of tree algorithms that are described in this document.
 
 Additional parameters may be defined depending on the tree algorithm used.
 
@@ -144,7 +144,7 @@ See {{Section 2.1 of RFC9162}}.
 
 Note: This is a copy of {{Section 2.1.1 of RFC9162}} except that the Merkle Tree Hash algorithm currently treats leaves and intermediate nodes the same during hashing.
 
-The log uses a binary Merkle Tree for efficient auditing. The hash algorithm used is one of the log's parameters (see Section {{parameters}}). This document establishes a registry of acceptable hash algorithms (see {{hash-alg-registry}}). Throughout this document, the hash algorithm in use is referred to as HASH and the size of its output in bytes is referred to as HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these entries will be hashed to form the leaves of the Merkle Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D_n = \{d\[0\], d\[1\], ..., d\[n-1\]\}, the Merkle Tree Hash (MTH) is thus defined as follows:
+The ledger uses a binary Merkle Tree for efficient auditing. The hash algorithm used is one of the service's parameters (see Section {{parameters}}). This document establishes a registry of acceptable hash algorithms (see {{hash-alg-registry}}). Throughout this document, the hash algorithm in use is referred to as HASH and the size of its output in bytes is referred to as HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these entries will be hashed to form the leaves of the Merkle Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D_n = \{d\[0\], d\[1\], ..., d\[n-1\]\}, the Merkle Tree Hash (MTH) is thus defined as follows:
 
 The hash of an empty list is the hash of an empty string:
 
@@ -205,7 +205,7 @@ Note: compute_root is used in receipt verification where the computed root is va
 
 ### Signing of the tree root
 
-A tree root is signed by signing over the tree root hash bytes using the signature algorithm declared in the Log's parameters (see {{parameters}}). For example, the signing payload would be 32 bytes for a SHA-256 tree root hash.
+A tree root is signed by signing over the tree root hash bytes using the signature algorithm declared in the service's parameters (see {{parameters}}). For example, the signing payload would be 32 bytes for a SHA-256 tree root hash.
 
 Comparison: {{Section 4.10 of RFC9162}}, which signs over the timestamp, tree size, root, and optional extensions using a DER-encoded structure. A future version of this draft may extend the information over which the signature is computed if necessary.
 
@@ -227,7 +227,7 @@ The Receipt contents structure is a CBOR array. The fields of the array in order
 
 - inclusion_proof: The Merkle proof for the leaf as an array of \[left, hash\] pairs.
 
-- leaf_info: Information about the leaf that is needed to reconstruct Countersign_structure.
+- leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: an implementation-specific leaf prefix, and the protected header of the countersigner.
 
 The CDDL fragment that represents the above text follows.
 
@@ -252,11 +252,11 @@ LeafInfo = [
 
 ## Receipt Generation
 
-[TODO] this needs improvement
+The following steps must be followed to generate a receipt after the tree root has been signed:
 
 1. Let LEAF be the leaf in the Merkle tree for which a receipt should be generated.
 
-2. Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF and SIGNATURE the signature over this root.
+2. Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF, and SIGNATURE the signature over this root.
 
 3. Compute LEAF_HASH as the hash of LEAF.
 
@@ -322,6 +322,18 @@ IANA is asked to add a new registry "TBD" to the list that appears at https://ww
 
 The rest of this section defines the subregistries that are to be created within the new "TBD" registry.
 
+### Tree Algorithms    {#tree-alg-registry}
+
+IANA is asked to establish a registry of tree algorithm identifiers, named "Tree Algorithms", with the following registration procedures: TBD
+
+The "Tree Algorithms" registry initially consists of:
+
+| Identifier | Tree Algorithm       | Reference     |
+| CCF-2      | CCF 2 tree algorithm | This document |
+{: title="Initial content of Tree Algorithms registry"}
+
+The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as [TBD].
+
 ### Hash Algorithms    {#hash-alg-registry}
 
 IANA is asked to establish a registry of hash algorithm identifiers, named "Hash Algorithms", with the following registration procedures: TBD
@@ -332,7 +344,7 @@ The "Hash Algorithms" registry initially consists of:
 | SHA-256    | SHA-256        | {{RFC6234}} |
 {: title="Initial content of Hash Algorithms registry"}
 
-The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as a cryptographic hash algorithm with no known preimage or collision attacks. These attacks can damage the integrity of the log.
+The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as a cryptographic hash algorithm with no known preimage or collision attacks. These attacks can damage the integrity of the ledger.
 
 ### Signature Algorithms     {#sig-alg-registry}
 
