@@ -86,7 +86,39 @@ Receipt = [
 ]
 ~~~
 
-Each tree algorithm must define the type of contents and how to generate and verify it.
+Each tree algorithm must define the type of contents and how to generate and verify a receipt.
+
+# COSE_Sign1 Countersigning    {#cose_sign1_countersign}
+
+In this document, the structures and principles of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}) are used.
+
+In order to create a signature, a well-defined byte string is needed.
+Since Merkle tree signing is applied over multiple messages to be countersigned, the Countersign_structure defined in {{I-D.ietf-cose-countersign}} forms just a part of this well-defined byte string but is used unchanged:
+
+~~~ cddl
+Countersign_structure = [
+    context: "CounterSignatureV2",
+    body_protected: empty_or_serialized_map,
+    sign_protected: empty_or_serialized_map,
+    external_aad: bstr,
+    payload: bstr,
+    other_fields: [
+        signature: bstr
+    ]
+]
+~~~
+
+body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer. external_aad is always empty (a zero-length byte string).
+
+The sign_protected field is embedded in the receipt contents to be able to re-construct Countersign_structure during validation. This is part of the definition of the tree algorithm.
+
+Procedure for reconstruction of Countersign_structure:
+
+1. Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.
+
+2. Extract body_protected, payload, and signature from Target.
+
+3. Create a Countersign_structure using the extracted fields from Target, and sign_protected from the receipt contents.
 
 # CCF 2 Tree Algorithm
 
@@ -179,80 +211,13 @@ Comparison: {{Section 4.10 of RFC9162}}, which signs over the timestamp, tree si
 
 ## Merkle Tree Leaves
 
-The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and a CBOR-encoded LeafEntry structure:
+The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and a CBOR-encoded Countersign_structure using the encoding described in {{deterministic-cbor}}:
 
 ~~~
-LeafBytes = prefix + LeafEntryBytes
+LeafBytes = prefix + cbor(Countersign_structure)
 ~~~
 
-LeafEntryBytes is created by encoding LeafEntry to a byte string, using the encoding described in {{deterministic-cbor}}.
-
-LeafEntry is a structure that contains the entry type and type-specific data:
-
-~~~ cddl
-LeafEntry = [
-    type: LeafEntryType,
-    data: LeafEntryData
-]
-LeafEntryType = int
-LeafEntryData = any
-~~~
-
-Comparison: See {{Section 4.5 of RFC9162}} where leaves are represented as a DER-encoded structure containing type, and type-dependent data.
-
-A specification of a leaf entry type must define the following:
-
-- The value of LeafEntryType
-- The type of LeafEntryData
-- The type of LeafReceiptData, which defines what to include in a receipt (see {{receipts}})
-- A procedure to re-construct the value of LeafEntryData
-
-~~~ cddl
-LeafReceiptData = any
-~~~
-
-### COSE_Sign1 Countersign type
-
-LeafEntryType value: 1
-
-LeafEntryData type: Countersign_structure
-
-LeafReceiptData type: SignerData
-
-~~~ cddl
-Countersign_structure = [
-    context: "CounterSignatureV2",
-    body_protected: empty_or_serialized_map,
-    sign_protected: empty_or_serialized_map,
-    external_aad: bstr,
-    payload: bstr,
-    other_fields: [
-        signature: bstr
-    ]
-]
-
-SignerData = [
-    sign_protected: empty_or_serialized_map
-]
-~~~
-
-body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer within the DerivationInfo structure. external_aad is always empty (a zero-length byte string).
-
-Comparison: Countersign_structure is identical to COSE V2 countersigning in {{I-D.ietf-cose-countersign}}.
-
-Procedure for reconstruction of LeafEntryData:
-
-1. Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.
-
-2. Extract body_protected, payload, and signature from Target.
-
-3. Create a Countersign_structure using the extracted fields from Target, and sign_protected from the receipt data. This is LeafEntryData.
-
-## Receipts      {#receipts}
-
-A Receipt is an inclusion proof for a leaf backed by a signed tree root. It can be considered as efficient batch signing that allows to present each signed payload (leaf) in an individual message suitable for independent verification.
-
-### Receipt Contents Structure
+## Receipt Contents Structure
 
 The Receipt contents structure is a CBOR array. The fields of the array in order are:
 
@@ -262,7 +227,7 @@ The Receipt contents structure is a CBOR array. The fields of the array in order
 
 - inclusion_proof: The Merkle proof for the leaf as an array of \[left, hash\] pairs.
 
-- leaf_info: Information about the leaf that is needed to reconstruct LeafEntryData.
+- leaf_info: Information about the leaf that is needed to reconstruct Countersign_structure.
 
 The CDDL fragment that represents the above text follows.
 
@@ -281,12 +246,11 @@ ProofElement = [
 
 LeafInfo = [
     prefix: bstr,
-    type: LeafEntryType,
-    data: LeafReceiptData
+    sign_protected: empty_or_serialized_map
 ]
 ~~~
 
-### Receipt Generation
+## Receipt Generation
 
 [TODO] this needs improvement
 
@@ -298,41 +262,31 @@ LeafInfo = [
 
 4. Generate an inclusion proof from LEAF_HASH to ROOT_HASH.
 
-5. Construct a LeafInfo structure with the implementation-specific prefix, the LeafEntryType, and the LeafReceiptData using the procedure defined by the leaf entry type.
+5. Construct a LeafInfo structure with the implementation-specific prefix and the protected header parameters of the countersigner.
 
 6. Create a ReceiptContents structure and fill it with SIGNATURE, the node's signing certificate endorsed by the service certificate, the inclusion proof, and the LeafInfo.
 
 7. Create a Receipt structure and fill it with the service identifier and ReceiptContents.
 
-### Receipt Verification
+## Receipt Verification
 
 The following steps must be followed to verify a Receipt:
 
-1. Compute LeafEntryData according to the LeafEntryType.
+1. Construct a Countersign_structure according to {{cose_sign1_countersign}}, using sign_protected from the leaf_info field of the receipt contents.
 
-2. Construct a LeafEntry structure and fill it with LeafEntryType and LeafEntryData.
+2. Compute LeafBytes as concatenation of prefix and the CBOR-encoding of Countersign_structure, using the encoding described in {{deterministic-cbor}}.
 
-3. Compute LeafBytes as concatenation of prefix and LeafEntryBytes, where LeafEntryBytes is created by encoding LeafEntry to a byte string, using the encoding described in {{deterministic-cbor}}.
+        LeafBytes := prefix + cbor(Countersign_structure)
 
-        LeafBytes := prefix + LeafEntryBytes
-
-4. Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the log's parameters (see {{parameters}}).
+4. Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}).
 
         LeafHash := HASH(LeafBytes)
 
-5. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the log's parameters (see {{parameters}}):
+5. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
 
         root := compute_root(LeafHash, proof)
 
 6. Verify the signature with the root hash as payload using the certificate chain established by the node certificate embedded in the receipt and the service certificate part of the service's parameters (see {{parameters}}).
-
-## COSE_Sign1 Countersign Receipt
-
-A COSE_Sign1 Countersign Receipt is a receipt where a COSE_Sign1 message was countersigned.
-
-~~~
-COSE_Sign1_Countersign_Receipt = Receipt
-~~~
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
@@ -358,7 +312,7 @@ Name: COSE_Sign1 Countersign receipt
 
 Label: TBD
 
-Value Type: COSE_Sign1_Countersign_Receipt / \[+ COSE_Sign1_Countersign_Receipt\]
+Value Type: Receipt / \[+ Receipt\]
 
 Description: A COSE_Sign1 Countersign Receipt to be embedded in the unprotected header of the countersigned COSE_Sign1 message.
 
