@@ -211,7 +211,7 @@ A tree root is signed by signing over the tree root hash bytes using the signatu
 
 The content of a leaf is defined as the concatenation of three byte streams:
 
-1. the hash of the CCF writeset (see [TBD]), where writeset is an opaque byte stream that is the serialization of CCF state changes,
+1. the hash of the CCF write set (see [TBD]), where write set is an opaque byte stream that is the serialization of CCF state changes,
 
 2. the hash of the CCF commit evidence (see [TBD]), where commit evidence is an ASCII byte stream with additional information on the commitment of the transaction in the CCF ledger,
 
@@ -220,7 +220,7 @@ The content of a leaf is defined as the concatenation of three byte streams:
 For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) is used.
 
 ~~~
-LeafBytes = HASH(writeset) + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
+LeafBytes = HASH(write_set) + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
 ~~~
 
 ## Receipt Contents Structure
@@ -233,7 +233,7 @@ The Receipt contents structure is a CBOR array. The fields of the array in order
 
 - inclusion_proof: The Merkle proof for the leaf as an array of \[left, hash\] pairs.
 
-- leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: the hash of the CCF writeset, the CCF commit evidence, and the protected header of the countersigner.
+- leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: the hash of the CCF write set, the CCF commit evidence, and the protected header of the countersigner.
 
 The CDDL fragment that represents the above text follows.
 
@@ -251,7 +251,7 @@ ProofElement = [
 ]
 
 LeafInfo = [
-    writeset_hash: bstr,
+    write_set_hash: bstr,
     commit_evidence: tstr,
     sign_protected: empty_or_serialized_map
 ]
@@ -269,7 +269,7 @@ The following steps must be followed to generate a receipt after the tree root h
 
 4. Generate an inclusion proof from LEAF_HASH to ROOT_HASH.
 
-5. Construct a LeafInfo structure with the CCF writeset digest, the commit evidence, and the protected header parameters of the countersigner.
+5. Construct a LeafInfo structure with the CCF write set hash, the commit evidence, and the protected header parameters of the countersigner.
 
 6. Create a ReceiptContents structure and fill it with SIGNATURE, the node's signing certificate endorsed by the service certificate, the inclusion proof, and the LeafInfo.
 
@@ -281,9 +281,9 @@ The following steps must be followed to verify a Receipt:
 
 1. Construct a Countersign_structure according to {{cose_sign1_countersign}}, using sign_protected from the leaf_info field of the receipt contents.
 
-2. Compute LeafBytes as concatenation of the writeset hash, the hash of the commit evidence, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}.
+2. Compute LeafBytes as concatenation of the write set hash, the hash of the commit evidence, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}.
 
-        LeafBytes := writeset_hash + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
+        LeafBytes := write_set_hash + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
 
 4. Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}).
 
