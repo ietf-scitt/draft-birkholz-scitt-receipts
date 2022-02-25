@@ -142,7 +142,7 @@ See {{Section 2.1 of RFC9162}}.
 
 ### Definition of the Merkle Tree    {#merkle-tree-def}
 
-Note: This is a copy of {{Section 2.1.1 of RFC9162}} except that the Merkle Tree Hash algorithm treats leaves and intermediate nodes the same during hashing.
+Note: This is a partial copy of {{Section 2.1.1 of RFC9162}}.
 
 The ledger uses a binary Merkle Tree for efficient auditing. The hash algorithm used is one of the service's parameters (see Section {{parameters}}). This document establishes a registry of acceptable hash algorithms (see {{hash-alg-registry}}). Throughout this document, the hash algorithm in use is referred to as HASH and the size of its output in bytes is referred to as HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these entries will be hashed to form the leaves of the Merkle Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D_n = \{d\[0\], d\[1\], ..., d\[n-1\]\}, the Merkle Tree Hash (MTH) is thus defined as follows:
 
@@ -171,6 +171,22 @@ where:
 - D\[k1:k2\] = D'_(k2-k1) denotes the list \{d'\[0\] = d\[k1\], d'\[1\] = d\[k1+1\], ..., d'\[k2-k1-1\] = d\[k2-1\]\} of length (k2 - k1).
 
 The Merkle Tree Hash over D_n is also called the tree root hash.
+
+The content of all leaf entries is defined as the concatenation of three byte streams:
+
+1. an internal hash, defined by the implementation and used for binding to data that is not revealed in receipts,
+
+2. a hash of internal data, defined by the implementation and used for binding to data that is revealed in receipts, and
+
+3. a hash of data that is well-defined and not implementation-specific.
+
+For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) is used.
+
+Note that the difference in size between leaves (composed of three hashes) and intermediate tree nodes (two hashes) provides second preimage resistance.
+
+~~~
+LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+~~~
 
 ### Merkle Inclusion Proofs
 
@@ -207,28 +223,12 @@ Note: compute_root is used in receipt verification where the computed root is va
 
 A tree root is signed by signing over the tree root hash bytes using the signature algorithm declared in the service's parameters (see {{parameters}}). For example, the signing payload would be 32 bytes for a SHA-256 tree root hash.
 
-## Merkle Tree Leaves
+## Countersigning Leaves
 
-In general, a Transparency Service backed by a Merkle tree will have different types of leaves. All leaves are defined as the concatenation of three byte streams:
-
-1. an internal hash, defined by the implementation and used for binding to data that is not revealed in receipts,
-
-2. a hash of internal data, defined by the implementation and used for binding to data that is revealed in receipts, and
-
-3. a hash of data that is well-defined and not implementation-specific.
-
-For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) is used.
-
-Note that the difference in size between leaves (composed of three hashes) and intermediate tree nodes (two hashes) provides second preimage resistance.
+The leaves that represent countersignatures have as data the CBOR-encoded Countersign_structure, using the CBOR encoding described in {{deterministic-cbor}}:
 
 ~~~
-LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
-~~~
-
-The leaves that represent countersignatures have as data the CBOR-encoded Countersign_structure, using the CBOR encoding described in {{deterministic-cbor}}.
-
-~~~
-CountersignData = cbor(Countersign_structure)
+LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
 ~~~
 
 ## Receipt Contents Structure
