@@ -5,9 +5,9 @@
 TBD                                                          H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                             M. Riechert
-Expires: 28 August 2022                                      A. Delignat
+Expires: 29 August 2022                                      A. Delignat
                                                                Microsoft
-                                                        24 February 2022
+                                                        25 February 2022
 
 
  Countersigning Receipts in Support of Trustworthy Supply Chain Ledger
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 August 2022.
+   This Internet-Draft will expire on 29 August 2022.
 
 Copyright Notice
 
@@ -320,10 +320,12 @@ Table of Contents
 5.3.  Merkle Tree Leaves
 
    The content of a leaf is defined as the concatenation of an
-   implementation-specific prefix byte stream and a CBOR-encoded
-   Countersign_structure using the encoding described in Section 6:
+   implementation-specific prefix byte stream and the hash of a CBOR-
+   encoded Countersign_structure, using the Merkle Tree Hash Algorithm
+   found in the service's parameters (see Section 5.1) and the CBOR
+   encoding described in Section 6:
 
-   LeafBytes = prefix + cbor(Countersign_structure)
+   LeafBytes = prefix + HASH(cbor(Countersign_structure))
 
 5.4.  Receipt Contents Structure
 
@@ -394,11 +396,12 @@ Table of Contents
    1.  Construct a Countersign_structure according to Section 4, using
        sign_protected from the leaf_info field of the receipt contents.
 
-   2.  Compute LeafBytes as concatenation of prefix and the CBOR-
-       encoding of Countersign_structure, using the encoding described
-       in Section 6.
+   2.  Compute LeafBytes as concatenation of prefix and the hash of the
+       CBOR-encoding of Countersign_structure, using the Merkle Tree
+       Hash Algorithm found in the service's parameters (see
+       Section 5.1) and the CBOR encoding described in Section 6.
 
-       LeafBytes := prefix + cbor(Countersign_structure)
+       LeafBytes := prefix + HASH(cbor(Countersign_structure))
 
    3.  Compute the leaf hash from LeafBytes using the Merkle Tree Hash
        Algorithm found in the service's parameters (see Section 5.1).
