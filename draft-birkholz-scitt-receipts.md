@@ -211,10 +211,10 @@ Comparison: {{Section 4.10 of RFC9162}}, which signs over the timestamp, tree si
 
 ## Merkle Tree Leaves
 
-The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and a CBOR-encoded Countersign_structure using the encoding described in {{deterministic-cbor}}:
+The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and the hash of a CBOR-encoded Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}:
 
 ~~~
-LeafBytes = prefix + cbor(Countersign_structure)
+LeafBytes = prefix + HASH(cbor(Countersign_structure))
 ~~~
 
 ## Receipt Contents Structure
@@ -274,9 +274,9 @@ The following steps must be followed to verify a Receipt:
 
 1. Construct a Countersign_structure according to {{cose_sign1_countersign}}, using sign_protected from the leaf_info field of the receipt contents.
 
-2. Compute LeafBytes as concatenation of prefix and the CBOR-encoding of Countersign_structure, using the encoding described in {{deterministic-cbor}}.
+2. Compute LeafBytes as concatenation of prefix and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}.
 
-        LeafBytes := prefix + cbor(Countersign_structure)
+        LeafBytes := prefix + HASH(cbor(Countersign_structure))
 
 4. Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}).
 
