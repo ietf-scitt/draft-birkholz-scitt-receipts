@@ -209,7 +209,9 @@ A tree root is signed by signing over the tree root hash bytes using the signatu
 
 ## Merkle Tree Leaves
 
-The content of a leaf is defined as the concatenation of three byte streams:
+In general, a Transparency Service backed by a Merkle tree will have different types of leaves. In the following, the structure of those leaves used for countersigning is described. Note that the tree root signing operation is agnostic to any specific leaf content since each leaf is seen as an opaque byte stream. In this document, receipts are defined for countersigning leaves.
+
+The content of a countersigning leaf is defined as the concatenation of three byte streams:
 
 1. the hash of the CCF write set (see [TBD]), where write set is an opaque byte stream that is the serialization of CCF state changes,
 
@@ -261,7 +263,7 @@ LeafInfo = [
 
 The following steps must be followed to generate a receipt after the tree root has been signed:
 
-1. Let LEAF be the leaf in the Merkle tree for which a receipt should be generated.
+1. Let LEAF be the countersigning leaf in the Merkle tree for which a receipt should be generated.
 
 2. Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF, and SIGNATURE the signature over this root.
 
