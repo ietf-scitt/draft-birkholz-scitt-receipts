@@ -5,9 +5,9 @@
 TBD                                                          H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                             M. Riechert
-Expires: 25 August 2022                                      A. Delignat
+Expires: 29 August 2022                                      A. Delignat
                                                                Microsoft
-                                                        21 February 2022
+                                                        25 February 2022
 
 
  Countersigning Receipts in Support of Trustworthy Supply Chain Ledger
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 August 2022.
+   This Internet-Draft will expire on 29 August 2022.
 
 Copyright Notice
 
@@ -67,21 +67,20 @@ Table of Contents
 
    1.  Introduction
      1.1.  Requirements Notation
-   2.  Cryptographic Components
-     2.1.  Merkle Trees
-     2.2.  Definition of the Merkle Tree
-     2.3.  Merkle Inclusion Proofs
-       2.3.1.  Generating an Inclusion Proof
-       2.3.2.  Verifying an Inclusion Proof
-     2.4.  Signing of the tree root
-   3.  Log Parameters
-   4.  Merkle Tree Leaves
-     4.1.  COSE_Sign1 Countersign type
-   5.  Receipts
-     5.1.  Receipt Structure
-     5.2.  Receipt Generation
-     5.3.  Receipt Verification
-     5.4.  SCITT Countersign Receipt
+   2.  Common Parameters
+   3.  Basic Receipt Structure
+   4.  COSE_Sign1 Countersigning
+   5.  CCF 2 Tree Algorithm
+     5.1.  Additional Parameters
+     5.2.  Cryptographic Components
+       5.2.1.  Merkle Trees
+       5.2.2.  Definition of the Merkle Tree
+       5.2.3.  Merkle Inclusion Proofs
+       5.2.4.  Signing of the tree root
+     5.3.  Countersigning Leaves
+     5.4.  Receipt Contents Structure
+     5.5.  Receipt Generation
+     5.6.  Receipt Verification
    6.  CBOR Encoding Restrictions
    7.  Privacy Considerations
    8.  Security Considerations
@@ -89,8 +88,9 @@ Table of Contents
      9.1.  Additions to Existing Registries
        9.1.1.  New Entry to the COSE Header Parameters Registry
      9.2.  New SCITT-Related Registries
-       9.2.1.  Hash Algorithms
-       9.2.2.  Signature Algorithms
+       9.2.1.  Tree Algorithms
+       9.2.2.  Hash Algorithms
+       9.2.3.  Signature Algorithms
    10. References
      10.1.  Normative References
      10.2.  Informative References
@@ -109,22 +109,120 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-2.  Cryptographic Components
+2.  Common Parameters
 
-2.1.  Merkle Trees
+   A Transparency Service backed by a Merkle tree is defined by a
+   collection of immutable parameters, which are used by clients to
+   communicate with the service and to verify artifacts.  Each of these
+   parameters must be established before the service operator begins to
+   operate the service.  At minimum, the following must be defined:
+
+   *  Service identifier: An opaque identifier (e.g.  UUID) that
+      uniquely identifies the service and all other parameters.
+
+   *  Tree algorithm: The tree algorithm used.  This document creates a
+      registry (see Section 9.2.1) with an initial set of tree
+      algorithms that are described in this document.
+
+   Additional parameters may be defined depending on the tree algorithm
+   used.
+
+3.  Basic Receipt Structure
+
+   A receipt represents a countersignature produced by a Transparency
+   Service.  The receipt structure is a CBOR array.  The fields of the
+   array in order are:
+
+   *  service_id: The service identifier as tstr.
+
+   *  contents: The receipt contents as a CBOR structure determined by
+      the tree algorithm.
+
+   Receipt = [
+     service_id: tstr,
+     contents: any
+   ]
+
+   Each tree algorithm must define the type of contents and how to
+   generate and verify a receipt.
+
+4.  COSE_Sign1 Countersigning
+
+   In this document, the structures and principles of COSE_Sign1
+   countersigning V2 ([I-D.ietf-cose-countersign]) are used.
+
+   In order to create a signature, a well-defined byte string is needed.
+   Since Merkle tree signing is applied over multiple messages to be
+   countersigned, the Countersign_structure defined in
+   [I-D.ietf-cose-countersign] forms just a part of this well-defined
+   byte string but is used unchanged:
+
+   Countersign_structure = [
+       context: "CounterSignatureV2",
+       body_protected: empty_or_serialized_map,
+       sign_protected: empty_or_serialized_map,
+       external_aad: bstr,
+       payload: bstr,
+       other_fields: [
+           signature: bstr
+       ]
+   ]
+
+   body_protected, payload, and signature are of the target COSE_Sign1
+   message. sign_protected is from the signer. external_aad is always
+   empty (a zero-length byte string).
+
+   The sign_protected field is embedded in the receipt contents to be
+   able to re-construct Countersign_structure during validation.  This
+   is part of the definition of the tree algorithm.
+
+   Procedure for reconstruction of Countersign_structure:
+
+   1.  Let Target be the COSE_Sign1 message that corresponds to the
+       countersignature.  Different environments will have different
+       mechanisms to achieve this.  One obvious mechanism is to embed
+       the receipt in the unprotected header of Target.  Another
+       mechanism may be to store both artifacts separately and use a
+       naming convention, database, or other method to link both
+       together.
+
+   2.  Extract body_protected, payload, and signature from Target.
+
+   3.  Create a Countersign_structure using the extracted fields from
+       Target, and sign_protected from the receipt contents.
+
+5.  CCF 2 Tree Algorithm
+
+   The CCF 2 tree algorithm corresponds to the algorithm implemented in
+   the CCF version 2 framework.
+
+5.1.  Additional Parameters
+
+   The following additional service parameters are defined:
+
+   Hash Algorithm: The hash algorithm used for the Merkle Tree (see
+   Section 9.2.2).
+
+   Signature Algorithm: The signature algorithm used (see
+   Section 9.2.3).
+
+   Service Certificate: The X.509 certificate used as trust anchor to
+   verify signatures generated by the transparency service.
+
+5.2.  Cryptographic Components
+
+5.2.1.  Merkle Trees
 
    See Section 2.1 of [RFC9162].
 
-2.2.  Definition of the Merkle Tree
+5.2.2.  Definition of the Merkle Tree
 
-   Note: This is a copy of Section 2.1.1 of [RFC9162] except that the
-   Merkle Tree Hash algorithm currently treats leaves and intermediate
-   nodes the same during hashing.
+   Note: This is a partial copy of Section 2.1.1 of [RFC9162].
 
-   The log uses a binary Merkle Tree for efficient auditing.  The hash
-   algorithm used is one of the log's parameters (see
-   Section Section 3).  This document establishes a registry of
-   acceptable hash algorithms (see Section 9.2.1).  Throughout this
+   The ledger uses a binary Merkle Tree for efficient auditing.  The
+   hash algorithm used is one of the service's parameters (see
+   Section Section 5.1).  This document establishes a registry of
+   acceptable hash algorithms (see Section 9.2.2).  Throughout this
    document, the hash algorithm in use is referred to as HASH and the
    size of its output in bytes is referred to as HASH_SIZE.  The input
    to the Merkle Tree Hash is a list of data entries; these entries will
@@ -158,7 +256,28 @@ Table of Contents
 
    The Merkle Tree Hash over D_n is also called the tree root hash.
 
-2.3.  Merkle Inclusion Proofs
+   The content of all leaf entries is defined as the concatenation of
+   three byte streams:
+
+   1.  an internal hash, defined by the implementation and used for
+       binding to data that is not revealed in receipts,
+
+   2.  a hash of internal data, defined by the implementation and used
+       for binding to data that is revealed in receipts, and
+
+   3.  a hash of data that is well-defined and not implementation-
+       specific.
+
+   For all hashes, the Merkle Tree Hash Algorithm found in the service's
+   parameters (see Section 5.1) is used.
+
+   Note that the difference in size between leaves (composed of three
+   hashes) and intermediate tree nodes (two hashes) provides second
+   preimage resistance.
+
+   LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+
+5.2.3.  Merkle Inclusion Proofs
 
    Note: This is a copy of Section 2.1.3 of [RFC9162].
 
@@ -174,7 +293,7 @@ Table of Contents
    inclusion proof matches the true root, then the inclusion proof
    proves that the leaf exists in the tree.
 
-2.3.1.  Generating an Inclusion Proof
+5.2.3.1.  Generating an Inclusion Proof
 
    Given an ordered list of n inputs to the tree, D_n = {d[0], d[1],
    ..., d[n-1]}, the Merkle inclusion proof PATH(m, D_n) for the (m+1)th
@@ -183,7 +302,7 @@ Table of Contents
    [TODO] add pseudo-code to generate array of [left, hash] pairs given
    a list of leaves and a target leaf index
 
-2.3.2.  Verifying an Inclusion Proof
+5.2.3.2.  Verifying an Inclusion Proof
 
    When a client has received an inclusion proof and wishes to verify
    inclusion of a leaf_hash for a given root_hash, the following
@@ -205,153 +324,44 @@ Table of Contents
    root is validated indirectly by verifying the signature over the
    root.
 
-2.4.  Signing of the tree root
+5.2.4.  Signing of the tree root
 
    A tree root is signed by signing over the tree root hash bytes using
-   the signature algorithm declared in the Log's parameters (see
-   Section 3).  For example, the signing payload would be 32 bytes for a
-   SHA-256 tree root hash.
+   the signature algorithm declared in the service's parameters (see
+   Section 5.1).  For example, the signing payload would be 32 bytes for
+   a SHA-256 tree root hash.
 
-   Comparison: Section 4.10 of [RFC9162], which signs over the
-   timestamp, tree size, root, and optional extensions using a DER-
-   encoded structure.  A future version of this draft may extend the
-   information over which the signature is computed if necessary.
+5.3.  Countersigning Leaves
 
-3.  Log Parameters
+   The leaves that represent countersignatures have as data the CBOR-
+   encoded Countersign_structure, using the CBOR encoding described in
+   Section 6:
 
-   A log is defined by a collection of immutable parameters which are
-   used by clients to verify receipts (see Section 5).  Each of these
-   parameters MUST be established before the log operator begins to
-   operate the log.
+LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
 
-   Hash Algorithm: The hash algorithm used for the Merkle Tree (see
-   Section 9.2.1).
+5.4.  Receipt Contents Structure
 
-   Signature Algorithm: The signature algorithm used (see
-   Section 9.2.2).
-
-   Certificate: The X.509 certificate used as trust anchor to verify
-   signatures generated by the log.
-
-   Version: The version of the protocol supported by the log (currently
-   1).
-
-   [TODO] need a Log ID
-
-4.  Merkle Tree Leaves
-
-   The content of a leaf is defined as the concatenation of an
-   implementation-specific prefix byte stream and a CBOR-encoded
-   LeafEntry structure:
-
-   LeafBytes = prefix + LeafEntryBytes
-
-   LeafEntryBytes is created by encoding LeafEntry to a byte string,
-   using the encoding described in Section 6.
-
-   LeafEntry is a structure that contains the entry type and type-
-   specific data:
-
-   LeafEntry = [
-       type: LeafEntryType,
-       data: LeafEntryData
-   ]
-   LeafEntryType = int
-   LeafEntryData = any
-
-   Comparison: See Section 4.5 of [RFC9162] where leaves are represented
-   as a DER-encoded structure containing type, and type-dependent data.
-
-   A specification of a leaf entry type must define the following:
-
-   *  The value of LeafEntryType
-
-   *  The type of LeafEntryData
-
-   *  The type of LeafReceiptData, which defines what to include in a
-      receipt (see Section 5)
-
-   *  A procedure to re-construct the value of LeafEntryData
-
-   LeafReceiptData = any
-
-4.1.  COSE_Sign1 Countersign type
-
-   LeafEntryType value: 1
-
-   LeafEntryData type: Countersign_structure
-
-   LeafReceiptData type: SignerData
-
-   Countersign_structure = [
-       context: "CounterSignatureV2",
-       body_protected: empty_or_serialized_map,
-       sign_protected: empty_or_serialized_map,
-       external_aad: bstr,
-       payload: bstr,
-       other_fields: [
-           signature: bstr
-       ]
-   ]
-
-   SignerData = [
-       sign_protected: empty_or_serialized_map
-   ]
-
-   body_protected, payload, and signature are of the target COSE_Sign1
-   message. sign_protected is from the signer within the DerivationInfo
-   structure. external_aad is always empty (a zero-length byte string).
-
-   Comparison: Countersign_structure is identical to COSE V2
-   countersigning in [I-D.ietf-cose-countersign].
-
-   Procedure for reconstruction of LeafEntryData:
-
-   1.  Let Target be the COSE_Sign1 message that corresponds to the
-       countersignature.  Different environments will have different
-       mechanisms to achieve this.  One obvious mechanism is to embed
-       the receipt in the unprotected header of Target.  Another
-       mechanism may be to store both artifacts separately and use a
-       naming convention, database, or other method to link both
-       together.
-
-   2.  Extract body_protected, payload, and signature from Target.
-
-   3.  Create a Countersign_structure using the extracted fields from
-       Target, and sign_protected from the receipt data.  This is
-       LeafEntryData.
-
-5.  Receipts
-
-   A Receipt is an inclusion proof for a leaf backed by a signed tree
-   root.  It can be considered as efficient batch signing that allows to
-   present each signed payload (leaf) in an individual message suitable
-   for independent verification.
-
-5.1.  Receipt Structure
-
-   The Receipt structure is a CBOR array.  The fields of the array in
-   order are:
+   The Receipt contents structure is a CBOR array.  The fields of the
+   array in order are:
 
    *  signature: The signature over the Merkle tree root as bstr.
 
-   *  x5chain: X.509 certificate chain as an array of DER-encoded X.509
-      certificates, excluding the certificate declared in the log's
-      parameters.  The first certificate must be the one whose private
-      key was used to compute the signature.  An empty array means that
-      there is no certificate hierarchy.
+   *  node_certificate: DER-encoded X.509 certificate of the CCF node
+      that generated the signature.  A node certificate is endorsed by
+      the service certificate.
 
    *  inclusion_proof: The Merkle proof for the leaf as an array of
       [left, hash] pairs.
 
    *  leaf_info: Information about the leaf that is needed to
-      reconstruct LeafEntryData.
+      reconstruct the leaf bytes: the internal hash, the internal data,
+      and the protected header of the countersigner.
 
    The CDDL fragment that represents the above text follows.
 
-   Receipt = [
+   ReceiptContents = [
        signature: bstr,
-       x5chain: [ bstr ],
+       node_certificate: bstr,
        inclusion_proof: [+ ProofElement],
        leaf_info: LeafInfo
    ]
@@ -362,69 +372,67 @@ Table of Contents
    ]
 
    LeafInfo = [
-       prefix: bstr,
-       type: LeafEntryType,
-       data: LeafReceiptData
+       internal_hash: bstr,
+       internal_data: bstr,
+       sign_protected: empty_or_serialized_map
    ]
 
-5.2.  Receipt Generation
+5.5.  Receipt Generation
 
-   [TODO] this needs improvement
+   The following steps must be followed to generate a receipt after the
+   tree root has been signed:
 
-   1.  Let LEAF be the leaf in the Merkle tree for which a receipt
-       should be generated.
+   1.  Let LEAF be the countersigning leaf in the Merkle tree for which
+       a receipt should be generated.
 
    2.  Let ROOT_HASH be the root hash of the Merkle tree that contains
-       LEAF and SIGNATURE the signature over this root.
+       LEAF, and SIGNATURE the signature over this root.
 
    3.  Compute LEAF_HASH as the hash of LEAF.
 
    4.  Generate an inclusion proof from LEAF_HASH to ROOT_HASH.
 
-   5.  Construct a LeafInfo structure with the implementation-specific
-       prefix, the LeafEntryType, and the LeafReceiptData using the
-       procedure defined by the leaf entry type.
+   5.  Construct a LeafInfo structure with the internal hash, the
+       internal data, and the protected header parameters of the
+       countersigner.
 
-   6.  Create a Receipt structure and fill it with SIGNATURE, the
-       signing certificate hierarchy excluding the certificate declared
-       in the log's parameters, the inclusion proof, and the LeafInfo.
+   6.  Create a ReceiptContents structure and fill it with SIGNATURE,
+       the node's signing certificate endorsed by the service
+       certificate, the inclusion proof, and the LeafInfo.
 
-5.3.  Receipt Verification
+   7.  Create a Receipt structure and fill it with the service
+       identifier and ReceiptContents.
+
+5.6.  Receipt Verification
 
    The following steps must be followed to verify a Receipt:
 
-   1.  Compute LeafEntryData according to the LeafEntryType.
+1.  Construct a Countersign_structure according to Section 4, using
+    sign_protected from the leaf_info field of the receipt contents.
 
-   2.  Construct a LeafEntry structure and fill it with LeafEntryType
-       and LeafEntryData.
+2.  Compute LeafBytes as concatenation of the internal hash, the hash
+    of internal data, and the hash of the CBOR-encoding of
+    Countersign_structure, using the Merkle Tree Hash Algorithm found
+    in the service's parameters (see Section 5.1) and the CBOR
+    encoding described in Section 6.
 
-   3.  Compute LeafBytes as concatenation of prefix and LeafEntryBytes,
-       where LeafEntryBytes is created by encoding LeafEntry to a byte
-       string, using the encoding described in Section 6.
+ LeafBytes := internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
 
-       LeafBytes := prefix + LeafEntryBytes
+3.  Compute the leaf hash from LeafBytes using the Merkle Tree Hash
+    Algorithm found in the service's parameters (see Section 5.1).
 
-   4.  Compute the leaf hash from LeafBytes using the Merkle Tree Hash
-       Algorithm found in the log's parameters (see Section 3).
+    LeafHash := HASH(LeafBytes)
 
-       LeafHash := HASH(LeafBytes)
+4.  Compute the root hash from the leaf hash and the Merkle proof
+    using the Merkle Tree Hash Algorithm found in the service's
+    parameters (see Section 5.1):
 
-   5.  Compute the root hash from the leaf hash and the Merkle proof
-       using the Merkle Tree Hash Algorithm found in the log's
-       parameters (see Section 3):
+    root := compute_root(LeafHash, proof)
 
-       root := compute_root(LeafHash, proof)
-
-   6.  Verify the signature with the root hash as payload using the
-       certificate chain included in the receipt and the declared
-       certificate from the log's parameters (see Section 3).
-
-5.4.  SCITT Countersign Receipt
-
-   A SCITT Countersign Receipt is a receipt where the leaf entry type is
-   1 (COSE_Sign1 Countersign type).
-
-   SCITT_Countersign_Receipt = Receipt
+5.  Verify the signature with the root hash as payload using the
+    certificate chain established by the node certificate embedded in
+    the receipt and the service certificate part of the service's
+    parameters (see Section 5.1).
 
 6.  CBOR Encoding Restrictions
 
@@ -448,16 +456,16 @@ Table of Contents
 
    IANA is requested to register the new COSE Header parameter defined
    below in the "COSE Header Parameters" registry.  The new parameter is
-   used for embedding one or more SCITT Countersign Receipts in the
+   used for embedding one or more COSE_Sign1 Countersign Receipts in the
    unprotected header of a COSE message.
 
-   Name: SCITT Countersign receipt
+   Name: COSE_Sign1 Countersign receipt
 
    Label: TBD
 
-   Value Type: SCITT_Countersign_Receipt / [+ SCITT_Countersign_Receipt]
+   Value Type: Receipt / [+ Receipt]
 
-   Description: A SCITT Countersign Receipt to be embedded in the
+   Description: A COSE_Sign1 Countersign Receipt to be embedded in the
    unprotected header of the countersigned COSE_Sign1 message.
 
 9.2.  New SCITT-Related Registries
@@ -468,7 +476,26 @@ Table of Contents
    The rest of this section defines the subregistries that are to be
    created within the new "TBD" registry.
 
-9.2.1.  Hash Algorithms
+9.2.1.  Tree Algorithms
+
+   IANA is asked to establish a registry of tree algorithm identifiers,
+   named "Tree Algorithms", with the following registration procedures:
+   TBD
+
+   The "Tree Algorithms" registry initially consists of:
+
+           +============+======================+===============+
+           | Identifier | Tree Algorithm       | Reference     |
+           +============+======================+===============+
+           | CCF-2      | CCF 2 tree algorithm | This document |
+           +------------+----------------------+---------------+
+
+            Table 1: Initial content of Tree Algorithms registry
+
+   The designated expert(s) should ensure that the proposed algorithm
+   has a public specification and is suitable for use as [TBD].
+
+9.2.2.  Hash Algorithms
 
    IANA is asked to establish a registry of hash algorithm identifiers,
    named "Hash Algorithms", with the following registration procedures:
@@ -482,15 +509,15 @@ Table of Contents
                 | SHA-256    | SHA-256        | [RFC6234] |
                 +------------+----------------+-----------+
 
-                      Table 1: Initial content of Hash
+                      Table 2: Initial content of Hash
                             Algorithms registry
 
    The designated expert(s) should ensure that the proposed algorithm
    has a public specification and is suitable for use as a cryptographic
    hash algorithm with no known preimage or collision attacks.  These
-   attacks can damage the integrity of the log.
+   attacks can damage the integrity of the ledger.
 
-9.2.2.  Signature Algorithms
+9.2.3.  Signature Algorithms
 
    IANA is asked to establish a registry of signature algorithm
    identifiers, named "Signature Algorithms", with the following
@@ -508,7 +535,7 @@ Table of Contents
           |            | the edwards25519 curve)   |           |
           +------------+---------------------------+-----------+
 
-             Table 2: Initial content of Signature Algorithms
+             Table 3: Initial content of Signature Algorithms
                                  registry
 
    The designated expert(s) should ensure that the proposed algorithm
