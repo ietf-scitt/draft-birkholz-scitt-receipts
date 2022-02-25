@@ -77,7 +77,7 @@ Table of Contents
        5.2.2.  Definition of the Merkle Tree
        5.2.3.  Merkle Inclusion Proofs
        5.2.4.  Signing of the tree root
-     5.3.  Merkle Tree Leaves
+     5.3.  Countersigning Leaves
      5.4.  Receipt Contents Structure
      5.5.  Receipt Generation
      5.6.  Receipt Verification
@@ -217,9 +217,7 @@ Table of Contents
 
 5.2.2.  Definition of the Merkle Tree
 
-   Note: This is a copy of Section 2.1.1 of [RFC9162] except that the
-   Merkle Tree Hash algorithm treats leaves and intermediate nodes the
-   same during hashing.
+   Note: This is a partial copy of Section 2.1.1 of [RFC9162].
 
    The ledger uses a binary Merkle Tree for efficient auditing.  The
    hash algorithm used is one of the service's parameters (see
@@ -257,6 +255,27 @@ Table of Contents
       d[k1+1], ..., d'[k2-k1-1] = d[k2-1]} of length (k2 - k1).
 
    The Merkle Tree Hash over D_n is also called the tree root hash.
+
+   The content of all leaf entries is defined as the concatenation of
+   three byte streams:
+
+   1.  an internal hash, defined by the implementation and used for
+       binding to data that is not revealed in receipts,
+
+   2.  a hash of internal data, defined by the implementation and used
+       for binding to data that is revealed in receipts, and
+
+   3.  a hash of data that is well-defined and not implementation-
+       specific.
+
+   For all hashes, the Merkle Tree Hash Algorithm found in the service's
+   parameters (see Section 5.1) is used.
+
+   Note that the difference in size between leaves (composed of three
+   hashes) and intermediate tree nodes (two hashes) provides second
+   preimage resistance.
+
+   LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
 
 5.2.3.  Merkle Inclusion Proofs
 
@@ -312,35 +331,13 @@ Table of Contents
    Section 5.1).  For example, the signing payload would be 32 bytes for
    a SHA-256 tree root hash.
 
-5.3.  Merkle Tree Leaves
-
-   In general, a Transparency Service backed by a Merkle tree will have
-   different types of leaves.  All leaves are defined as the
-   concatenation of three byte streams:
-
-   1.  an internal hash, defined by the implementation and used for
-       binding to data that is not revealed in receipts,
-
-   2.  a hash of internal data, defined by the implementation and used
-       for binding to data that is revealed in receipts, and
-
-   3.  a hash of data that is well-defined and not implementation-
-       specific.
-
-   For all hashes, the Merkle Tree Hash Algorithm found in the service's
-   parameters (see Section 5.1) is used.
-
-   Note that the difference in size between leaves (composed of three
-   hashes) and intermediate tree nodes (two hashes) provides second
-   preimage resistance.
-
-   LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+5.3.  Countersigning Leaves
 
    The leaves that represent countersignatures have as data the CBOR-
    encoded Countersign_structure, using the CBOR encoding described in
-   Section 6.
+   Section 6:
 
-   CountersignData = cbor(Countersign_structure)
+LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
 
 5.4.  Receipt Contents Structure
 

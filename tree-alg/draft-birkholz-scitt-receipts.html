@@ -1156,7 +1156,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="xref">5.3</a>.  <a href="#name-merkle-tree-leaves" class="xref">Merkle Tree Leaves</a></p>
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="xref">5.3</a>.  <a href="#name-countersigning-leaves" class="xref">Countersigning Leaves</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
                 <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="xref">5.4</a>.  <a href="#name-receipt-contents-structure" class="xref">Receipt Contents Structure</a></p>
@@ -1351,7 +1351,7 @@ Countersign_structure = [
           <h4 id="name-definition-of-the-merkle-tr">
 <a href="#section-5.2.2" class="section-number selfRef">5.2.2. </a><a href="#name-definition-of-the-merkle-tr" class="section-name selfRef">Definition of the Merkle Tree</a>
           </h4>
-<p id="section-5.2.2-1">Note: This is a copy of <span><a href="https://rfc-editor.org/rfc/rfc9162#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#RFC9162" class="xref">RFC9162</a>]</span> except that the Merkle Tree Hash algorithm treats leaves and intermediate nodes the same during hashing.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-1">Note: This is a partial copy of <span><a href="https://rfc-editor.org/rfc/rfc9162#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#RFC9162" class="xref">RFC9162</a>]</span>.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.2.2-2">The ledger uses a binary Merkle Tree for efficient auditing. The hash algorithm used is one of the service's parameters (see Section <a href="#parameters" class="xref">Section 5.1</a>). This document establishes a registry of acceptable hash algorithms (see <a href="#hash-alg-registry" class="xref">Section 9.2.2</a>). Throughout this document, the hash algorithm in use is referred to as HASH and the size of its output in bytes is referred to as HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these entries will be hashed to form the leaves of the Merkle Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D_n = {d[0], d[1], ..., d[n-1]}, the Merkle Tree Hash (MTH) is thus defined as follows:<a href="#section-5.2.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.2.2-3">The hash of an empty list is the hash of an empty string:<a href="#section-5.2.2-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.2.2-4">
@@ -1381,6 +1381,22 @@ MTH(D_n) = HASH(MTH(D[0:k]) || MTH(D[k:n])),
 </li>
           </ul>
 <p id="section-5.2.2-11">The Merkle Tree Hash over D_n is also called the tree root hash.<a href="#section-5.2.2-11" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-12">The content of all leaf entries is defined as the concatenation of three byte streams:<a href="#section-5.2.2-12" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.2.2-13">
+<li id="section-5.2.2-13.1">an internal hash, defined by the implementation and used for binding to data that is not revealed in receipts,<a href="#section-5.2.2-13.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-5.2.2-13.2">a hash of internal data, defined by the implementation and used for binding to data that is revealed in receipts, and<a href="#section-5.2.2-13.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-5.2.2-13.3">a hash of data that is well-defined and not implementation-specific.<a href="#section-5.2.2-13.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+<p id="section-5.2.2-14">For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) is used.<a href="#section-5.2.2-14" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-15">Note that the difference in size between leaves (composed of three hashes) and intermediate tree nodes (two hashes) provides second preimage resistance.<a href="#section-5.2.2-15" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2.2-16">
+<pre>
+LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+</pre><a href="#section-5.2.2-16" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
 <div id="merkle-inclusion-proofs">
@@ -1434,32 +1450,16 @@ verify_proof(leaf_hash, root_hash, proof):
 </div>
 </section>
 </div>
-<div id="merkle-tree-leaves">
+<div id="countersigning-leaves">
 <section id="section-5.3">
-        <h3 id="name-merkle-tree-leaves">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-merkle-tree-leaves" class="section-name selfRef">Merkle Tree Leaves</a>
+        <h3 id="name-countersigning-leaves">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-countersigning-leaves" class="section-name selfRef">Countersigning Leaves</a>
         </h3>
-<p id="section-5.3-1">In general, a Transparency Service backed by a Merkle tree will have different types of leaves. All leaves are defined as the concatenation of three byte streams:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.3-2">
-<li id="section-5.3-2.1">an internal hash, defined by the implementation and used for binding to data that is not revealed in receipts,<a href="#section-5.3-2.1" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.3-2.2">a hash of internal data, defined by the implementation and used for binding to data that is revealed in receipts, and<a href="#section-5.3-2.2" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.3-2.3">a hash of data that is well-defined and not implementation-specific.<a href="#section-5.3-2.3" class="pilcrow">¶</a>
-</li>
-        </ol>
-<p id="section-5.3-3">For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) is used.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
-<p id="section-5.3-4">Note that the difference in size between leaves (composed of three hashes) and intermediate tree nodes (two hashes) provides second preimage resistance.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-5">
+<p id="section-5.3-1">The leaves that represent countersignatures have as data the CBOR-encoded Countersign_structure, using the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-2">
 <pre>
-LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
-</pre><a href="#section-5.3-5" class="pilcrow">¶</a>
-</div>
-<p id="section-5.3-6">The leaves that represent countersignatures have as data the CBOR-encoded Countersign_structure, using the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.3-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-7">
-<pre>
-CountersignData = cbor(Countersign_structure)
-</pre><a href="#section-5.3-7" class="pilcrow">¶</a>
+LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
+</pre><a href="#section-5.3-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
