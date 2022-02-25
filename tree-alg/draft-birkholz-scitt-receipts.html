@@ -1351,7 +1351,7 @@ Countersign_structure = [
           <h4 id="name-definition-of-the-merkle-tr">
 <a href="#section-5.2.2" class="section-number selfRef">5.2.2. </a><a href="#name-definition-of-the-merkle-tr" class="section-name selfRef">Definition of the Merkle Tree</a>
           </h4>
-<p id="section-5.2.2-1">Note: This is a copy of <span><a href="https://rfc-editor.org/rfc/rfc9162#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#RFC9162" class="xref">RFC9162</a>]</span> except that the Merkle Tree Hash algorithm currently treats leaves and intermediate nodes the same during hashing.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-1">Note: This is a copy of <span><a href="https://rfc-editor.org/rfc/rfc9162#section-2.1.1" class="relref">Section 2.1.1</a> of [<a href="#RFC9162" class="xref">RFC9162</a>]</span> except that the Merkle Tree Hash algorithm treats leaves and intermediate nodes the same during hashing.<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.2.2-2">The ledger uses a binary Merkle Tree for efficient auditing. The hash algorithm used is one of the service's parameters (see Section <a href="#parameters" class="xref">Section 5.1</a>). This document establishes a registry of acceptable hash algorithms (see <a href="#hash-alg-registry" class="xref">Section 9.2.2</a>). Throughout this document, the hash algorithm in use is referred to as HASH and the size of its output in bytes is referred to as HASH_SIZE. The input to the Merkle Tree Hash is a list of data entries; these entries will be hashed to form the leaves of the Merkle Tree. The output is a single HASH_SIZE Merkle Tree Hash. Given an ordered list of n inputs, D_n = {d[0], d[1], ..., d[n-1]}, the Merkle Tree Hash (MTH) is thus defined as follows:<a href="#section-5.2.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.2.2-3">The hash of an empty list is the hash of an empty string:<a href="#section-5.2.2-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.2.2-4">
@@ -1430,7 +1430,6 @@ verify_proof(leaf_hash, root_hash, proof):
 <a href="#section-5.2.4" class="section-number selfRef">5.2.4. </a><a href="#name-signing-of-the-tree-root" class="section-name selfRef">Signing of the tree root</a>
           </h4>
 <p id="section-5.2.4-1">A tree root is signed by signing over the tree root hash bytes using the signature algorithm declared in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>). For example, the signing payload would be 32 bytes for a SHA-256 tree root hash.<a href="#section-5.2.4-1" class="pilcrow">¶</a></p>
-<p id="section-5.2.4-2">Comparison: <span><a href="https://rfc-editor.org/rfc/rfc9162#section-4.10" class="relref">Section 4.10</a> of [<a href="#RFC9162" class="xref">RFC9162</a>]</span>, which signs over the timestamp, tree size, root, and optional extensions using a DER-encoded structure. A future version of this draft may extend the information over which the signature is computed if necessary.<a href="#section-5.2.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1440,11 +1439,20 @@ verify_proof(leaf_hash, root_hash, proof):
         <h3 id="name-merkle-tree-leaves">
 <a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-merkle-tree-leaves" class="section-name selfRef">Merkle Tree Leaves</a>
         </h3>
-<p id="section-5.3-1">The content of a leaf is defined as the concatenation of an implementation-specific prefix byte stream and the hash of a CBOR-encoded Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.3-2">
+<p id="section-5.3-1">The content of a leaf is defined as the concatenation of three byte streams:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.3-2">
+<li id="section-5.3-2.1">the hash of the CCF writeset (see [TBD]), where writeset is an opaque byte stream that is the serialization of CCF state changes,<a href="#section-5.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.3-2.2">the hash of the CCF commit evidence (see [TBD]), where commit evidence is an ASCII byte stream with additional information on the commitment of the transaction in the CCF ledger,<a href="#section-5.3-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.3-2.3">the hash of the CBOR-encoded Countersign_structure, using the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.3-2.3" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-5.3-3">For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) is used.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.3-4">
 <pre>
-LeafBytes = prefix + HASH(cbor(Countersign_structure))
-</pre><a href="#section-5.3-2" class="pilcrow">¶</a>
+LeafBytes = HASH(writeset) + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
+</pre><a href="#section-5.3-4" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -1461,7 +1469,7 @@ LeafBytes = prefix + HASH(cbor(Countersign_structure))
 </li>
           <li class="normal" id="section-5.4-2.3">inclusion_proof: The Merkle proof for the leaf as an array of [left, hash] pairs.<a href="#section-5.4-2.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-5.4-2.4">leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: an implementation-specific leaf prefix, and the protected header of the countersigner.<a href="#section-5.4-2.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.4-2.4">leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: the hash of the CCF writeset, the CCF commit evidence, and the protected header of the countersigner.<a href="#section-5.4-2.4" class="pilcrow">¶</a>
 </li>
         </ul>
 <p id="section-5.4-3">The CDDL fragment that represents the above text follows.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
@@ -1480,7 +1488,8 @@ ProofElement = [
 ]
 
 LeafInfo = [
-    prefix: bstr,
+    writeset_hash: bstr,
+    commit_evidence: tstr,
     sign_protected: empty_or_serialized_map
 ]
 </pre><a href="#section-5.4-4" class="pilcrow">¶</a>
@@ -1502,7 +1511,7 @@ LeafInfo = [
 </li>
           <li id="section-5.5-2.4">Generate an inclusion proof from LEAF_HASH to ROOT_HASH.<a href="#section-5.5-2.4" class="pilcrow">¶</a>
 </li>
-          <li id="section-5.5-2.5">Construct a LeafInfo structure with the implementation-specific prefix and the protected header parameters of the countersigner.<a href="#section-5.5-2.5" class="pilcrow">¶</a>
+          <li id="section-5.5-2.5">Construct a LeafInfo structure with the CCF writeset digest, the commit evidence, and the protected header parameters of the countersigner.<a href="#section-5.5-2.5" class="pilcrow">¶</a>
 </li>
           <li id="section-5.5-2.6">Create a ReceiptContents structure and fill it with SIGNATURE, the node's signing certificate endorsed by the service certificate, the inclusion proof, and the LeafInfo.<a href="#section-5.5-2.6" class="pilcrow">¶</a>
 </li>
@@ -1521,10 +1530,10 @@ LeafInfo = [
 <li id="section-5.6-2.1">Construct a Countersign_structure according to <a href="#cose_sign1_countersign" class="xref">Section 4</a>, using sign_protected from the leaf_info field of the receipt contents.<a href="#section-5.6-2.1" class="pilcrow">¶</a>
 </li>
           <li id="section-5.6-2.2">
-            <p id="section-5.6-2.2.1">Compute LeafBytes as concatenation of prefix and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.6-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-5.6-2.2.1">Compute LeafBytes as concatenation of the writeset hash, the hash of the commit evidence, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.6-2.2.1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.6-2.2.2">
 <pre>
- LeafBytes := prefix + HASH(cbor(Countersign_structure))
+ LeafBytes := writeset_hash + HASH(commit_evidence) + HASH(cbor(Countersign_structure))
 </pre><a href="#section-5.6-2.2.2" class="pilcrow">¶</a>
 </div>
 </li>
