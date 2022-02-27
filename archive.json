@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-02-24T01:08:09.713196+00:00",
+  "timestamp": "2022-02-27T01:07:48.602239+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -50,5 +50,128 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOG2uaB84zZftw",
+      "title": "Introduce tree algorithm",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/1",
+      "state": "MERGED",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed, this introduces a top-level tree algorithm to fork the format and makes the existing description match CCF 2.0. There may be scope to move the `LeafEntry` structure and associated \"COSE_Sign1 Countersign type\" section to a common section since that seems independent of any Merkle-related algorithms.\r\n\r\n@fournet @ad-l",
+      "createdAt": "2022-02-24T11:08:07Z",
+      "updatedAt": "2022-02-25T18:55:46Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "63a86b16e2a6ef8ef225c63d40dd0adb93bde179",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "tree-alg",
+      "headRefOid": "8dc61f5a836696898b21fa9fb3ce10da98334955",
+      "closedAt": "2022-02-25T18:55:42Z",
+      "mergedAt": "2022-02-25T18:55:42Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "542fb8302d0bdf131bdeeedb9515785a2b8f35ec"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB841L1r7",
+          "commit": {
+            "abbreviatedOid": "b2bafde"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-24T11:09:44Z",
+          "updatedAt": "2022-02-24T11:09:45Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "communicate = issuing/adding and verifying?",
+              "createdAt": "2022-02-24T11:09:45Z",
+              "updatedAt": "2022-02-24T11:09:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841L2ob",
+          "commit": {
+            "abbreviatedOid": "b2bafde"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-24T11:13:45Z",
+          "updatedAt": "2022-02-24T11:13:45Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "That reflects my common struggle on having two separate documents with API not being in here. But yes.",
+              "createdAt": "2022-02-24T11:13:45Z",
+              "updatedAt": "2022-02-24T11:13:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Q6ca",
+          "commit": {
+            "abbreviatedOid": "4cc8d9c"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-25T12:37:38Z",
+          "updatedAt": "2022-02-25T12:37:38Z",
+          "comments": [
+            {
+              "originalPosition": 262,
+              "body": "Asking out of curiosity more than anything else, but this is \"write_set_digest\" in CCF, is there a reason why it's been renamed?",
+              "createdAt": "2022-02-25T12:37:38Z",
+              "updatedAt": "2022-02-25T12:37:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Q6u9",
+          "commit": {
+            "abbreviatedOid": "4cc8d9c"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-25T12:38:57Z",
+          "updatedAt": "2022-02-25T12:38:57Z",
+          "comments": [
+            {
+              "originalPosition": 283,
+              "body": "Not being a native speaker, I have no opinion on the \"write set\" vs \"writeset\" distinction, but I think sticking to either \"digest\" or \"hash\" (see above) throughout would be more consistent.",
+              "createdAt": "2022-02-25T12:38:57Z",
+              "updatedAt": "2022-02-25T12:38:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Rmqq",
+          "commit": {
+            "abbreviatedOid": "b71ed4a"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-25T15:21:34Z",
+          "updatedAt": "2022-02-25T15:21:34Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
 }
