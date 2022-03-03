@@ -28,10 +28,15 @@ author:
   organization: Microsoft
   email: Maik.Riechert@microsoft.com
   country: UK
-- ins: A. Delignat
-  name: Antoine Delignat
+- ins: A. Delignat-Lavaud
+  name: Antoine Delignat-Lavaud
   organization: Microsoft
   email: antdl@microsoft.com
+  country: UK
+- ins: C. Fournet
+  name: Cedric Fournet
+  organization: Microsoft
+  email: fournet@microsoft.com
   country: UK
 
 normative:
@@ -49,10 +54,21 @@ informative:
 A transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on merkle-tree based operations for global supply chain ledgers. A generic procedure how to produce payloads for signing and validation is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
 
 --- middle
----
+
 # Introduction
 
-This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages recorded in an authenticated data structure such as a Merkle Tree.
+This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
+
+We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier. 
+
+> Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS. 
+
+From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.
+
+Compared with countersignatures on single COSE envelopes, 
+- Receipts countersign the envelope in context, providing authentication both of the envelope and of its logical position in the authenticated data structure.
+- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents. 
+- Receipts can be issued in bulk, using a single public-key signature for issuing a large number of Receipts. 
 
 ## Requirements Notation
 
@@ -62,22 +78,30 @@ This document defines a method for issuing and verifying countersignatures on CO
 
 # Common Parameters
 
-A Transparency Service backed by a Merkle tree is defined by a collection of immutable parameters, which are used by clients to communicate with the service and to verify artifacts. Each of these parameters must be established before the service operator begins to operate the service. At minimum, the following must be defined:
+Verifiers are configured by a collection of parameters 
+to identify a Transparency Service and verify its Receipts. 
+These parameters MUST be fixed for the lifetime of the Transparency Service
+and securely communicated to all Verifiers. 
 
-- Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and all other parameters.
+At minimum, these parameters include:
 
-- Tree algorithm: The tree algorithm used. This document creates a registry (see {{tree-alg-registry}}) with an initial set of tree algorithms that are described in this document.
+- a Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and all other parameters.
 
-Additional parameters may be defined depending on the tree algorithm used.
+  > is it sufficient? why putting it in every receipt then? What are those other parameters? I was expecting a public key or a certificate. 
 
-# Basic Receipt Structure
+- The Tree algorithm used for issuing receipts, and their additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
 
-A receipt represents a countersignature produced by a Transparency Service.
-The receipt structure is a CBOR array. The fields of the array in order are:
+  > The architecture also has fixed TS registration policies. 
 
-- service_id: The service identifier as tstr.
+# Generic Receipt Structure
 
-- contents: The receipt contents as a CBOR structure determined by the tree algorithm.
+A Receipt represents a countersignature issued by a Transparency Service.
+
+The Receipt structure is a CBOR map with two items, in order: 
+
+- `service_id`: The service identifier as tstr.
+
+- `contents`: The proof as a CBOR structure determined by the tree algorithm.
 
 ~~~ cddl
 Receipt = [
@@ -86,14 +110,16 @@ Receipt = [
 ]
 ~~~
 
-Each tree algorithm must define the type of contents and how to generate and verify a receipt.
+Each tree algorithm MUST define its contents type and procedures for issuing and verifying a receipt.
 
 # COSE_Sign1 Countersigning    {#cose_sign1_countersign}
 
-In this document, the structures and principles of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}) are used.
+While the tree algorithms may differ in the way they aggregate multiple envelopes to compute a digest to be signed by the TS,
+they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves). 
 
-In order to create a signature, a well-defined byte string is needed.
-Since Merkle tree signing is applied over multiple messages to be countersigned, the Countersign_structure defined in {{I-D.ietf-cose-countersign}} forms just a part of this well-defined byte string but is used unchanged:
+This document uses the principals and structure definitions 
+of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}).
+Each envelope is authenticated using its `Countersign_structure` map,recalled below.
 
 ~~~ cddl
 Countersign_structure = [
@@ -110,29 +136,34 @@ Countersign_structure = [
 
 body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer. external_aad is always empty (a zero-length byte string).
 
-The sign_protected field is embedded in the receipt contents to be able to re-construct Countersign_structure during validation. This is part of the definition of the tree algorithm.
+The sign_protected field is embedded in the Receipt contents to be able to re-construct Countersign_structure during validation. This is part of the definition of the tree algorithm.
 
 Procedure for reconstruction of Countersign_structure:
 
-1. Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.
+1. Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the Receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.
 
 2. Extract body_protected, payload, and signature from Target.
 
-3. Create a Countersign_structure using the extracted fields from Target, and sign_protected from the receipt contents.
+3. Create a Countersign_structure using the extracted fields from Target, and sign_protected from the Receipt contents.
 
 # CCF 2 Tree Algorithm
 
-The CCF 2 tree algorithm corresponds to the algorithm implemented in the CCF version 2 framework.
+The CCF 2 tree algorithm documents the algorithm based on a binary Merkle tree over the sequence of all ledger entries that is implemented in the CCF version 2 framework.
+
+> Add pointer to CCF v2? 
 
 ## Additional Parameters        {#parameters}
 
-The following additional service parameters are defined:
+The algorithm requires that the TS define 
+additional parameters:
 
-Hash Algorithm: The hash algorithm used for the Merkle Tree (see {{hash-alg-registry}}).
+- Hash Algorithm: The hash algorithm used in its Merkle Tree (see {{hash-alg-registry}}).
 
-Signature Algorithm: The signature algorithm used (see {{sig-alg-registry}}).
+- Signature Algorithm: The signature algorithm used (see {{sig-alg-registry}}).
 
-Service Certificate: The X.509 certificate used as trust anchor to verify signatures generated by the transparency service.
+- Service Certificate: The X.509 certificate used as trust anchor to verify signatures generated by the transparency service.
+
+The Service Certificate MUST be consistent with the Service identifier and Signature Algorithm.  
 
 ## Cryptographic Components
 
@@ -174,9 +205,9 @@ The Merkle Tree Hash over D_n is also called the tree root hash.
 
 The content of all leaf entries is defined as the concatenation of three byte streams:
 
-1. an internal hash, defined by the implementation and used for binding to data that is not revealed in receipts,
+1. an internal hash, defined by the implementation and used for binding to data that is not revealed in Receipts,
 
-2. a hash of internal data, defined by the implementation and used for binding to data that is revealed in receipts, and
+2. a hash of internal data, defined by the implementation and used for binding to data that is revealed in Receipts, and
 
 3. a hash of data that is well-defined and not implementation-specific.
 
@@ -217,7 +248,7 @@ verify_proof(leaf_hash, root_hash, proof):
   return h == root_hash
 ~~~
 
-Note: compute_root is used in receipt verification where the computed root is validated indirectly by verifying the signature over the root.
+Note: compute_root is used in Receipt verification where the computed root is validated indirectly by verifying the signature over the root.
 
 ### Signing of the tree root
 
@@ -234,6 +265,8 @@ LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structur
 ## Receipt Contents Structure
 
 The Receipt contents structure is a CBOR array. The fields of the array in order are:
+
+> It is a map, right? 
 
 - signature: The signature over the Merkle tree root as bstr.
 
@@ -267,9 +300,9 @@ LeafInfo = [
 
 ## Receipt Generation
 
-The following steps must be followed to generate a receipt after the tree root has been signed:
+The following steps must be followed to generate a Receipt after the tree root has been signed:
 
-1. Let LEAF be the countersigning leaf in the Merkle tree for which a receipt should be generated.
+1. Let LEAF be the countersigning leaf in the Merkle tree for which a Receipt should be generated.
 
 2. Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF, and SIGNATURE the signature over this root.
 
