@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-03-01T01:15:49.322759+00:00",
+  "timestamp": "2022-03-03T01:12:56.048921+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -170,6 +170,73 @@
           "createdAt": "2022-02-25T15:21:34Z",
           "updatedAt": "2022-02-25T15:21:34Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOG2uaB84z0hDW",
+      "title": "Require Issued At countersigner header parameter",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/2",
+      "state": "OPEN",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-02T11:03:55Z",
+      "updatedAt": "2022-03-02T11:43:04Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "542fb8302d0bdf131bdeeedb9515785a2b8f35ec",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "letmaik/iat",
+      "headRefOid": "e06c5210af7720ae2a6772313cb1739ded26d5d3",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB841fds0",
+          "commit": {
+            "abbreviatedOid": "e06c521"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-02T11:21:47Z",
+          "updatedAt": "2022-03-02T11:21:48Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "What does extract mean? It sounds like removal, but that cannot be right, yes?",
+              "createdAt": "2022-03-02T11:21:48Z",
+              "updatedAt": "2022-03-02T11:21:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841fi7L",
+          "commit": {
+            "abbreviatedOid": "e06c521"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-02T11:43:04Z",
+          "updatedAt": "2022-03-02T11:43:04Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I meant something in the realm of \"read\" or \"access\". Maybe the step isn't really necessary and can be inlined into the following.",
+              "createdAt": "2022-03-02T11:43:04Z",
+              "updatedAt": "2022-03-02T11:43:04Z"
+            }
+          ]
         }
       ]
     }
