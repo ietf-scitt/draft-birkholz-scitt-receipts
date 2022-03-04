@@ -89,7 +89,7 @@ At minimum, these parameters include:
 
   > is it sufficient? why putting it in every receipt then? What are those other parameters? I was expecting a public key or a certificate. 
 
-- The Tree algorithm used for issuing receipts, and their additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
+- The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
 
   > The architecture also has fixed TS registration policies. 
 
