@@ -11,8 +11,7 @@ Expires: 5 September 2022                             A. Delignat-Lavaud
                                                             4 March 2022
 
 
- Countersigning Receipts in Support of Trustworthy Supply Chain Ledger
-                                Services
+         Countersigning COSE Envelopes in Transparency Services
                   draft-birkholz-scitt-receipts-latest
 
 Abstract
