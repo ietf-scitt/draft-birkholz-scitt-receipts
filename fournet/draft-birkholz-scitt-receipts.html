@@ -1020,7 +1020,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 4 September 2022</td>
+<td class="center">Expires 5 September 2022</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1033,12 +1033,12 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 <dd class="internet-draft">draft-birkholz-scitt-receipts-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2022-03-03" class="published">3 March 2022</time>
+<time datetime="2022-03-04" class="published">4 March 2022</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2022-09-04">4 September 2022</time></dd>
+<dd class="expires"><time datetime="2022-09-05">5 September 2022</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1092,7 +1092,7 @@ svg [stroke="fill"], svg [fill^="#fff"] {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 September 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1173,10 +1173,10 @@ svg [stroke="fill"], svg [fill^="#fff"] {
                 <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="xref">5.4</a>.  <a href="#name-receipt-contents-structure" class="xref">Receipt Contents Structure</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
-                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="xref">5.5</a>.  <a href="#name-receipt-generation" class="xref">Receipt Generation</a></p>
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="xref">5.5</a>.  <a href="#name-receipt-verification" class="xref">Receipt Verification</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.6">
-                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="xref">5.6</a>.  <a href="#name-receipt-verification" class="xref">Receipt Verification</a></p>
+                <p id="section-toc.1-1.5.2.6.1"><a href="#section-5.6" class="xref">5.6</a>.  <a href="#name-receipt-generation" class="xref">Receipt Generation</a></p>
 </li>
             </ul>
 </li>
@@ -1284,7 +1284,7 @@ and securely communicated to all Verifiers.<a href="#section-2-1" class="pilcrow
           </ul>
 </li>
         <li class="normal" id="section-2-3.2">
-          <p id="section-2-3.2.1">The Tree algorithm used for issuing receipts, and their additional global parameters, if any. This document creates a registry (see <a href="#tree-alg-registry" class="xref">Section 9.2.1</a>) and describes an initial set of tree algorithms.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-2-3.2.1">The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see <a href="#tree-alg-registry" class="xref">Section 9.2.1</a>) and describes an initial set of tree algorithms.<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
 <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-2-3.2.2.1">
               <p id="section-2-3.2.2.1.1">The architecture also has fixed TS registration policies.<a href="#section-2-3.2.2.1.1" class="pilcrow">¶</a></p>
@@ -1300,7 +1300,7 @@ and securely communicated to all Verifiers.<a href="#section-2-1" class="pilcrow
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-generic-receipt-structure" class="section-name selfRef">Generic Receipt Structure</a>
       </h2>
 <p id="section-3-1">A Receipt represents a countersignature issued by a Transparency Service.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">The Receipt structure is a CBOR map with two items, in order:<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-2">The Receipt structure is a CBOR array with two items, in order:<a href="#section-3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3-3.1">
           <code>service_id</code>: The service identifier as tstr.<a href="#section-3-3.1" class="pilcrow">¶</a>
@@ -1329,7 +1329,7 @@ Receipt = [
 they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves).<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">This document uses the principals and structure definitions 
 of COSE_Sign1 countersigning V2 (<span>[<a href="#I-D.ietf-cose-countersign" class="xref">I-D.ietf-cose-countersign</a>]</span>).
-Each envelope is authenticated using its <code>Countersign_structure</code> map,recalled below.<a href="#section-4-2" class="pilcrow">¶</a></p>
+Each envelope is authenticated using a <code>Countersign_structure</code> array, recalled below.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <div id="section-4-3">
 <pre class="lang-cddl sourcecode">
 Countersign_structure = [
@@ -1344,15 +1344,17 @@ Countersign_structure = [
 ]
 </pre><a href="#section-4-3" class="pilcrow">¶</a>
 </div>
-<p id="section-4-4">body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer, see <a href="#countersign_headers" class="xref">Section 4.1</a>. external_aad is always empty (a zero-length byte string).<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">The sign_protected field is embedded in the Receipt contents to be able to re-construct Countersign_structure during validation. This is part of the definition of the tree algorithm.<a href="#section-4-5" class="pilcrow">¶</a></p>
-<p id="section-4-6">Procedure for reconstruction of Countersign_structure:<a href="#section-4-6" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-4-7">
-<li id="section-4-7.1">Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the Receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.<a href="#section-4-7.1" class="pilcrow">¶</a>
+<p id="section-4-4">The <code>body_protected</code>, <code>payload</code>, and <code>signature</code> fields are copied form the COSE_Sign1 message being countersigned.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">The <code>sign_protected</code> field is provided by the TS, see <a href="#countersign_headers" class="xref">Section 4.1</a> below. This field 
+is included in the Receipt contents to enable the Verifier to re-construct <code>Countersign_structure</code>, as specified by the tree algorithm.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">By convention, the TS always provides am empty <code>external_aad</code>: a zero-length bytestring.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-7">Procedure for reconstruction of Countersign_structure:<a href="#section-4-7" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4-8">
+<li id="section-4-8.1">Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the Receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.<a href="#section-4-8.1" class="pilcrow">¶</a>
 </li>
-        <li id="section-4-7.2">Extract body_protected, payload, and signature from Target.<a href="#section-4-7.2" class="pilcrow">¶</a>
+        <li id="section-4-8.2">Extract body_protected, payload, and signature from Target.<a href="#section-4-8.2" class="pilcrow">¶</a>
 </li>
-        <li id="section-4-7.3">Create a Countersign_structure using the extracted fields from Target, and sign_protected from the Receipt contents.<a href="#section-4-7.3" class="pilcrow">¶</a>
+        <li id="section-4-8.3">Create a Countersign_structure using the extracted fields from Target, and sign_protected from the Receipt contents.<a href="#section-4-8.3" class="pilcrow">¶</a>
 </li>
       </ol>
 <div id="countersign_headers">
@@ -1533,29 +1535,47 @@ LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structur
 </div>
 </section>
 </div>
-<div id="receipt-contents-structure">
+<div id="ReceiptContents">
 <section id="section-5.4">
         <h3 id="name-receipt-contents-structure">
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-receipt-contents-structure" class="section-name selfRef">Receipt Contents Structure</a>
         </h3>
-<p id="section-5.4-1">The Receipt contents structure is a CBOR array. The fields of the array in order are:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
-<ul class="normal ulEmpty">
-<li class="normal ulEmpty" id="section-5.4-2.1">
-            <p id="section-5.4-2.1.1">It is a map, right?<a href="#section-5.4-2.1.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
+<p id="section-5.4-1">The Receipt contents structure is a CBOR array. The items the array in order are:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.4-3.1">signature: The signature over the Merkle tree root as bstr.<a href="#section-5.4-3.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5.4-2.1">
+            <code>signature</code>: the signature over the Merkle tree root as bstr.<a href="#section-5.4-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-5.4-3.2">node_certificate: DER-encoded X.509 certificate of the CCF node that generated the signature. A node certificate is endorsed by the service certificate.<a href="#section-5.4-3.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.4-2.2">
+            <code>node_certificate</code>: a DER-encoded X.509 certificate for the public key for signature verification. 
+This certificate <span class="bcp14">MUST</span> be a valid CCF node certificate
+for the service; in particular, it <span class="bcp14">MUST</span> form a valid X.509 certificate chain with the service certificate.<a href="#section-5.4-2.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-5.4-3.3">inclusion_proof: The Merkle proof for the leaf as an array of [left, hash] pairs.<a href="#section-5.4-3.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.4-2.3">
+            <p id="section-5.4-2.3.1"><code>inclusion_proof</code>: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope.<a href="#section-5.4-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.4-2.3.2.1">The array <span class="bcp14">MUST</span> have at most 64 items.<a href="#section-5.4-2.3.2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-5.4-3.4">leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: the internal hash, the internal data, and the protected header of the countersigner.<a href="#section-5.4-3.4" class="pilcrow">¶</a>
+              <li class="normal" id="section-5.4-2.3.2.2">The inclusion proof structure is an array of [left, hash] pairs where <code>left</code> indicates the ordering of digests for the intermediate hash compution. The hash <span class="bcp14">MUST</span> be a bytestring of length <code>HASH_SIZE</code>.<a href="#section-5.4-2.3.2.2" class="pilcrow">¶</a>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-5.4-2.4">
+            <p id="section-5.4-2.4.1"><code>leaf_info</code>: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the 
+countersigner.<a href="#section-5.4-2.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.4-2.4.2.1">
+                <code>internal_hash</code> <span class="bcp14">MUST</span> be a bytestring of length <code>HASH_SIZE</code>;<a href="#section-5.4-2.4.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="normal" id="section-5.4-2.4.2.2">
+                <code>internal_data</code> <span class="bcp14">MUST</span> be a bytestring of length less than 1024.<a href="#section-5.4-2.4.2.2" class="pilcrow">¶</a>
+</li>
+            </ul>
 </li>
         </ul>
-<p id="section-5.4-4">The CDDL fragment that represents the above text follows.<a href="#section-5.4-4" class="pilcrow">¶</a></p>
-<div id="section-5.4-5">
+<p id="section-5.4-3">The inclusion of an additional, short-lived certificate endorsed by the TS enables flexibility in its distributed implementation, and may support additional CCF-specific auditing.<a href="#section-5.4-3" class="pilcrow">¶</a></p>
+<p id="section-5.4-4">The internal values passed in <code>leaf_info</code> are opaque to the Verifier described in this document, but they may support additional CCF-specific auditing of the ledger.<a href="#section-5.4-4" class="pilcrow">¶</a></p>
+<p id="section-5.4-5">The CDDL fragment that represents the above text follows.<a href="#section-5.4-5" class="pilcrow">¶</a></p>
+<div id="section-5.4-6">
 <pre class="lang-cddl sourcecode">
 ReceiptContents = [
     signature: bstr,
@@ -1574,70 +1594,100 @@ LeafInfo = [
     internal_data: bstr,
     sign_protected: empty_or_serialized_map
 ]
-</pre><a href="#section-5.4-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.4-6" class="pilcrow">¶</a>
 </div>
-</section>
-</div>
-<div id="receipt-generation">
-<section id="section-5.5">
-        <h3 id="name-receipt-generation">
-<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-receipt-generation" class="section-name selfRef">Receipt Generation</a>
-        </h3>
-<p id="section-5.5-1">The following steps must be followed to generate a Receipt after the tree root has been signed:<a href="#section-5.5-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.5-2">
-<li id="section-5.5-2.1">Let LEAF be the countersigning leaf in the Merkle tree for which a Receipt should be generated.<a href="#section-5.5-2.1" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.2">Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF, and SIGNATURE the signature over this root.<a href="#section-5.5-2.2" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.3">Compute LEAF_HASH as the hash of LEAF.<a href="#section-5.5-2.3" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.4">Generate an inclusion proof from LEAF_HASH to ROOT_HASH.<a href="#section-5.5-2.4" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.5">Construct a LeafInfo structure with the internal hash, the internal data, and the protected header parameters of the countersigner.<a href="#section-5.5-2.5" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.6">Create a ReceiptContents structure and fill it with SIGNATURE, the node's signing certificate endorsed by the service certificate, the inclusion proof, and the LeafInfo.<a href="#section-5.5-2.6" class="pilcrow">¶</a>
-</li>
-          <li id="section-5.5-2.7">Create a Receipt structure and fill it with the service identifier and ReceiptContents.<a href="#section-5.5-2.7" class="pilcrow">¶</a>
-</li>
-        </ol>
 </section>
 </div>
 <div id="receipt-verification">
-<section id="section-5.6">
+<section id="section-5.5">
         <h3 id="name-receipt-verification">
-<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-receipt-verification" class="section-name selfRef">Receipt Verification</a>
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-receipt-verification" class="section-name selfRef">Receipt Verification</a>
         </h3>
-<p id="section-5.6-1">The following steps must be followed to verify a Receipt:<a href="#section-5.6-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.6-2">
-<li id="section-5.6-2.1">Construct a Countersign_structure according to <a href="#cose_sign1_countersign" class="xref">Section 4</a>, using sign_protected from the leaf_info field of the receipt contents.<a href="#section-5.6-2.1" class="pilcrow">¶</a>
+<p id="section-5.5-1">Given the TS parameters, a signed envelope, and a Receipt for it, 
+the following steps must be followed to verify this Receipt.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
+<p id="section-5.5-2">For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (see <a href="#parameters" class="xref">Section 5.1</a>)<a href="#section-5.5-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.5-3">
+<li id="section-5.5-3.1">Verify that the Receipt Content structure is well-formed, as described in <a href="#ReceiptContents" class="xref">Section 5.4</a><a href="#section-5.5-3.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-5.6-2.2">
-            <p id="section-5.6-2.2.1">Compute LeafBytes as concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.6-2.2.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.6-2.2.2">
+          <li id="section-5.5-3.2">Construct a <code>Countersign_structure</code> as described in <a href="#cose_sign1_countersign" class="xref">Section 4</a>, using <code>sign_protected</code> from the <code>leaf_info</code> field of the receipt contents.<a href="#section-5.5-3.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.5-3.3">
+            <p id="section-5.5-3.3.1">Compute <code>LeafBytes</code> as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of <code>Countersign_structure</code>, using the and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.5-3.3.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-3.3.2">
 <pre>
- LeafBytes := internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
-</pre><a href="#section-5.6-2.2.2" class="pilcrow">¶</a>
+ LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
+</pre><a href="#section-5.5-3.3.2" class="pilcrow">¶</a>
 </div>
 </li>
-          <li id="section-5.6-2.3">
-            <p id="section-5.6-2.3.1">Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>).<a href="#section-5.6-2.3.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.6-2.3.2">
+          <li id="section-5.5-3.4">
+            <p id="section-5.5-3.4.1">Compute the leaf digest.<a href="#section-5.5-3.4.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-3.4.2">
 <pre>
  LeafHash := HASH(LeafBytes)
-</pre><a href="#section-5.6-2.3.2" class="pilcrow">¶</a>
+</pre><a href="#section-5.5-3.4.2" class="pilcrow">¶</a>
 </div>
 </li>
-          <li id="section-5.6-2.4">
-            <p id="section-5.6-2.4.1">Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>):<a href="#section-5.6-2.4.1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5.6-2.4.2">
+          <li id="section-5.5-3.5">
+            <p id="section-5.5-3.5.1">Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>):<a href="#section-5.5-3.5.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.5-3.5.2">
 <pre>
- root := compute_root(LeafHash, proof)
-</pre><a href="#section-5.6-2.4.2" class="pilcrow">¶</a>
+ root := compute_root(LeafHash, inclusion_proof)
+</pre><a href="#section-5.5-3.5.2" class="pilcrow">¶</a>
 </div>
 </li>
-          <li id="section-5.6-2.5">Verify the signature with the root hash as payload using the certificate chain established by the node certificate embedded in the receipt and the service certificate part of the service's parameters (see <a href="#parameters" class="xref">Section 5.1</a>) using the Issued At time from sign_protected to verify certificate validity periods.<a href="#section-5.6-2.5" class="pilcrow">¶</a>
+          <li id="section-5.5-3.6">Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see <a href="#parameters" class="xref">Section 5.1</a>) using the Issued At time from <code>sign_protected</code> to verify the validity periods of the certificates. The chain <span class="bcp14">MUST</span> enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.<a href="#section-5.5-3.6" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.5-3.7">Verify that <code>signature</code> is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.<a href="#section-5.5-3.7" class="pilcrow">¶</a>
 </li>
         </ol>
+<p id="section-5.5-4">The Verifier <span class="bcp14">SHOULD</span> apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.<a href="#section-5.5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="receipt-generation">
+<section id="section-5.6">
+        <h3 id="name-receipt-generation">
+<a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-receipt-generation" class="section-name selfRef">Receipt Generation</a>
+        </h3>
+<p id="section-5.6-1">This document provides a reference algorithm for producing valid receipts, 
+but it omits any discussion of TS registration policy and any CCF-specific implementation details.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
+<p id="section-5.6-2">The algorithm takes as input a list of entries, each entry consisting either of   <code>internal_hash</code>, <code>internal_data</code>, and an optional signed envelope.
+(This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
+For simplicity, we assume the list is of size <code>2^N</code>.<a href="#section-5.6-2" class="pilcrow">¶</a></p>
+<p id="section-5.6-3">The following steps must be followed to generate a Receipt after the tree root has been signed:<a href="#section-5.6-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.6-4">
+<li id="section-5.6-4.1">For each signed envelope, compute the <code>Countersign_structure</code> as described in <a href="#cose_sign1_countersign" class="xref">Section 4</a>.<a href="#section-5.6-4.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.6-4.2">
+            <p id="section-5.6-4.2.1">For each item in the list, compute <code>LeafBytes</code> as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of <code>Countersign_structure</code>, using the and the CBOR encoding described in <a href="#deterministic-cbor" class="xref">Section 6</a>.<a href="#section-5.6-4.2.1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.6-4.2.2">
+<pre>
+ for each item in the list:
+   if the envelope is present:
+     LeafBytes := internal_hash || HASH(internal_data) HASH(cbor(Countersign_structure))
+   else
+     LeafBytes := internal_hash || HASH(internal_data)
+   LeafHash := HASH(Leaf)
+</pre><a href="#section-5.6-4.2.2" class="pilcrow">¶</a>
+</div>
+</li>
+          <li id="section-5.6-4.3">Given the resulting list of <code>2^N</code> digests, build a binary tree of intermediate digests, one level at a time, by hashing every pair of digests form the list
+to produce the list of digests at the next level. This eventually produces a list that includes a single digest: the root of the tree.<a href="#section-5.6-4.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.6-4.4">Select a valid <code>node_certificate</code> and compute a <code>signature</code> of the root of the tree with the corresponding signing key.<a href="#section-5.6-4.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-5.6-4.5">For each signed envelope provided in the input,<a href="#section-5.6-4.5" class="pilcrow">¶</a>
+</li>
+        </ol>
+<ul class="normal">
+<li class="normal" id="section-5.6-5.1">Collect an <code>inclusion proof</code> selected from the intermediate hashes as follows: 
+at each level, select the other digest of the pair used to compute the next level, 
+and set <code>left</code> to true if it is the first item in the pair and to <code>false</code> otherwise.<a href="#section-5.6-5.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-5.6-5.2">Produce the receipt contents using this <code>inclusion_proof</code>, the fixed <code>node_certificate</code> and <code>signature</code>, and the bytestrings <code>internal_hash</code> and <code>internal_data</code> provided with the envelope.<a href="#section-5.6-5.2" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-5.6-5.3">Produce the receipt using the Service Identifier and this receipt contents.<a href="#section-5.6-5.3" class="pilcrow">¶</a>
+</li>
+        </ul>
 </section>
 </div>
 </section>
@@ -1647,7 +1697,7 @@ LeafInfo = [
       <h2 id="name-cbor-encoding-restrictions">
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-cbor-encoding-restrictions" class="section-name selfRef">CBOR Encoding Restrictions</a>
       </h2>
-<p id="section-6-1">In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in <span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC8949" class="xref">RFC8949</a>]</span> <span class="bcp14">MUST</span> be used.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in <span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC8949" class="xref">RFC8949</a>]</span> <span class="bcp14">MUST</span> be used for all their CBOR structures.<a href="#section-6-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="privacy-considerations">
