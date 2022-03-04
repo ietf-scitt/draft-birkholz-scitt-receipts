@@ -350,17 +350,15 @@ The algorithm takes as input a list of entries, each entry consisting either of 
 (This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
 For simplicity, we assume the list is of size `2^N`. 
 
-The following steps must be followed to generate a Receipt after the tree root has been signed:
-
 1. For each signed envelope, compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
 
 2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the and the CBOR encoding described in {{deterministic-cbor}}.
 
         for each item in the list:
           if the envelope is present:
-            LeafBytes := internal_hash || HASH(internal_data) HASH(cbor(Countersign_structure))
+            LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
           else  
-            LeafBytes := internal_hash || HASH(internal_data) 
+            LeafBytes := internal_hash || HASH(internal_data) || HASH_SIZE 0s 
           LeafHash := HASH(Leaf)
 
 3. Given the resulting list of `2^N` digests, build a binary tree of intermediate digests, one level at a time, by hashing every pair of digests form the list
