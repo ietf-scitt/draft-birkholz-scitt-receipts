@@ -1523,7 +1523,7 @@ LeafBytes = internal_hash || HASH(internal_data) || HASH(cbor(Countersign_struct
         <h3 id="name-receipt-contents-structure">
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-receipt-contents-structure" class="section-name selfRef">Receipt Contents Structure</a>
         </h3>
-<p id="section-5.4-1">The Receipt contents structure is a CBOR array. The items the array in order are:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-1">The Receipt contents structure is a CBOR array. The items of the array in order are:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.4-2.1">
             <code>signature</code>: the signature over the Merkle tree root as bstr.<a href="#section-5.4-2.1" class="pilcrow">¶</a>
@@ -1633,7 +1633,7 @@ the following steps must be followed to verify this Receipt.<a href="#section-5.
         </h3>
 <p id="section-5.6-1">This document provides a reference algorithm for producing valid receipts,
 but it omits any discussion of TS registration policy and any CCF-specific implementation details.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
-<p id="section-5.6-2">The algorithm takes as input a list of entries, each entry consisting either of   <code>internal_hash</code>, <code>internal_data</code>, and an optional signed envelope.
+<p id="section-5.6-2">The algorithm takes as input a list of entries, each entry consisting of <code>internal_hash</code>, <code>internal_data</code>, and an optional signed envelope.
 (This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
 For simplicity, we assume the list is of size <code>2^N</code>.<a href="#section-5.6-2" class="pilcrow">¶</a></p>
 <p id="section-5.6-3">The following steps must be followed to generate a Receipt after the tree root has been signed:<a href="#section-5.6-3" class="pilcrow">¶</a></p>
