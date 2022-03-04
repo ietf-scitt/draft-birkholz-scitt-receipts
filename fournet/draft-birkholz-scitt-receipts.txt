@@ -233,11 +233,7 @@ Table of Contents
 
    The CCF 2 tree algorithm documents the algorithm based on a binary
    Merkle tree over the sequence of all ledger entries that is
-   implemented in the CCF version 2 framework.
-
-      Add non-normative pointer to CCF v2
-      (https://microsoft.github.io/CCF/main/architecture/
-      merkle_tree.html) ?
+   implemented in the CCF version 2 framework (see [CCF_Merkle_Tree]).
 
 5.1.  Additional Parameters
 
@@ -701,6 +697,11 @@ LeafBytes = internal_hash || HASH(internal_data) || HASH(cbor(Countersign_struct
               December 2021, <https://www.rfc-editor.org/rfc/rfc9162>.
 
 10.2.  Informative References
+
+   [CCF_Merkle_Tree]
+              Microsoft Research, "CCF - Merkle Tree", n.d.,
+              <https://microsoft.github.io/CCF/main/architecture/
+              merkle_tree.html>.
 
    [I-D.ietf-cose-countersign]
               Schaad, J. and R. Housley, "CBOR Object Signing and
