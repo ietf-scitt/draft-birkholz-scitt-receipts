@@ -106,9 +106,9 @@ Table of Contents
    We adopt the terminology of architecture (pointer) for Claim,
    Envelope, Transparency Service, Ledger, Receipt, and Verifier.
 
-      Do we need to explain or introduce them here?  We may also define
-      Tree (our shorthand for authenticated data structure), Root (a
-      succinct commitment to the Tree, e.g., a hand) and use Issuer
+      [TODO] Do we need to explain or introduce them here?  We may also
+      define Tree (our shorthand for authenticated data structure), Root
+      (a succinct commitment to the Tree, e.g., a hand) and use Issuer
       instead of TS.
 
    From the Verifier's viewpoint, a Receipt is similar to a
@@ -149,7 +149,8 @@ Table of Contents
       global parameters, if any.  This document creates a registry (see
       Section 9.2.1) and describes an initial set of tree algorithms.
 
-         The architecture also has fixed TS registration policies.
+         [TODO] The architecture also has fixed TS registration
+         policies.
 
 3.  Generic Receipt Structure
 
@@ -202,7 +203,7 @@ Table of Contents
    Verifier to re-construct Countersign_structure, as specified by the
    tree algorithm.
 
-   By convention, the TS always provides am empty external_aad: a zero-
+   By convention, the TS always provides an empty external_aad: a zero-
    length bytestring.
 
    Procedure for reconstruction of Countersign_structure:
@@ -315,7 +316,7 @@ Table of Contents
    hashes) and intermediate tree nodes (two hashes) provides second
    preimage resistance.
 
-   LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+   LeafBytes = internal_hash || HASH(internal_data) || HASH(data)
 
 5.2.3.  Merkle Inclusion Proofs
 
@@ -352,8 +353,8 @@ Table of Contents
    compute_root(leaf_hash, proof):
      h := leaf_hash
      for [left, hash] in proof:
-         h := HASH(hash + h) if left
-              HASH(h + hash) else
+         h := HASH(hash || h) if left
+              HASH(h || hash) else
      return h
 
    verify_proof(leaf_hash, root_hash, proof):
