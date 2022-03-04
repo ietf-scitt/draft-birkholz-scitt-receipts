@@ -317,44 +317,70 @@ LeafInfo = [
 ]
 ~~~
 
-## Receipt Generation
-
-The following steps must be followed to generate a Receipt after the tree root has been signed:
-
-1. Let LEAF be the countersigning leaf in the Merkle tree for which a Receipt should be generated.
-
-2. Let ROOT_HASH be the root hash of the Merkle tree that contains LEAF, and SIGNATURE the signature over this root.
-
-3. Compute LEAF_HASH as the hash of LEAF.
-
-4. Generate an inclusion proof from LEAF_HASH to ROOT_HASH.
-
-5. Construct a LeafInfo structure with the internal hash, the internal data, and the protected header parameters of the countersigner.
-
-6. Create a ReceiptContents structure and fill it with SIGNATURE, the node's signing certificate endorsed by the service certificate, the inclusion proof, and the LeafInfo.
-
-7. Create a Receipt structure and fill it with the service identifier and ReceiptContents.
-
 ## Receipt Verification
 
 Given the TS parameters, a signed envelope, and a Receipt for it, 
-the following steps must be followed to verify this Receipt:
+the following steps must be followed to verify this Receipt.
+
+For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (see {{parameters}})
 
 1. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
 
-2. Compute LeafBytes as concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}.
+2. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the and the CBOR encoding described in {{deterministic-cbor}}.
 
-        LeafBytes := internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
+        LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
 
-4. Compute the leaf hash from LeafBytes using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}).
+4. Compute the leaf digest.
 
         LeafHash := HASH(LeafBytes)
 
 5. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
 
-        root := compute_root(LeafHash, proof)
+        root := compute_root(LeafHash, inclusion_proof)
 
-6. Verify the signature with the root hash as payload using the certificate chain established by the node certificate embedded in the receipt and the service certificate part of the service's parameters (see {{parameters}}) using the Issued At time from sign_protected to verify certificate validity periods.
+6. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from `sign_protected` to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters. 
+
+7. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
+
+The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.  
+
+## Receipt Generation
+
+This document provides a reference algorithm for producing valid receipts, 
+but it omits any discussion of TS registration policy and any CCF-specific implementation details. 
+
+The algorithm takes as input a list of entries, each entry consisting either of   `internal_hash`, `internal_data`, and an optional signed envelope.
+(This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
+For simplicity, we assume the list is of size `2^N`. 
+
+The following steps must be followed to generate a Receipt after the tree root has been signed:
+
+1. For each signed envelope, compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
+
+2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the and the CBOR encoding described in {{deterministic-cbor}}.
+
+        for each item in the list:
+          if the envelope is present:
+            LeafBytes := internal_hash || HASH(internal_data) HASH(cbor(Countersign_structure))
+          else  
+            LeafBytes := internal_hash || HASH(internal_data) 
+          LeafHash := HASH(Leaf)
+
+3. Given the resulting list of `2^N` digests, build a binary tree of intermediate digests, one level at a time, by hashing every pair of digests form the list
+to produce the list of digests at the next level. This eventually produces a list that includes a single digest: the root of the tree. 
+
+4. Select a valid `node_certificate` and compute a `signature` of the root of the tree with the corresponding signing key. 
+
+4. For each signed envelope provided in the input, 
+
+  - Collect an `inclusion proof` selected from the intermediate hashes as follows: 
+at each level, select the other digest of the pair used to compute the next level, 
+and set `left` to true if it is the first item in the pair and to `false` otherwise. 
+
+  - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
+
+  - Produce the receipt using the Service Identifier and this receipt contents.
+  
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
