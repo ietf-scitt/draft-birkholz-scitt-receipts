@@ -66,7 +66,7 @@ This document defines a method for issuing and verifying countersignatures on CO
 
 We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
 
-> Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
+> [TODO] Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
 
 From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.
 
@@ -94,7 +94,7 @@ At minimum, these parameters include:
 
 - The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
 
-  > The architecture also has fixed TS registration policies.
+  > [TODO] The architecture also has fixed TS registration policies.
 
 # Generic Receipt Structure
 
@@ -142,7 +142,7 @@ The `body_protected`, `payload`, and `signature` fields are copied form the COSE
 The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field
 is included in the Receipt contents to enable the Verifier to re-construct `Countersign_structure`, as specified by the tree algorithm.
 
-By convention, the TS always provides am empty `external_aad`: a zero-length bytestring.
+By convention, the TS always provides an empty `external_aad`: a zero-length bytestring.
 
 Procedure for reconstruction of Countersign_structure:
 
@@ -224,7 +224,7 @@ For all hashes, the Merkle Tree Hash Algorithm found in the service's parameters
 Note that the difference in size between leaves (composed of three hashes) and intermediate tree nodes (two hashes) provides second preimage resistance.
 
 ~~~
-LeafBytes = internal_hash + HASH(internal_data) + HASH(data)
+LeafBytes = internal_hash || HASH(internal_data) || HASH(data)
 ~~~
 
 ### Merkle Inclusion Proofs
@@ -247,8 +247,8 @@ When a client has received an inclusion proof and wishes to verify inclusion of 
 compute_root(leaf_hash, proof):
   h := leaf_hash
   for [left, hash] in proof:
-      h := HASH(hash + h) if left
-           HASH(h + hash) else
+      h := HASH(hash || h) if left
+           HASH(h || hash) else
   return h
 
 verify_proof(leaf_hash, root_hash, proof):
