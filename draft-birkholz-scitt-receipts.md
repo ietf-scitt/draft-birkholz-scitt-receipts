@@ -54,7 +54,7 @@ informative:
 A transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on merkle-tree based operations for global supply chain ledgers. A generic procedure how to produce payloads for signing and validation is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
 
 --- middle
----
+
 # Introduction
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
@@ -97,7 +97,7 @@ At minimum, these parameters include:
 
 A Receipt represents a countersignature issued by a Transparency Service.
 
-The Receipt structure is a CBOR map with two items, in order: 
+The Receipt structure is a CBOR array with two items, in order: 
 
 - `service_id`: The service identifier as tstr.
 
@@ -119,7 +119,7 @@ they all share the same representation of the individual envelopes to be counter
 
 This document uses the principals and structure definitions 
 of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}).
-Each envelope is authenticated using its `Countersign_structure` map,recalled below.
+Each envelope is authenticated using a `Countersign_structure` array, recalled below.
 
 ~~~ cddl
 Countersign_structure = [
@@ -134,9 +134,12 @@ Countersign_structure = [
 ]
 ~~~
 
-body_protected, payload, and signature are of the target COSE_Sign1 message. sign_protected is from the signer, see {{countersign_headers}}. external_aad is always empty (a zero-length byte string).
+The `body_protected`, `payload`, and `signature` fields are copied form the COSE_Sign1 message being countersigned. 
 
-The sign_protected field is embedded in the Receipt contents to be able to re-construct Countersign_structure during validation. This is part of the definition of the tree algorithm.
+The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field 
+is included in the Receipt contents to enable the Verifier to re-construct `Countersign_structure`, as specified by the tree algorithm.
+
+By convention, the TS always provides am empty `external_aad`: a zero-length bytestring.
 
 Procedure for reconstruction of Countersign_structure:
 
@@ -270,11 +273,9 @@ The leaves that represent countersignatures have as data the CBOR-encoded Counte
 LeafBytes = internal_hash + HASH(internal_data) + HASH(cbor(Countersign_structure))
 ~~~
 
-## Receipt Contents Structure
+## Receipt Contents Structure {#ReceiptContents}
 
-The Receipt contents structure is a CBOR array. The fields of the array in order are:
-
-> It is a map, right? 
+The Receipt contents structure is a CBOR array. The items the array in order are:
 
 - `signature`: the signature over the Merkle tree root as bstr.
 
@@ -283,13 +284,13 @@ The Receipt contents structure is a CBOR array. The fields of the array in order
 for the service; in particular, it MUST form a valid X.509 certificate chain with the service certificate. 
 
 - `inclusion_proof`: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope. 
-  - The array MUST have a number of items less than the binary log of the maximal expected size of the ledger. 
+  - The array MUST have at most 64 items.  
   - The inclusion proof structure is an array of \[left, hash\] pairs where `left` indicates the ordering of digests for the intermediate hash compution. The hash MUST be a bytestring of length `HASH_SIZE`.
 
 - `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the 
 countersigner.
-  - `internal_hash` MUST be a bytestring of length `HASH_SIZE`
-  - `internal_data` MUST be a bytestring of length less than `HASH_SIZE + 32`
+  - `internal_hash` MUST be a bytestring of length `HASH_SIZE`;
+  - `internal_data` MUST be a bytestring of length less than 1024. 
 
 The inclusion of an additional, short-lived certificate endorsed by the TS enables flexibility in its distributed implementation, and may support additional CCF-specific auditing. 
 
@@ -324,9 +325,11 @@ the following steps must be followed to verify this Receipt.
 
 For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (see {{parameters}})
 
-1. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
+1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}
 
-2. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the and the CBOR encoding described in {{deterministic-cbor}}.
+2. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
+
+3. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the and the CBOR encoding described in {{deterministic-cbor}}.
 
         LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
 
