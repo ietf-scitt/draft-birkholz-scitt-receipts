@@ -48,6 +48,11 @@ normative:
 
 informative:
   I-D.ietf-cose-countersign:
+  CCF_Merkle_Tree:
+    target: https://microsoft.github.io/CCF/main/architecture/merkle_tree.html
+    title: CCF - Merkle Tree
+    author:
+      ins: Microsoft Research
 
 --- abstract
 
@@ -155,9 +160,7 @@ The following parameters MUST be included in the protected header of the counter
 
 # CCF 2 Tree Algorithm
 
-The CCF 2 tree algorithm documents the algorithm based on a binary Merkle tree over the sequence of all ledger entries that is implemented in the CCF version 2 framework.
-
-> Add non-normative pointer to [CCF v2](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html) ?
+The CCF 2 tree algorithm documents the algorithm based on a binary Merkle tree over the sequence of all ledger entries that is implemented in the CCF version 2 framework (see {{CCF_Merkle_Tree}}).
 
 ## Additional Parameters        {#parameters}
 
