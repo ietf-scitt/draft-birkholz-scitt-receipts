@@ -1247,9 +1247,9 @@ svg [stroke="fill"], svg [fill^="#fff"] {
 </li>
       </ul>
 <p id="section-1-4">From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">Compared with countersignatures on single COSE envelopes, 
+<p id="section-1-5">Compared with countersignatures on single COSE envelopes,
 - Receipts countersign the envelope in context, providing authentication both of the envelope and of its logical position in the authenticated data structure.
-- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents. 
+- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents.
 - Receipts can be issued in bulk, using a single public-key signature for issuing a large number of Receipts.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <div id="requirements-notation">
 <section id="section-1.1">
@@ -1269,8 +1269,8 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
       <h2 id="name-common-parameters">
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-common-parameters" class="section-name selfRef">Common Parameters</a>
       </h2>
-<p id="section-2-1">Verifiers are configured by a collection of parameters 
-to identify a Transparency Service and verify its Receipts. 
+<p id="section-2-1">Verifiers are configured by a collection of parameters
+to identify a Transparency Service and verify its Receipts.
 These parameters <span class="bcp14">MUST</span> be fixed for the lifetime of the Transparency Service
 and securely communicated to all Verifiers.<a href="#section-2-1" class="pilcrow">¶</a></p>
 <p id="section-2-2">At minimum, these parameters include:<a href="#section-2-2" class="pilcrow">¶</a></p>
@@ -1321,7 +1321,7 @@ Receipt = [
       </h2>
 <p id="section-4-1">While the tree algorithms may differ in the way they aggregate multiple envelopes to compute a digest to be signed by the TS,
 they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves).<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">This document uses the principals and structure definitions 
+<p id="section-4-2">This document uses the principals and structure definitions
 of COSE_Sign1 countersigning V2 (<span>[<a href="#I-D.ietf-cose-countersign" class="xref">I-D.ietf-cose-countersign</a>]</span>).
 Each envelope is authenticated using a <code>Countersign_structure</code> array, recalled below.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <div id="section-4-3">
@@ -1339,7 +1339,7 @@ Countersign_structure = [
 </pre><a href="#section-4-3" class="pilcrow">¶</a>
 </div>
 <p id="section-4-4">The <code>body_protected</code>, <code>payload</code>, and <code>signature</code> fields are copied form the COSE_Sign1 message being countersigned.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">The <code>sign_protected</code> field is provided by the TS, see <a href="#countersign_headers" class="xref">Section 4.1</a> below. This field 
+<p id="section-4-5">The <code>sign_protected</code> field is provided by the TS, see <a href="#countersign_headers" class="xref">Section 4.1</a> below. This field
 is included in the Receipt contents to enable the Verifier to re-construct <code>Countersign_structure</code>, as specified by the tree algorithm.<a href="#section-4-5" class="pilcrow">¶</a></p>
 <p id="section-4-6">By convention, the TS always provides am empty <code>external_aad</code>: a zero-length bytestring.<a href="#section-4-6" class="pilcrow">¶</a></p>
 <p id="section-4-7">Procedure for reconstruction of Countersign_structure:<a href="#section-4-7" class="pilcrow">¶</a></p>
@@ -1381,7 +1381,7 @@ is included in the Receipt contents to enable the Verifier to re-construct <code
         <h3 id="name-additional-parameters">
 <a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-additional-parameters" class="section-name selfRef">Additional Parameters</a>
         </h3>
-<p id="section-5.1-1">The algorithm requires that the TS define 
+<p id="section-5.1-1">The algorithm requires that the TS define
 additional parameters:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-2.1">Hash Algorithm: The hash algorithm used in its Merkle Tree (see <a href="#hash-alg-registry" class="xref">Section 9.2.2</a>).<a href="#section-5.1-2.1" class="pilcrow">¶</a>
@@ -1534,7 +1534,7 @@ LeafBytes = internal_hash || HASH(internal_data) || HASH(cbor(Countersign_struct
             <code>signature</code>: the signature over the Merkle tree root as bstr.<a href="#section-5.4-2.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-5.4-2.2">
-            <code>node_certificate</code>: a DER-encoded X.509 certificate for the public key for signature verification. 
+            <code>node_certificate</code>: a DER-encoded X.509 certificate for the public key for signature verification.
 This certificate <span class="bcp14">MUST</span> be a valid CCF node certificate
 for the service; in particular, it <span class="bcp14">MUST</span> form a valid X.509 certificate chain with the service certificate.<a href="#section-5.4-2.2" class="pilcrow">¶</a>
 </li>
@@ -1548,7 +1548,7 @@ for the service; in particular, it <span class="bcp14">MUST</span> form a valid 
             </ul>
 </li>
           <li class="normal" id="section-5.4-2.4">
-            <p id="section-5.4-2.4.1"><code>leaf_info</code>: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the 
+            <p id="section-5.4-2.4.1"><code>leaf_info</code>: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the
 countersigner.<a href="#section-5.4-2.4.1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.4-2.4.2.1">
@@ -1591,7 +1591,7 @@ LeafInfo = [
         <h3 id="name-receipt-verification">
 <a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-receipt-verification" class="section-name selfRef">Receipt Verification</a>
         </h3>
-<p id="section-5.5-1">Given the TS parameters, a signed envelope, and a Receipt for it, 
+<p id="section-5.5-1">Given the TS parameters, a signed envelope, and a Receipt for it,
 the following steps must be followed to verify this Receipt.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 <p id="section-5.5-2">For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (see <a href="#parameters" class="xref">Section 5.1</a>)<a href="#section-5.5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.5-3">
@@ -1636,7 +1636,7 @@ the following steps must be followed to verify this Receipt.<a href="#section-5.
         <h3 id="name-receipt-generation">
 <a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-receipt-generation" class="section-name selfRef">Receipt Generation</a>
         </h3>
-<p id="section-5.6-1">This document provides a reference algorithm for producing valid receipts, 
+<p id="section-5.6-1">This document provides a reference algorithm for producing valid receipts,
 but it omits any discussion of TS registration policy and any CCF-specific implementation details.<a href="#section-5.6-1" class="pilcrow">¶</a></p>
 <p id="section-5.6-2">The algorithm takes as input a list of entries, each entry consisting either of   <code>internal_hash</code>, <code>internal_data</code>, and an optional signed envelope.
 (This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
@@ -1667,8 +1667,8 @@ to produce the list of digests at the next level. This eventually produces a lis
 </li>
         </ol>
 <ul class="normal">
-<li class="normal" id="section-5.6-5.1">Collect an <code>inclusion proof</code> selected from the intermediate hashes as follows: 
-at each level, select the other digest of the pair used to compute the next level, 
+<li class="normal" id="section-5.6-5.1">Collect an <code>inclusion proof</code> selected from the intermediate hashes as follows:
+at each level, select the other digest of the pair used to compute the next level,
 and set <code>left</code> to true if it is the first item in the pair and to <code>false</code> otherwise.<a href="#section-5.6-5.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-5.6-5.2">Produce the receipt contents using this <code>inclusion_proof</code>, the fixed <code>node_certificate</code> and <code>signature</code>, and the bytestrings <code>internal_hash</code> and <code>internal_data</code> provided with the envelope.<a href="#section-5.6-5.2" class="pilcrow">¶</a>

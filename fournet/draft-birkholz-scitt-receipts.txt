@@ -121,8 +121,8 @@ Table of Contents
    the envelope and of its logical position in the authenticated data
    structure. - Receipts are proof of commitment to the whole contents
    of the data structure, even if the Verifier knows only some of its
-   contents.  - Receipts can be issued in bulk, using a single public-
-   key signature for issuing a large number of Receipts.
+   contents. - Receipts can be issued in bulk, using a single public-key
+   signature for issuing a large number of Receipts.
 
 1.1.  Requirements Notation
 
