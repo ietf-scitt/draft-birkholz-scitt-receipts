@@ -1,5 +1,5 @@
 ---
-title: Countersigning Receipts in Support of Trustworthy Supply Chain Ledger Services
+title: Countersigning COSE Envelopes in Transparency Services
 abbrev: SCITT Receipts
 docname: draft-birkholz-scitt-receipts-latest
 stand_alone: true
