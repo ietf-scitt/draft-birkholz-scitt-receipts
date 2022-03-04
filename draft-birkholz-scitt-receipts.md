@@ -59,16 +59,16 @@ A transparent and authentic ledger service in support of a supply chain's integr
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
 
-We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier. 
+We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
 
-> Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS. 
+> Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
 
 From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.
 
-Compared with countersignatures on single COSE envelopes, 
+Compared with countersignatures on single COSE envelopes,
 - Receipts countersign the envelope in context, providing authentication both of the envelope and of its logical position in the authenticated data structure.
-- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents. 
-- Receipts can be issued in bulk, using a single public-key signature for issuing a large number of Receipts. 
+- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents.
+- Receipts can be issued in bulk, using a single public-key signature for issuing a large number of Receipts.
 
 ## Requirements Notation
 
@@ -78,10 +78,10 @@ Compared with countersignatures on single COSE envelopes,
 
 # Common Parameters
 
-Verifiers are configured by a collection of parameters 
-to identify a Transparency Service and verify its Receipts. 
+Verifiers are configured by a collection of parameters
+to identify a Transparency Service and verify its Receipts.
 These parameters MUST be fixed for the lifetime of the Transparency Service
-and securely communicated to all Verifiers. 
+and securely communicated to all Verifiers.
 
 At minimum, these parameters include:
 
@@ -89,13 +89,13 @@ At minimum, these parameters include:
 
 - The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
 
-  > The architecture also has fixed TS registration policies. 
+  > The architecture also has fixed TS registration policies.
 
 # Generic Receipt Structure
 
 A Receipt represents a countersignature issued by a Transparency Service.
 
-The Receipt structure is a CBOR array with two items, in order: 
+The Receipt structure is a CBOR array with two items, in order:
 
 - `service_id`: The service identifier as tstr.
 
@@ -113,9 +113,9 @@ Each tree algorithm MUST define its contents type and procedures for issuing and
 # COSE_Sign1 Countersigning    {#cose_sign1_countersign}
 
 While the tree algorithms may differ in the way they aggregate multiple envelopes to compute a digest to be signed by the TS,
-they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves). 
+they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves).
 
-This document uses the principals and structure definitions 
+This document uses the principals and structure definitions
 of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}).
 Each envelope is authenticated using a `Countersign_structure` array, recalled below.
 
@@ -132,9 +132,9 @@ Countersign_structure = [
 ]
 ~~~
 
-The `body_protected`, `payload`, and `signature` fields are copied form the COSE_Sign1 message being countersigned. 
+The `body_protected`, `payload`, and `signature` fields are copied form the COSE_Sign1 message being countersigned.
 
-The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field 
+The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field
 is included in the Receipt contents to enable the Verifier to re-construct `Countersign_structure`, as specified by the tree algorithm.
 
 By convention, the TS always provides am empty `external_aad`: a zero-length bytestring.
@@ -157,11 +157,11 @@ The following parameters MUST be included in the protected header of the counter
 
 The CCF 2 tree algorithm documents the algorithm based on a binary Merkle tree over the sequence of all ledger entries that is implemented in the CCF version 2 framework.
 
-> Add non-normative pointer to [CCF v2](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html) ? 
+> Add non-normative pointer to [CCF v2](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html) ?
 
 ## Additional Parameters        {#parameters}
 
-The algorithm requires that the TS define 
+The algorithm requires that the TS define
 additional parameters:
 
 - Hash Algorithm: The hash algorithm used in its Merkle Tree (see {{hash-alg-registry}}).
@@ -273,22 +273,22 @@ The Receipt contents structure is a CBOR array. The items the array in order are
 
 - `signature`: the signature over the Merkle tree root as bstr.
 
-- `node_certificate`: a DER-encoded X.509 certificate for the public key for signature verification. 
+- `node_certificate`: a DER-encoded X.509 certificate for the public key for signature verification.
   This certificate MUST be a valid CCF node certificate
-for the service; in particular, it MUST form a valid X.509 certificate chain with the service certificate. 
+for the service; in particular, it MUST form a valid X.509 certificate chain with the service certificate.
 
-- `inclusion_proof`: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope. 
-  - The array MUST have at most 64 items.  
+- `inclusion_proof`: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope.
+  - The array MUST have at most 64 items.
   - The inclusion proof structure is an array of \[left, hash\] pairs where `left` indicates the ordering of digests for the intermediate hash compution. The hash MUST be a bytestring of length `HASH_SIZE`.
 
-- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the 
+- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the
 countersigner.
   - `internal_hash` MUST be a bytestring of length `HASH_SIZE`;
-  - `internal_data` MUST be a bytestring of length less than 1024. 
+  - `internal_data` MUST be a bytestring of length less than 1024.
 
-The inclusion of an additional, short-lived certificate endorsed by the TS enables flexibility in its distributed implementation, and may support additional CCF-specific auditing. 
+The inclusion of an additional, short-lived certificate endorsed by the TS enables flexibility in its distributed implementation, and may support additional CCF-specific auditing.
 
-The internal values passed in `leaf_info` are opaque to the Verifier described in this document, but they may support additional CCF-specific auditing of the ledger. 
+The internal values passed in `leaf_info` are opaque to the Verifier described in this document, but they may support additional CCF-specific auditing of the ledger.
 
 The CDDL fragment that represents the above text follows.
 
@@ -314,7 +314,7 @@ LeafInfo = [
 
 ## Receipt Verification
 
-Given the TS parameters, a signed envelope, and a Receipt for it, 
+Given the TS parameters, a signed envelope, and a Receipt for it,
 the following steps must be followed to verify this Receipt.
 
 For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (see {{parameters}})
@@ -335,20 +335,20 @@ For all steps, Hash refers to the Hash Algorithm selected in the TS parameters (
 
         root := compute_root(LeafHash, inclusion_proof)
 
-6. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from `sign_protected` to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters. 
+6. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from `sign_protected` to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.
 
 7. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
 
-The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.  
+The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.
 
 ## Receipt Generation
 
-This document provides a reference algorithm for producing valid receipts, 
-but it omits any discussion of TS registration policy and any CCF-specific implementation details. 
+This document provides a reference algorithm for producing valid receipts,
+but it omits any discussion of TS registration policy and any CCF-specific implementation details.
 
 The algorithm takes as input a list of entries, each entry consisting either of   `internal_hash`, `internal_data`, and an optional signed envelope.
 (This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
-For simplicity, we assume the list is of size `2^N`. 
+For simplicity, we assume the list is of size `2^N`.
 
 The following steps must be followed to generate a Receipt after the tree root has been signed:
 
@@ -359,25 +359,25 @@ The following steps must be followed to generate a Receipt after the tree root h
         for each item in the list:
           if the envelope is present:
             LeafBytes := internal_hash || HASH(internal_data) HASH(cbor(Countersign_structure))
-          else  
-            LeafBytes := internal_hash || HASH(internal_data) 
+          else
+            LeafBytes := internal_hash || HASH(internal_data)
           LeafHash := HASH(Leaf)
 
 3. Given the resulting list of `2^N` digests, build a binary tree of intermediate digests, one level at a time, by hashing every pair of digests form the list
-to produce the list of digests at the next level. This eventually produces a list that includes a single digest: the root of the tree. 
+to produce the list of digests at the next level. This eventually produces a list that includes a single digest: the root of the tree.
 
-4. Select a valid `node_certificate` and compute a `signature` of the root of the tree with the corresponding signing key. 
+4. Select a valid `node_certificate` and compute a `signature` of the root of the tree with the corresponding signing key.
 
-4. For each signed envelope provided in the input, 
+4. For each signed envelope provided in the input,
 
-  - Collect an `inclusion proof` selected from the intermediate hashes as follows: 
-at each level, select the other digest of the pair used to compute the next level, 
-and set `left` to true if it is the first item in the pair and to `false` otherwise. 
+  - Collect an `inclusion proof` selected from the intermediate hashes as follows:
+at each level, select the other digest of the pair used to compute the next level,
+and set `left` to true if it is the first item in the pair and to `false` otherwise.
 
   - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
 
   - Produce the receipt using the Service Identifier and this receipt contents.
-  
+
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
