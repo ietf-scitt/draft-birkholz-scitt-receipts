@@ -54,7 +54,7 @@ informative:
 A transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on merkle-tree based operations for global supply chain ledgers. A generic procedure how to produce payloads for signing and validation is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
 
 --- middle
-
+---
 # Introduction
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
@@ -276,13 +276,24 @@ The Receipt contents structure is a CBOR array. The fields of the array in order
 
 > It is a map, right? 
 
-- signature: The signature over the Merkle tree root as bstr.
+- `signature`: the signature over the Merkle tree root as bstr.
 
-- node_certificate: DER-encoded X.509 certificate of the CCF node that generated the signature. A node certificate is endorsed by the service certificate.
+- `node_certificate`: a DER-encoded X.509 certificate for the public key for signature verification. 
+  This certificate MUST be a valid CCF node certificate
+for the service; in particular, it MUST form a valid X.509 certificate chain with the service certificate. 
 
-- inclusion_proof: The Merkle proof for the leaf as an array of \[left, hash\] pairs.
+- `inclusion_proof`: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope. 
+  - The array MUST have a number of items less than the binary log of the maximal expected size of the ledger. 
+  - The inclusion proof structure is an array of \[left, hash\] pairs where `left` indicates the ordering of digests for the intermediate hash compution. The hash MUST be a bytestring of length `HASH_SIZE`.
 
-- leaf_info: Information about the leaf that is needed to reconstruct the leaf bytes: the internal hash, the internal data, and the protected header of the countersigner.
+- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the 
+countersigner.
+  - `internal_hash` MUST be a bytestring of length `HASH_SIZE`
+  - `internal_data` MUST be a bytestring of length less than `HASH_SIZE + 32`
+
+The inclusion of an additional, short-lived certificate endorsed by the TS enables flexibility in its distributed implementation, and may support additional CCF-specific auditing. 
+
+The internal values passed in `leaf_info` are opaque to the Verifier described in this document, but they may support additional CCF-specific auditing of the ledger. 
 
 The CDDL fragment that represents the above text follows.
 
@@ -326,9 +337,10 @@ The following steps must be followed to generate a Receipt after the tree root h
 
 ## Receipt Verification
 
-The following steps must be followed to verify a Receipt:
+Given the TS parameters, a signed envelope, and a Receipt for it, 
+the following steps must be followed to verify this Receipt:
 
-1. Construct a Countersign_structure according to {{cose_sign1_countersign}}, using sign_protected from the leaf_info field of the receipt contents.
+1. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
 
 2. Compute LeafBytes as concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of Countersign_structure, using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}) and the CBOR encoding described in {{deterministic-cbor}}.
 
@@ -346,7 +358,7 @@ The following steps must be followed to verify a Receipt:
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
-In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in {{Section 4.2.1 of RFC8949}} MUST be used.
+In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in {{Section 4.2.1 of RFC8949}} MUST be used for all their CBOR structures.
 
 # Privacy Considerations
 
