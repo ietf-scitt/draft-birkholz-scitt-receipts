@@ -272,7 +272,7 @@ LeafBytes = internal_hash || HASH(internal_data) || HASH(cbor(Countersign_struct
 
 ## Receipt Contents Structure {#ReceiptContents}
 
-The Receipt contents structure is a CBOR array. The items the array in order are:
+The Receipt contents structure is a CBOR array. The items of the array in order are:
 
 - `signature`: the signature over the Merkle tree root as bstr.
 
@@ -349,7 +349,7 @@ The Verifier SHOULD apply additional checks before accepting the countersigned e
 This document provides a reference algorithm for producing valid receipts,
 but it omits any discussion of TS registration policy and any CCF-specific implementation details.
 
-The algorithm takes as input a list of entries, each entry consisting either of   `internal_hash`, `internal_data`, and an optional signed envelope.
+The algorithm takes as input a list of entries, each entry consisting of `internal_hash`, `internal_data`, and an optional signed envelope.
 (This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
 For simplicity, we assume the list is of size `2^N`.
 
