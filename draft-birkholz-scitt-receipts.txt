@@ -5,10 +5,10 @@
 TBD                                                          H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                             M. Riechert
-Expires: 5 September 2022                             A. Delignat-Lavaud
+Expires: 8 September 2022                             A. Delignat-Lavaud
                                                               C. Fournet
                                                                Microsoft
-                                                            4 March 2022
+                                                            7 March 2022
 
 
          Countersigning COSE Envelopes in Transparency Services
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 September 2022.
+   This Internet-Draft will expire on 8 September 2022.
 
 Copyright Notice
 
@@ -193,7 +193,7 @@ Table of Contents
        ]
    ]
 
-   The body_protected, payload, and signature fields are copied form the
+   The body_protected, payload, and signature fields are copied from the
    COSE_Sign1 message being countersigned.
 
    The sign_protected field is provided by the TS, see Section 4.1
@@ -334,14 +334,20 @@ Table of Contents
    ledger entries into the leaf bytestrings passed as input to the
    Merkle Tree function.
 
-   Each bytestring is computed from three inputs: - internal_hash: a
-   string of HASH_LEN bytes; - internal_data: a string of at most 1024
-   bytes; and - data: either the CBOR-encoded Countersign_structure of
-   the signed envelope, using the CBOR encoding described in Section 6,
-   or the empty bytestring for auxiliary ledger entries.
+   Each bytestring is computed from three inputs:
 
-   as the concatenation of three hashes: ~~~ LeafBytes =
-   internal_hash || HASH(internal_data) || HASH(data) ~~~
+   *  internal_hash: a string of HASH_SIZE bytes;
+
+   *  internal_data: a string of at most 1024 bytes; and
+
+   *  data_hash: either the HASH of the CBOR-encoded
+      Countersign_structure of the signed envelope, using the CBOR
+      encoding described in Section 6, or a bytestring of size HASH_SIZE
+      filled with zeroes for auxiliary ledger entries.
+
+   as the concatenation of three hashes:
+
+   LeafBytes = internal_hash || HASH(internal_data) || data_hash
 
    This ensures that leaf bytestrings are always distinct from the
    inputs of the intermediate computations in MTH, which always consist
@@ -462,7 +468,7 @@ Table of Contents
    The algorithm takes as input a list of entries to be jointly
    countersigned, each entry consisting of internal_hash, internal_data,
    and an optional signed envelope.  (This optional item reflects that a
-   CCF ledger records both signed envelopes and internal entries.)
+   CCF ledger records both signed envelopes and auxiliary entries.)
 
    1.  For each signed envelope, compute the Countersign_structure as
        described in Section 4.
@@ -471,7 +477,7 @@ Table of Contents
        concatenation of the internal hash, the hash of internal data
        and, if the envelope is present, the hash of the CBOR-encoding of
        Countersign_structure, using the CBOR encoding described in
-       Section 6.
+       Section 6, otherwise a HASH_SIZE bytestring of zeroes.
 
    3.  Compute the tree root hash by applying MTH to the resulting list
        of leaf bytestrings, keeping the results for all intermediate
@@ -482,15 +488,15 @@ Table of Contents
 
    5.  For each signed envelope provided in the input,
 
-   *  Collect an inclusion proof by selecting intermediate hash values,
-      as described above.
+       *  Collect an inclusion_proof by selecting intermediate hash
+          values, as described above.
 
-   *  Produce the receipt contents using this inclusion_proof, the fixed
-      node_certificate and signature, and the bytestrings internal_hash
-      and internal_data provided with the envelope.
+       *  Produce the receipt contents using this inclusion_proof, the
+          fixed node_certificate and signature, and the bytestrings
+          internal_hash and internal_data provided with the envelope.
 
-   *  Produce the receipt using the Service Identifier and this receipt
-      contents.
+       *  Produce the receipt using the Service Identifier and this
+          receipt contents.
 
 6.  CBOR Encoding Restrictions
 
