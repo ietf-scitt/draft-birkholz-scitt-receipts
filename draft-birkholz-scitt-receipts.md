@@ -137,7 +137,7 @@ Countersign_structure = [
 ]
 ~~~
 
-The `body_protected`, `payload`, and `signature` fields are copied form the COSE_Sign1 message being countersigned.
+The `body_protected`, `payload`, and `signature` fields are copied from the COSE_Sign1 message being countersigned.
 
 The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field
 is included in the Receipt contents to enable the Verifier to re-construct `Countersign_structure`, as specified by the tree algorithm.
@@ -239,13 +239,15 @@ This section describes the encoding of signed envelopes and auxiliary ledger ent
 into the leaf bytestrings passed as input to the Merkle Tree function.
 
 Each bytestring is computed from three inputs:
-- `internal_hash`: a string of HASH_LEN bytes;
+
+- `internal_hash`: a string of HASH_SIZE bytes;
 - `internal_data`: a string of at most 1024 bytes; and
-- `data`: either the CBOR-encoded Countersign_structure of the signed envelope, using the CBOR encoding described in {{deterministic-cbor}}, or the empty bytestring for auxiliary ledger entries.
+- `data_hash`: either the HASH of the CBOR-encoded Countersign_structure of the signed envelope, using the CBOR encoding described in {{deterministic-cbor}}, or a bytestring of size HASH_SIZE filled with zeroes for auxiliary ledger entries.
 
 as the concatenation of three hashes:
+
 ~~~
-LeafBytes = internal_hash || HASH(internal_data) || HASH(data)
+LeafBytes = internal_hash || HASH(internal_data) || data_hash
 ~~~
 
 This ensures that leaf bytestrings are always distinct from the inputs of the intermediate computations in MTH, which always consist of two hashes, and also that leaf bytestrings for signed envelopes and for auxiliary ledger entries are always distinct.
@@ -328,11 +330,11 @@ This document provides a reference algorithm for producing valid receipts,
 but it omits any discussion of TS registration policy and any CCF-specific implementation details.
 
 The algorithm takes as input a list of entries to be jointly countersigned, each entry consisting of `internal_hash`, `internal_data`, and an optional signed envelope.
-(This optional item reflects that a CCF ledger records both signed envelopes and internal entries.)
+(This optional item reflects that a CCF ledger records both signed envelopes and auxiliary entries.)
 
 1. For each signed envelope, compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
 
-2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}.
+2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}, otherwise a HASH_SIZE bytestring of zeroes.
 
 3. Compute the tree root hash by applying MTH to the resulting list of leaf bytestrings,
   keeping the results for all intermediate HASH values.
@@ -341,11 +343,11 @@ The algorithm takes as input a list of entries to be jointly countersigned, each
 
 4. For each signed envelope provided in the input,
 
-  - Collect an `inclusion proof` by selecting intermediate hash values, as described above.
+    - Collect an `inclusion_proof` by selecting intermediate hash values, as described above.
 
-  - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
+    - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
 
-  - Produce the receipt using the Service Identifier and this receipt contents.
+    - Produce the receipt using the Service Identifier and this receipt contents.
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
