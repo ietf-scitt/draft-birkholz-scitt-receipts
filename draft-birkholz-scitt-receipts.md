@@ -355,11 +355,11 @@ In order to always regenerate the same byte string for the "to be signed" and "t
 
 # Privacy Considerations
 
-Privacy Considerations
+TBD
 
 # Security Considerations
 
-Security Considerations
+TBD
 
 # IANA Considerations
 
