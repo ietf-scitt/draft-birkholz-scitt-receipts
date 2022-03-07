@@ -507,11 +507,11 @@ Table of Contents
 
 7.  Privacy Considerations
 
-   Privacy Considerations
+   TBD
 
 8.  Security Considerations
 
-   Security Considerations
+   TBD
 
 9.  IANA Considerations
 
