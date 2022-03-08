@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-03-06T01:07:58.732059+00:00",
+  "timestamp": "2022-03-08T01:07:22.914112+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -540,6 +540,34 @@
           ]
         }
       ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOG2uaB840Cq3j",
+      "title": "Minor tweaks",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/4",
+      "state": "MERGED",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-07T13:25:14Z",
+      "updatedAt": "2022-03-07T15:57:58Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "5f9209a84a2862d4444f7af99efb0b83c40f861d",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "minor-tweaks",
+      "headRefOid": "64d496298bd451449fc48d9003fa757877ad3c4a",
+      "closedAt": "2022-03-07T15:57:55Z",
+      "mergedAt": "2022-03-07T15:57:55Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "b61fce5d7aef4cd5de7dae945f96e830b35ddfc0"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
