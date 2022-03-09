@@ -5,10 +5,10 @@
 TBD                                                          H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                             M. Riechert
-Expires: 8 September 2022                             A. Delignat-Lavaud
+Expires: 10 September 2022                            A. Delignat-Lavaud
                                                               C. Fournet
                                                                Microsoft
-                                                            7 March 2022
+                                                            9 March 2022
 
 
          Countersigning COSE Envelopes in Transparency Services
@@ -20,9 +20,9 @@ Abstract
    chain's integrity, transparency, and trust requires all peers that
    contribute to the ledgers operations to be trustworthy and authentic.
    In this document, a countersigning variant is specified that enables
-   trust assertions on merkle-tree based operations for global supply
-   chain ledgers.  A generic procedure how to produce payloads for
-   signing and validation is defined and leverages solutions and
+   trust assertions on Merkle-tree based operations for global supply
+   chain ledgers.  A generic procedure for producing payloads to be
+   signed and validated is defined and leverages solutions and
    principles from the Concise Signing and Encryption (COSE) space.
 
 Discussion Venues
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 September 2022.
+   This Internet-Draft will expire on 10 September 2022.
 
 Copyright Notice
 
