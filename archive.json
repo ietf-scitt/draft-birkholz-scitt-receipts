@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-03-08T01:07:22.914112+00:00",
+  "timestamp": "2022-03-10T01:15:47.170178+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -568,6 +568,68 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOG2uaB840Li_j",
+      "title": "Grammar suggestion for the abstract",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/5",
+      "state": "MERGED",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-09T15:30:29Z",
+      "updatedAt": "2022-03-09T21:04:26Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "52f273acc94bf0c419b11a5eb05411f51b5b5cb4",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "achamayou-grammar-suggestion",
+      "headRefOid": "f0c5d2d7313a7087827f71da7bf43cc8660209c4",
+      "closedAt": "2022-03-09T21:04:26Z",
+      "mergedAt": "2022-03-09T21:04:26Z",
+      "mergedBy": "henkbirkholz",
+      "mergeCommit": {
+        "oid": "4bdc64d1cf4a58f77ca301a4831d368b7c4aa828"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB8417vft",
+          "commit": {
+            "abbreviatedOid": "f658f94"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-09T19:14:04Z",
+          "updatedAt": "2022-03-09T19:14:05Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nA transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on Merkle-tree based operations for global supply chain ledgers. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.\r\n```",
+              "createdAt": "2022-03-09T19:14:04Z",
+              "updatedAt": "2022-03-09T19:14:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB8418Oti",
+          "commit": {
+            "abbreviatedOid": "f0c5d2d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-03-09T21:03:38Z",
+          "updatedAt": "2022-03-09T21:03:38Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
