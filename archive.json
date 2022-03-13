@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-03-10T01:15:47.170178+00:00",
+  "timestamp": "2022-03-13T01:07:12.880628+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -630,6 +630,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOG2uaB840O-d8",
+      "title": "Minor typo and formatting change",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/6",
+      "state": "OPEN",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The first change is to address the fact that the current .md renders correctly as bullet list on Github but not in other contexts such as https://www.ietf.org/archive/id/draft-birkholz-scitt-receipts-00.html",
+      "createdAt": "2022-03-10T12:15:11Z",
+      "updatedAt": "2022-03-10T12:15:11Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "4bdc64d1cf4a58f77ca301a4831d368b7c4aa828",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "achamayou-typo",
+      "headRefOid": "239c3122a96ceaddf34b277c92f00525f1502b51",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
