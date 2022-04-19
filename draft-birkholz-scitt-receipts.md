@@ -70,7 +70,7 @@ We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transpa
 
 From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.
 
-Compared with countersignatures on single COSE envelopes:
+Compared with countersignatures on single COSE envelopes,
 
 - Receipts countersign the envelope in context, providing authentication both of the envelope and of its logical position in the authenticated data structure.
 - Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents.
