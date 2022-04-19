@@ -376,9 +376,9 @@ Name: COSE_Sign1 Countersign receipt
 
 Label: TBD
 
-Value Type: Receipt / \[+ Receipt\]
+Value Type: \[+ Receipt\]
 
-Description: A COSE_Sign1 Countersign Receipt to be embedded in the unprotected header of the countersigned COSE_Sign1 message.
+Description: One or more COSE_Sign1 Countersign Receipts to be embedded in the unprotected header of the countersigned COSE_Sign1 message.
 
 #### Issued At
 
