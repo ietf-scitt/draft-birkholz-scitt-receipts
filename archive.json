@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-04-17T01:35:22.321251+00:00",
+  "timestamp": "2022-04-24T01:24:45.461513+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -581,7 +581,7 @@
       "labels": [],
       "body": "",
       "createdAt": "2022-03-09T15:30:29Z",
-      "updatedAt": "2022-03-09T21:04:26Z",
+      "updatedAt": "2022-04-19T14:52:04Z",
       "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
       "baseRefName": "main",
       "baseRefOid": "52f273acc94bf0c419b11a5eb05411f51b5b5cb4",
@@ -636,20 +636,69 @@
       "id": "PR_kwDOG2uaB840O-d8",
       "title": "Minor typo and formatting change",
       "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/6",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "achamayou",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The first change is to address the fact that the current .md renders correctly as bullet list on Github but not in other contexts such as https://www.ietf.org/archive/id/draft-birkholz-scitt-receipts-00.html",
       "createdAt": "2022-03-10T12:15:11Z",
-      "updatedAt": "2022-03-10T12:15:11Z",
+      "updatedAt": "2022-04-19T14:51:51Z",
       "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
       "baseRefName": "main",
       "baseRefOid": "4bdc64d1cf4a58f77ca301a4831d368b7c4aa828",
       "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
       "headRefName": "achamayou-typo",
-      "headRefOid": "239c3122a96ceaddf34b277c92f00525f1502b51",
+      "headRefOid": "b531cdaa13daa27ab741b77b2d7f796c89f16eb4",
+      "closedAt": "2022-04-19T14:51:47Z",
+      "mergedAt": "2022-04-19T14:51:47Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "6cf20391b2ce938b1a7495ec2d3a6eea470c791c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB844YIdW",
+          "commit": {
+            "abbreviatedOid": "239c312"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-04-19T14:51:12Z",
+          "updatedAt": "2022-04-19T14:51:27Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I think the comma makes more sense here.\r\n```suggestion\r\nCompared with countersignatures on single COSE envelopes,\r\n```",
+              "createdAt": "2022-04-19T14:51:13Z",
+              "updatedAt": "2022-04-19T14:51:27Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOG2uaB842brnb",
+      "title": "Simplify receipt header parameter",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/7",
+      "state": "OPEN",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Allowing both a receipt and an array of receipts as type is ambiguous here since the receipt is an array itself and not wrapped, so distinguishing the two cases wouldn't work. Having a single type also simplifies client code.",
+      "createdAt": "2022-04-19T14:57:16Z",
+      "updatedAt": "2022-04-19T14:57:17Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "6cf20391b2ce938b1a7495ec2d3a6eea470c791c",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "letmaik/receipts-param",
+      "headRefOid": "934d30faa14383fe0c49aaed79c4128ccc8b4bb7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
