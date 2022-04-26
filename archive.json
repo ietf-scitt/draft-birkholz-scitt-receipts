@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-04-24T01:24:45.461513+00:00",
+  "timestamp": "2022-04-26T01:46:52.423466+00:00",
   "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 8,
+      "id": "I_kwDOG2uaB85IVfrJ",
+      "title": "Policy of Tree Algorithms IANA registry",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/issues/8",
+      "state": "OPEN",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "From https://mailarchive.ietf.org/arch/msg/scitt/bCi2TJZ65B9ltLKaEftm_ePxwL8/.\r\n\r\nBen suggested that the Tree Algorithms registry should have a lenient policy like \"Expert Review\", or \"Specification Required\", or even \"First Come, First Served\". Currently it's TBD. The reasoning being that the purpose of the registry \"seems to be to avoid collisions rather than to reliably avoid duplication of effort\". This issue tracks the discussion.\r\n\r\nNote that there are two other proposed registries for hash and signature algorithms, but we can deal with them later on.",
+      "createdAt": "2022-04-24T09:06:52Z",
+      "updatedAt": "2022-04-24T09:06:52Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
