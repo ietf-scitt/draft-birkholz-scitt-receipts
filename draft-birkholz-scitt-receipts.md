@@ -65,7 +65,7 @@ A transparent and authentic ledger service in support of a supply chain's integr
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
 
-We adopt the terminology of An Architecture for Trustworthy and Transparent Digital Supply Chains (see {{I-D.birkholz-scitt-architecture}}) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
+We adopt the terminology of the Supply Chain integrity, Transparency, and Trust architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
 
 > [TODO] Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
 
