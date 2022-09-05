@@ -48,6 +48,7 @@ normative:
 
 informative:
   I-D.ietf-cose-countersign:
+  I-D.birkholz-scitt-architecture:
   CCF_Merkle_Tree:
     target: https://microsoft.github.io/CCF/main/architecture/merkle_tree.html
     title: CCF - Merkle Tree
@@ -64,7 +65,7 @@ A transparent and authentic ledger service in support of a supply chain's integr
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
 
-We adopt the terminology of [architecture](pointer) for Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
+We adopt the terminology of the Supply Chain integrity, Transparency, and Trust (SCITT) architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
 
 > [TODO] Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
 
@@ -91,9 +92,9 @@ and securely communicated to all Verifiers.
 
 At minimum, these parameters include:
 
-- a Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and can be used to securely retrive all other Service parameters.
+- a Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and can be used to securely retrieve all other Service parameters.
 
-- The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
+- The Tree algorithm used for issuing receipts, and its additional parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
 
   > [TODO] The architecture also has fixed TS registration policies.
 
@@ -121,7 +122,7 @@ Each tree algorithm MUST define its contents type and procedures for issuing and
 While the tree algorithms may differ in the way they aggregate multiple envelopes to compute a digest to be signed by the TS,
 they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves).
 
-This document uses the principals and structure definitions
+This document uses the principles and structure definitions
 of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}).
 Each envelope is authenticated using a `Countersign_structure` array, recalled below.
 
@@ -213,7 +214,7 @@ where:
 ### Merkle Inclusion Proofs
 
 A Merkle inclusion proof for a leaf in a Merkle Tree is the shortest list of intermediate hash values required to re-compute the tree root hash
-form the digest of the leaf bytestring. Each node in the tree is either a leaf node or is computed from the two nodes immediately below it (i.e., towards the leaves). At each step up the tree (towards the root), a node from the inclusion proof is combined with the node computed so far. In other words, the inclusion proof consists of the list of missing nodes required to compute the nodes leading from a leaf to the root of the tree. If the root computed from the inclusion proof matches the true root, then the inclusion proof proves that the leaf exists in the tree.
+from the digest of the leaf bytestring. Each node in the tree is either a leaf node or is computed from the two nodes immediately below it (i.e., towards the leaves). At each step up the tree (towards the root), a node from the inclusion proof is combined with the node computed so far. In other words, the inclusion proof consists of the list of missing nodes required to compute the nodes leading from a leaf to the root of the tree. If the root computed from the inclusion proof matches the true root, then the inclusion proof proves that the leaf exists in the tree.
 
 #### Verifying an Inclusion Proof
 
@@ -253,7 +254,7 @@ LeafBytes = internal_hash || HASH(internal_data) || data_hash
 
 This ensures that leaf bytestrings are always distinct from the inputs of the intermediate computations in MTH, which always consist of two hashes, and also that leaf bytestrings for signed envelopes and for auxiliary ledger entries are always distinct.
 
-The `internal_hash` and `internal_data` bytestrings are internal to the CCF implementation Similarly, the auxiliary ledger entries are internal to CCF. They are opaque to receipt Verifiers, but they commit the TS to the whole ledger contents and may be used for additional, CCF-specific auditing.
+The `internal_hash` and `internal_data` bytestrings are internal to the CCF implementation. Similarly, the auxiliary ledger entries are internal to CCF. They are opaque to receipt Verifiers, but they commit the TS to the whole ledger contents and may be used for additional, CCF-specific auditing.
 
 ## Receipt Contents Structure {#ReceiptContents}
 
@@ -303,7 +304,7 @@ LeafInfo = [
 Given the TS parameters, a signed envelope, and a Receipt for it,
 the following steps must be followed to verify this Receipt.
 
-1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}
+1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
 
 2. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
 
