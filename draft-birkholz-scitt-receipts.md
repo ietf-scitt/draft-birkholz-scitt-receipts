@@ -57,7 +57,7 @@ informative:
 
 --- abstract
 
-A transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on Merkle-tree based operations for global supply chain ledgers. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
+A transparent and authentic Transparent Registry service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the Registry operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on Merkle-tree based operations for global supply chain registries. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
 
 --- middle
 
@@ -65,7 +65,7 @@ A transparent and authentic ledger service in support of a supply chain's integr
 
 This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
 
-We adopt the terminology of the Supply Chain integrity, Transparency, and Trust (SCITT) architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Claim, Envelope, Transparency Service, Ledger, Receipt, and Verifier.
+We adopt the terminology of the Supply Chain Integrity, Transparency, and Trust (SCITT) architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Claim, Envelope, Transparency Service, Registry, Receipt, and Verifier.
 
 > [TODO] Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
 
