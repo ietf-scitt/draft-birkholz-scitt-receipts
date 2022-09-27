@@ -54,28 +54,27 @@ informative:
     title: CCF - Merkle Tree
     author:
       ins: Microsoft Research
+  DID:
+    target: https://www.w3.org/TR/did-core/
+    title: W3C Decentralized Identifiers
 
 --- abstract
 
-A transparent and authentic Transparent Registry service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the Registry operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on Merkle-tree based operations for global supply chain registries. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
+A transparent and authentic Transparency Service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the Registry operations to be trustworthy and authentic. In this document, a COSE signature algorithm and COSE profile are specified that enable trust assertions on Merkle-tree based operations for global supply chain registries. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.
+
+TODO rewrite abstract, main points are:
+- use standard COSE countersignatures for TS receipts
+- support specific transparency service types through existing and new signature algorithms
+- define a new algorithm for CCF-based transparency services
+- rely on COSE header and profiling for key identification and discovery
 
 --- middle
 
 # Introduction
 
-This document defines a method for issuing and verifying countersignatures on COSE_Sign1 messages included in an authenticated data structure such as a Merkle Tree.
+We adopt the terminology of the Supply Chain Integrity, Transparency, and Trust (SCITT) architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Transparency Service, Registry, Envelope, Receipt, and Verifier.
 
-We adopt the terminology of the Supply Chain Integrity, Transparency, and Trust (SCITT) architecture document (An Architecture for Trustworthy and Transparent Digital Supply Chains, see {{I-D.birkholz-scitt-architecture}}): Claim, Envelope, Transparency Service, Registry, Receipt, and Verifier.
-
-> [TODO] Do we need to explain or introduce them here? We may also define Tree (our shorthand for authenticated data structure), Root (a succinct commitment to the Tree, e.g., a hand) and use Issuer instead of TS.
-
-From the Verifier's viewpoint, a Receipt is similar to a countersignature V2 on a single signed message: it is a universally-verifiable cryptographic proof of endorsement of the signed envelope by the countersigner.
-
-Compared with countersignatures on single COSE envelopes,
-
-- Receipts countersign the envelope in context, providing authentication both of the envelope and of its logical position in the authenticated data structure.
-- Receipts are proof of commitment to the whole contents of the data structure, even if the Verifier knows only some of its contents.
-- Receipts can be issued in bulk, using a single public-key signature for issuing a large number of Receipts.
+This document defines Receipts issued by Transparency Services as a profile of COSE_Sign1 countersignatures ({{I-D.ietf-cose-countersign}}). Different Transparency Service types may rely on different authenticated data structures and processes. Those are supported through existing and new signature algorithms. This document defines a first new signature algorithm for CCF-compatible Transparency Services.
 
 ## Requirements Notation
 
@@ -83,99 +82,69 @@ Compared with countersignatures on single COSE envelopes,
 
 {: #mybody}
 
-# Common Parameters
+# COSE_Sign1 Countersignature Profile
 
-Verifiers are configured by a collection of parameters
-to identify a Transparency Service and verify its Receipts.
-These parameters MUST be fixed for the lifetime of the Transparency Service
-and securely communicated to all Verifiers.
+A receipt acknowledges the registration of a COSE_Sign1 message in a Transparency Service and is represented as a COSE_Countersignature structure following {{I-D.ietf-cose-countersign}}. This section defines the contents of the COSE headers of the countersigner (the Transparency Service) and how they can be used to identify and/or discover the public key needed for signature verification and establish the identity of the countersigner needed for evaluation of further policies in verifiers. It also provides methods for carrying the countersignature either within or outside the countersigned COSE_Sign1 envelope.
 
-At minimum, these parameters include:
-
-- a Service identifier: An opaque identifier (e.g. UUID) that uniquely identifies the service and can be used to securely retrieve all other Service parameters.
-
-- The Tree algorithm used for issuing receipts, and its additional parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.
-
-  > [TODO] The architecture also has fixed TS registration policies.
-
-# Generic Receipt Structure
-
-A Receipt represents a countersignature issued by a Transparency Service.
-
-The Receipt structure is a CBOR array with two items, in order:
-
-- `service_id`: The service identifier as tstr.
-
-- `contents`: The proof as a CBOR structure determined by the tree algorithm.
+For reference, the CDDL of the COSE_Countersignature structure is repeated here:
 
 ~~~ cddl
-Receipt = [
-  service_id: tstr,
-  contents: any
+COSE_Countersignature = COSE_Signature
+COSE_Signature = [
+    protected : empty_or_serialized_map,
+    unprotected : header_map
+    signature : bstr
 ]
+header_map = {
+    * label => values
+}
+empty_or_serialized_map = bstr .cbor header_map / bstr .size 0
+label = int / tstr
+values = any
 ~~~
 
-Each tree algorithm MUST define its contents type and procedures for issuing and verifying a receipt.
+## Header parameters
 
-# COSE_Sign1 Countersigning    {#cose_sign1_countersign}
+The following parameters MUST always be included in the protected header:
+- alg (label: 1): The signing algorithm that was used.
+- Profile (label: TBD, temporary: -67550): COSE profile as CBOR array of name and version: ["SCITT-Receipt", 1].
+- Issued At (label: TBD, temporary: -67570): The time at which the countersignature was issued as the number of seconds from 1970-01-01T00:00:00Z UTC, ignoring leap seconds, represented as CBOR integer. [TODO] should this be registered outside of SCITT for wider re-use?
 
-While the tree algorithms may differ in the way they aggregate multiple envelopes to compute a digest to be signed by the TS,
-they all share the same representation of the individual envelopes to be countersigned (intuitively, their leaves).
+If the Transparency Service uses {{DID}} (DIDs) to identify itself as issuer of the countersignature, then the following parameters MUST be included in the protected header:
+- Issuer (label: TBD, temporary: -67560): The DID of the countersigner as CBOR tstr. Example: "did:example:12345".
+- kid (label: 4): The DID URL relative to the Issuer DID that identifies the verification method (public key) within the DID document of the countersigner, UTF-8 encoded within a bstr (Note: this is not a CBOR tstr!). Example: b"#abcde".
 
-This document uses the principles and structure definitions
-of COSE_Sign1 countersigning V2 ({{I-D.ietf-cose-countersign}}).
-Each envelope is authenticated using a `Countersign_structure` array, recalled below.
+To obtain the public key needed for signature verification when using a DID as identifier, verifiers carry out DID resolution as described in {{DID}} using the Issuer parameter as DID, followed by key selection using the UTF-8 decoded kid parameter.
 
-~~~ cddl
-Countersign_structure = [
-    context: "CounterSignatureV2",
-    body_protected: empty_or_serialized_map,
-    sign_protected: empty_or_serialized_map,
-    external_aad: bstr,
-    payload: bstr,
-    other_fields: [
-        signature: bstr
-    ]
-]
-~~~
+If the Transparency Service uses a unique but opaque identifier to identify itself, then the following parameters MUST be included in the protected header:
+- kid (label: 4): The opaque text identifier of the Transparency Service, UTF-8 encoded within a bstr (Note: this is not a tstr!). Example: b"893u28hj89few9hn98dfs89".
 
-The `body_protected`, `payload`, and `signature` fields are copied from the COSE_Sign1 message being countersigned.
+To obtain the public key needed for signature verification with opaque identifiers, verifiers look-up the key in their local trust store that matches the given UTF-8 decoded kid. Note that this variant mirrors the Log ID concept in Certificate Transparency logs (see RFC 9162).
 
-The `sign_protected` field is provided by the TS, see {{countersign_headers}} below. This field
-is included in the Receipt contents to enable the Verifier to re-construct `Countersign_structure`, as specified by the tree algorithm.
+## Carrying receipts
 
-By convention, the TS always provides an empty `external_aad`: a zero-length bytestring.
+This document defines two methods to carry receipts:
 
-Procedure for reconstruction of Countersign_structure:
+- Embedded in the header of the countersigned envelope
+- Separated outside the countersigned envelope
 
-1. Let Target be the COSE_Sign1 message that corresponds to the countersignature. Different environments will have different mechanisms to achieve this. One obvious mechanism is to embed the Receipt in the unprotected header of Target. Another mechanism may be to store both artifacts separately and use a naming convention, database, or other method to link both together.
+{{I-D.ietf-cose-countersign}} defines the header parameter to embed a receipt as a standard countersignature in the unprotected header of the countersigned envelope. Note that the parameter may already exist in the envelope and existing countersignatures should not be removed. A receipt can be distinguished from other countersignatures by inspecting the Profile header parameter. Note that embedded countersignatures are not tagged since the header parameter uniquely identifies the type of the countersignature.
 
-2. Extract body_protected, payload, and signature from Target.
+A receipt can also be carried outside of the countersigned envelope. In this case, the receipt should be tagged as COSE_Countersignature_Tagged (see {{I-D.ietf-cose-countersign}}) to aid identification and versioning.
 
-3. Create a Countersign_structure using the extracted fields from Target, and sign_protected from the Receipt contents.
+# Signature scheme for CCF-Compatible Transparency Services
 
-## Countersigner Header Parameters    {#countersign_headers}
+This section defines the Transparency Service signature scheme SCITT-CCF. The scheme is based on signing the root of a binary Merkle tree over the sequence of all Transparency Service claims, as implemented in the Confidential Consortium Framework (see {{CCF_Merkle_Tree}}). It can be considered a meta-scheme as it relies on existing signature schemes like ECDsa.
 
-The following parameters MUST be included in the protected header of the countersigner (sign_protected in {{cose_sign1_countersign}}):
+## COSE Algorithms
 
-- Issued At (label: TBD): The time at which the countersignature was issued as the number of seconds from 1970-01-01T00:00:00Z UTC, ignoring leap seconds.
+Each algorithm defined for the scheme determines both the base signing algorithm and the Merkle tree hash algorithm. The following table lists the initial algorithms:
 
-# CCF 2 Tree Algorithm
-
-The CCF 2 tree algorithm specifies an algorithm based on a binary Merkle tree over the sequence of all ledger entries, as implemented in the CCF version 2 framework (see {{CCF_Merkle_Tree}}).
-
-## Additional Parameters        {#parameters}
-
-The algorithm requires that the TS define
-additional parameters:
-
-- Hash Algorithm: The hash algorithm used in its Merkle Tree (see {{hash-alg-registry}}).
-
-- Signature Algorithm: The signature algorithm used (see {{sig-alg-registry}}).
-
-- Service Certificate: The self-signed X.509 certificate used as trust anchor to verify signatures generated by the transparency service using the Signature Algorithm.
-
-All definitions in this section use the hash algorithm set in the TS parameters (see Section {{parameters}}). We write HASH to refer to this algorithm, and HASH_SIZE for the fixed length of its output in bytes.
+| kty | alg             | Base alg | Merkle hash alg |
+|-----|-----------------|----------|-----------------|
+| EC  | SCITT-CCF-ES256 | ES256    | SHA-256         |
+| EC  | SCITT-CCF-ES384 | ES384    | SHA-384         |
+| EC  | SCITT-CCF-ES512 | ES512    | SHA-512         |
 
 ## Cryptographic Components
 
@@ -235,16 +204,16 @@ Given the MTH input D_n = \{d\[0\], d\[1\], ..., d\[n-1\]\} and an index i < n i
 run the MTH algorithm and record the position and value of every intermediate hash
 concatenated and hashed first with the digest of the leaf, then with the resulting intermediate hash value. (Most implementations instead record all intermediate hash computations, so that they can produce all inclusion proofs for a given tree by table lookups.)
 
-## Encoding Signed Envelopes into Tree Leaves
+## Encoding To-Be-Signed into Tree Leaves
 
-This section describes the encoding of signed envelopes and auxiliary ledger entries
+This section describes the encoding of To-Be-Signed (TBS) and auxiliary ledger entries
 into the leaf bytestrings passed as input to the Merkle Tree function.
 
 Each bytestring is computed from three inputs:
 
 - `internal_hash`: a string of HASH_SIZE bytes;
 - `internal_data`: a string of at most 1024 bytes; and
-- `data_hash`: either the HASH of the CBOR-encoded Countersign_structure of the signed envelope, using the CBOR encoding described in {{deterministic-cbor}}, or a bytestring of size HASH_SIZE filled with zeroes for auxiliary ledger entries.
+- `data_hash`: either the HASH of the TBS bytes, or a bytestring of size HASH_SIZE filled with zeroes for auxiliary ledger entries.
 
 as the concatenation of three hashes:
 
@@ -252,26 +221,25 @@ as the concatenation of three hashes:
 LeafBytes = internal_hash || HASH(internal_data) || data_hash
 ~~~
 
-This ensures that leaf bytestrings are always distinct from the inputs of the intermediate computations in MTH, which always consist of two hashes, and also that leaf bytestrings for signed envelopes and for auxiliary ledger entries are always distinct.
+This ensures that leaf bytestrings are always distinct from the inputs of the intermediate computations in MTH, which always consist of two hashes, and also that leaf bytestrings for TBS and for auxiliary ledger entries are always distinct.
 
-The `internal_hash` and `internal_data` bytestrings are internal to the CCF implementation. Similarly, the auxiliary ledger entries are internal to CCF. They are opaque to receipt Verifiers, but they commit the TS to the whole ledger contents and may be used for additional, CCF-specific auditing.
+The `internal_hash` and `internal_data` bytestrings are internal to the CCF implementation. Similarly, the auxiliary ledger entries are internal to CCF. They are opaque to signature Verifiers, but they commit the TS to the whole ledger contents and may be used for additional, CCF-specific auditing.
 
-## Receipt Contents Structure {#ReceiptContents}
+## Signature Encoding
 
-The Receipt contents structure is a CBOR array. The items of the array in order are:
+The signature bytes are the CBOR-encoding of a CBOR array SCITT_CCF_Signature. The items of the array in order are:
 
-- `signature`: the signature over the Merkle tree root as bstr.
+- `root_signature`: the signature over the Merkle tree root as bstr.
 
 - `node_certificate`: a DER-encoded X.509 certificate for the public key for signature verification.
   This certificate MUST be a valid CCF node certificate
-for the service; in particular, it MUST form a valid X.509 certificate chain with the service certificate.
+for the service; in particular, it MUST be signed by the key passed to the SCITT-CCF signature algorithm.
 
 - `inclusion_proof`: the intermediate hashes to recompute the signed root of the Merkle tree from the leaf digest of the envelope.
   - The array MUST have at most 64 items.
   - The inclusion proof structure is an array of \[left, hash\] pairs where `left` indicates the ordering of digests for the intermediate hash compution. The hash MUST be a bytestring of length `HASH_SIZE`.
 
-- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the
-countersigner.
+- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash and the internal data.
   - `internal_hash` MUST be a bytestring of length `HASH_SIZE`;
   - `internal_data` MUST be a bytestring of length less than 1024.
 
@@ -280,8 +248,8 @@ The inclusion of an additional, short-lived certificate endorsed by the TS enabl
 The CDDL fragment that represents the above text follows.
 
 ~~~ cddl
-ReceiptContents = [
-    signature: bstr,
+SCITT_CCF_Signature = [
+    root_signature: bstr,
     node_certificate: bstr,
     inclusion_proof: [+ ProofElement],
     leaf_info: LeafInfo
@@ -294,62 +262,55 @@ ProofElement = [
 
 LeafInfo = [
     internal_hash: bstr,
-    internal_data: bstr,
-    sign_protected: empty_or_serialized_map
+    internal_data: bstr
 ]
 ~~~
 
-## Receipt Verification
+## Signature Verification
 
-Given the TS parameters, a signed envelope, and a Receipt for it,
-the following steps must be followed to verify this Receipt.
+Given the public key, the TBS bytes, and the signature bytes, the following steps must be followed to verify the signature.
 
-1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
+1. Decode the signature bytes as the CBOR structure SCITT_CCF_Signature.
 
-2. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
+2. Compute `LeafBytes` as the bytestring concatenation of internal_hash, the hash of internal_data, and the hash of the TBS, using the Merkle tree hash algorithm.
 
-3. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}.
+        LeafBytes := internal_hash || HASH(internal_data) || HASH(TBS)
 
-        LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
-
-4. Compute the leaf digest.
+3. Compute the leaf digest.
 
         LeafHash := HASH(LeafBytes)
 
-5. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
+4. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm:
 
         root := recompute_root(LeafHash, inclusion_proof)
 
-6. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from `sign_protected` to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.
+5. Verify that the certificate in node_certificate is signed by the public key passed to the signature algorithm. [TODO]: ignore the validity period of the certificate for now. Not sure yet how that would work.
 
-7. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
+6. Verify that `root_signature` is a valid signature value of the root hash, using the public key in node_certificate and the base signature algorithm.
 
-The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.
+## Signature Generation
 
-## Receipt Generation
-
-This document provides a reference algorithm for producing valid receipts,
+This document provides a reference algorithm for producing valid signatures,
 but it omits any discussion of TS registration policy and any CCF-specific implementation details.
 
-The algorithm takes as input a list of entries to be jointly countersigned, each entry consisting of `internal_hash`, `internal_data`, and an optional signed envelope.
-(This optional item reflects that a CCF ledger records both signed envelopes and auxiliary entries.)
+The algorithm takes as input a list of entries to be jointly signed, each entry consisting of `internal_hash`, `internal_data`, and an optional TBS value.
+(This optional item reflects that a CCF ledger records both TBS-type and auxiliary entries.)
 
-1. For each signed envelope, compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
+1. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if TBS is present, the hash of the TBS bytes, otherwise a HASH_SIZE bytestring of zeroes.
 
-2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}, otherwise a HASH_SIZE bytestring of zeroes.
-
-3. Compute the tree root hash by applying MTH to the resulting list of leaf bytestrings,
+2. Compute the tree root hash by applying MTH to the resulting list of leaf bytestrings,
   keeping the results for all intermediate HASH values.
 
-4. Select a valid `node_certificate` and compute a `signature` of the root of the tree with the corresponding signing key.
+3. Select a valid `node_certificate` and compute a `root_signature` of the root of the tree with the corresponding signing key.
 
-4. For each signed envelope provided in the input,
+4. For each TBS-type entry provided in the input,
 
     - Collect an `inclusion_proof` by selecting intermediate hash values, as described above.
 
-    - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
+    - Produce the SCITT_CCF_Signature structure using this `inclusion_proof`, the fixed `node_certificate` and `root_signature`, and the bytestrings `internal_hash` and `internal_data` provided with each entry.
 
-    - Produce the receipt using the Service Identifier and this receipt contents.
+    - CBOR-encode the SCITT_CCF_Signature structure as the resulting signature bytes.
+
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
@@ -367,72 +328,63 @@ TBD
 
 ## Additions to Existing Registries
 
+### New Entries to the COSE Algorithms Registry
+
+IANA is requested to register the new COSE algorithms defined below in the "COSE Algorithms" registry.
+
+#### SCITT-CCF-ES256
+
+Name: SCITT-CCF-ES256
+
+Value: TBD (temporary: -65656)
+
+Description: SCITT-CCF signature using ES256
+
+Capabilities: [kty]
+
+Change Controller: TBD
+
+Reference: TBD
+
+Recommended: Yes
+
+[TODO] Should recommended be yes or no? Who is the recommendation for?
+
+[TODO] add similar entries for SCITT-CCF-ES384 and SCITT-CCF-ES512
+
 ### New Entries to the COSE Header Parameters Registry
 
 IANA is requested to register the new COSE Header parameters defined below in the "COSE Header Parameters" registry.
 
-#### COSE_Sign1 Countersign receipt
+#### Profile
 
-Name: COSE_Sign1 Countersign receipt
+Name: Profile
 
-Label: TBD
+Label: TBD (temporary: -67550)
 
-Value Type: \[+ Receipt\]
+Value Type: array [name: tstr, version: int]
 
-Description: One or more COSE_Sign1 Countersign Receipts to be embedded in the unprotected header of the countersigned COSE_Sign1 message.
+Description: The COSE profile that is used.
+
+#### Issuer
+
+Name: Issuer
+
+Label: TBD (temporary: -67560)
+
+Value Type: tstr
+
+Description: The issuer of the (counter-)signature.
 
 #### Issued At
 
 Name: Issued At
 
-Label: TBD
+Label: TBD (temporary: -67570)
 
 Value Type: uint
 
 Description: The time at which the signature was issued as the number of seconds from 1970-01-01T00:00:00Z UTC, ignoring leap seconds.
-
-## New SCITT-Related Registries
-
-IANA is asked to add a new registry "TBD" to the list that appears at https://www.iana.org/assignments/.
-
-The rest of this section defines the subregistries that are to be created within the new "TBD" registry.
-
-### Tree Algorithms    {#tree-alg-registry}
-
-IANA is asked to establish a registry of tree algorithm identifiers, named "Tree Algorithms", with the following registration procedures: TBD
-
-The "Tree Algorithms" registry initially consists of:
-
-| Identifier | Tree Algorithm       | Reference     |
-| CCF-2      | CCF 2 tree algorithm | This document |
-{: title="Initial content of Tree Algorithms registry"}
-
-The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as [TBD].
-
-### Hash Algorithms    {#hash-alg-registry}
-
-IANA is asked to establish a registry of hash algorithm identifiers, named "Hash Algorithms", with the following registration procedures: TBD
-
-The "Hash Algorithms" registry initially consists of:
-
-| Identifier | Hash Algorithm | Reference   |
-| SHA-256    | SHA-256        | {{RFC6234}} |
-{: title="Initial content of Hash Algorithms registry"}
-
-The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as a cryptographic hash algorithm with no known preimage or collision attacks. These attacks can damage the integrity of the ledger.
-
-### Signature Algorithms     {#sig-alg-registry}
-
-IANA is asked to establish a registry of signature algorithm identifiers, named "Signature Algorithms", with the following registration procedures: TBD
-
-The "Signature Algorithms" registry initially consists of:
-
-| Identifier | Signature Algorithm | Reference |
-| ES256      | Deterministic ECDSA (NIST P-256) with HMAC-SHA256 | {{RFC6979}} |
-| ED25519    | Ed25519 (PureEdDSA with the edwards25519 curve)  | {{RFC8032}} |
-{: title="Initial content of Signature Algorithms registry"}
-
-The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as a cryptographic signature algorithm.
 
 --- back
 
