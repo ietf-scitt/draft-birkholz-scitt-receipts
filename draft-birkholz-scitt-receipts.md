@@ -104,15 +104,19 @@ A Receipt represents a countersignature issued by a Transparency Service.
 
 The Receipt structure is a CBOR array with two items, in order:
 
-- `service_id`: The service identifier as tstr.
+- `protected`: The protected header of the countersigner.
 
 - `contents`: The proof as a CBOR structure determined by the tree algorithm.
 
 ~~~ cddl
 Receipt = [
-  service_id: tstr,
+  protected: bstr .cbor {
+    * label => value
+  },
   contents: any
 ]
+label = tstr / int
+value = any
 ~~~
 
 Each tree algorithm MUST define its contents type and procedures for issuing and verifying a receipt.
@@ -157,6 +161,8 @@ Procedure for reconstruction of Countersign_structure:
 ## Countersigner Header Parameters    {#countersign_headers}
 
 The following parameters MUST be included in the protected header of the countersigner (sign_protected in {{cose_sign1_countersign}}):
+
+- Service ID (label: TBD): The Service identifier, as defined in the Transparency Service parameters.
 
 - Issued At (label: TBD): The time at which the countersignature was issued as the number of seconds from 1970-01-01T00:00:00Z UTC, ignoring leap seconds.
 
@@ -270,8 +276,7 @@ for the service; in particular, it MUST form a valid X.509 certificate chain wit
   - The array MUST have at most 64 items.
   - The inclusion proof structure is an array of \[left, hash\] pairs where `left` indicates the ordering of digests for the intermediate hash compution. The hash MUST be a bytestring of length `HASH_SIZE`.
 
-- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash, the internal data, and the protected header of the
-countersigner.
+- `leaf_info`: auxiliary inputs to recompute the leaf digest included in the Merkle tree: the internal hash and the internal data.
   - `internal_hash` MUST be a bytestring of length `HASH_SIZE`;
   - `internal_data` MUST be a bytestring of length less than 1024.
 
@@ -294,35 +299,36 @@ ProofElement = [
 
 LeafInfo = [
     internal_hash: bstr,
-    internal_data: bstr,
-    sign_protected: empty_or_serialized_map
+    internal_data: bstr
 ]
 ~~~
 
 ## Receipt Verification
 
-Given the TS parameters, a signed envelope, and a Receipt for it,
+Given a signed envelope and a Receipt for it,
 the following steps must be followed to verify this Receipt.
 
-1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
+1. Decode the protected header of the Receipt and look-up the TS parameters using the service_id field.
 
-2. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using `sign_protected` from the `leaf_info` field of the receipt contents.
+2. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
 
-3. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}.
+3. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using the protected header of the Receipt as `sign_protected`.
+
+4. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}.
 
         LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
 
-4. Compute the leaf digest.
+5. Compute the leaf digest.
 
         LeafHash := HASH(LeafBytes)
 
-5. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
+6. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
 
         root := recompute_root(LeafHash, inclusion_proof)
 
-6. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from `sign_protected` to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.
+7. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from the protected header of the Receipt to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.
 
-7. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
+8. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
 
 The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.
 
@@ -334,7 +340,7 @@ but it omits any discussion of TS registration policy and any CCF-specific imple
 The algorithm takes as input a list of entries to be jointly countersigned, each entry consisting of `internal_hash`, `internal_data`, and an optional signed envelope.
 (This optional item reflects that a CCF ledger records both signed envelopes and auxiliary entries.)
 
-1. For each signed envelope, compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
+1. For each signed envelope, create the countersigner protected header and compute the `Countersign_structure` as described in {{cose_sign1_countersign}}.
 
 2. For each item in the list, compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data and, if the envelope is present, the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}, otherwise a HASH_SIZE bytestring of zeroes.
 
@@ -349,7 +355,7 @@ The algorithm takes as input a list of entries to be jointly countersigned, each
 
     - Produce the receipt contents using this `inclusion_proof`, the fixed `node_certificate` and `signature`, and the bytestrings `internal_hash` and `internal_data` provided with the envelope.
 
-    - Produce the receipt using the Service Identifier and this receipt contents.
+    - Produce the receipt using the countersigner protected header and this receipt's contents.
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
