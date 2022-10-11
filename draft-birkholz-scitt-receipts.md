@@ -164,7 +164,26 @@ The following parameters MUST be included in the protected header of the counter
 
 - Service ID (label: TBD): The Service identifier, as defined in the Transparency Service parameters.
 
+- Tree Algorithm (label: TBD): The Tree Algorithm used for issuing the receipt, as defined in the Transparency Service parameters.
+
 - Issued At (label: TBD): The time at which the countersignature was issued as the number of seconds from 1970-01-01T00:00:00Z UTC, ignoring leap seconds.
+
+# Receipt Verification {#ReceiptVerification}
+
+Given a signed envelope and a Receipt for it,
+the following steps must be followed to verify this Receipt.
+
+1. Decode the protected header of the Receipt and look-up the TS parameters using the Service ID header parameter.
+
+2. Verify that the Tree Algorithm parameter value in the receipt protected header matches the one in the TS parameters.
+
+3. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using the protected header of the Receipt as `sign_protected`.
+
+4. CBOR-encode `Countersign_structure` as To-Be-Included, using the CBOR encoding described in {{deterministic-cbor}}.
+
+5. Invoke the Tree Algorithm receipt verification procedure with the TS parameters and To-Be-Included as inputs.
+
+The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.
 
 # CCF 2 Tree Algorithm
 
@@ -303,34 +322,28 @@ LeafInfo = [
 ]
 ~~~
 
-## Receipt Verification
+## Receipt Contents Verification
 
-Given a signed envelope and a Receipt for it,
-the following steps must be followed to verify this Receipt.
+Given the To-Be-Included bytes (see {{ReceiptVerification}}) and the TS parameters,
+the following steps must be followed to verify the Receipt contents.
 
-1. Decode the protected header of the Receipt and look-up the TS parameters using the service_id field.
+1. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
 
-2. Verify that the Receipt Content structure is well-formed, as described in {{ReceiptContents}}.
+2. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the To-Be-Included bytes.
 
-3. Construct a `Countersign_structure` as described in {{cose_sign1_countersign}}, using the protected header of the Receipt as `sign_protected`.
+        LeafBytes := internal_hash || HASH(internal_data) || HASH(To-Be-Included)
 
-4. Compute `LeafBytes` as the bytestring concatenation of the internal hash, the hash of internal data, and the hash of the CBOR-encoding of `Countersign_structure`, using the CBOR encoding described in {{deterministic-cbor}}.
-
-        LeafBytes := internal_hash || HASH(internal_data) || HASH(cbor(Countersign_structure))
-
-5. Compute the leaf digest.
+3. Compute the leaf digest.
 
         LeafHash := HASH(LeafBytes)
 
-6. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
+4. Compute the root hash from the leaf hash and the Merkle proof using the Merkle Tree Hash Algorithm found in the service's parameters (see {{parameters}}):
 
         root := recompute_root(LeafHash, inclusion_proof)
 
-7. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}) using the Issued At time from the protected header of the Receipt to verify the validity periods of the certificates. The chain MUST enable the use of the public key in the receipt certificate for signature verification with the Signature Algorithm of the TS parameters.
+5. Verify the certificate chain established by the node certificate embedded in the receipt and the fixed service certificate in the TS parameters (see {{parameters}}). TBD needs more details
 
-8. Verify that `signature` is a valid signature value of the root hash, using the public key of the receipt certificate and the Signature Algorithm of the TS parameters.
-
-The Verifier SHOULD apply additional checks before accepting the countersigned envelope as valid, based on its protected headers and payload.
+6. Verify that `signature` is a valid signature value of the root hash, using the public key of the node certificate and the Signature Algorithm of the TS parameters.
 
 ## Receipt Generation
 
@@ -359,7 +372,7 @@ The algorithm takes as input a list of entries to be jointly countersigned, each
 
 # CBOR Encoding Restrictions    {#deterministic-cbor}
 
-In order to always regenerate the same byte string for the "to be signed" and "to be hashed" values, the core deterministic encoding rules defined in {{Section 4.2.1 of RFC8949}} MUST be used for all their CBOR structures.
+In order to always regenerate the same byte string for the "to be included" and "to be hashed" values, the core deterministic encoding rules defined in {{Section 4.2.1 of RFC8949}} MUST be used for all their CBOR structures.
 
 # Privacy Considerations
 
