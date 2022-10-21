@@ -392,7 +392,7 @@ IANA is requested to register the new COSE Header parameters defined below in th
 
 Name: COSE_Sign1 Countersign receipt
 
-Label: TBD
+Label: TBD (temporary: `394`, see also {{I-D.birkholz-scitt-architecture}})
 
 Value Type: \[+ Receipt\]
 
