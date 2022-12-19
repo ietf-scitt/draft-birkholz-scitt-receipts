@@ -1,0 +1,727 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2022-04-26T01:46:52.423466+00:00",
+  "repo": "ietf-scitt/draft-birkholz-scitt-receipts",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 8,
+      "id": "I_kwDOG2uaB85IVfrJ",
+      "title": "Policy of Tree Algorithms IANA registry",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/issues/8",
+      "state": "OPEN",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "From https://mailarchive.ietf.org/arch/msg/scitt/bCi2TJZ65B9ltLKaEftm_ePxwL8/.\r\n\r\nBen suggested that the Tree Algorithms registry should have a lenient policy like \"Expert Review\", or \"Specification Required\", or even \"First Come, First Served\". Currently it's TBD. The reasoning being that the purpose of the registry \"seems to be to avoid collisions rather than to reliably avoid duplication of effort\". This issue tracks the discussion.\r\n\r\nNote that there are two other proposed registries for hash and signature algorithms, but we can deal with them later on.",
+      "createdAt": "2022-04-24T09:06:52Z",
+      "updatedAt": "2022-04-24T09:06:52Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOG2uaB84zZftw",
+      "title": "Introduce tree algorithm",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/1",
+      "state": "MERGED",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed, this introduces a top-level tree algorithm to fork the format and makes the existing description match CCF 2.0. There may be scope to move the `LeafEntry` structure and associated \"COSE_Sign1 Countersign type\" section to a common section since that seems independent of any Merkle-related algorithms.\r\n\r\n@fournet @ad-l",
+      "createdAt": "2022-02-24T11:08:07Z",
+      "updatedAt": "2022-02-25T18:55:46Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "63a86b16e2a6ef8ef225c63d40dd0adb93bde179",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "tree-alg",
+      "headRefOid": "8dc61f5a836696898b21fa9fb3ce10da98334955",
+      "closedAt": "2022-02-25T18:55:42Z",
+      "mergedAt": "2022-02-25T18:55:42Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "542fb8302d0bdf131bdeeedb9515785a2b8f35ec"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB841L1r7",
+          "commit": {
+            "abbreviatedOid": "b2bafde"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-24T11:09:44Z",
+          "updatedAt": "2022-02-24T11:09:45Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "communicate = issuing/adding and verifying?",
+              "createdAt": "2022-02-24T11:09:45Z",
+              "updatedAt": "2022-02-24T11:09:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841L2ob",
+          "commit": {
+            "abbreviatedOid": "b2bafde"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-24T11:13:45Z",
+          "updatedAt": "2022-02-24T11:13:45Z",
+          "comments": [
+            {
+              "originalPosition": 8,
+              "body": "That reflects my common struggle on having two separate documents with API not being in here. But yes.",
+              "createdAt": "2022-02-24T11:13:45Z",
+              "updatedAt": "2022-02-24T11:13:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Q6ca",
+          "commit": {
+            "abbreviatedOid": "4cc8d9c"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-25T12:37:38Z",
+          "updatedAt": "2022-02-25T12:37:38Z",
+          "comments": [
+            {
+              "originalPosition": 262,
+              "body": "Asking out of curiosity more than anything else, but this is \"write_set_digest\" in CCF, is there a reason why it's been renamed?",
+              "createdAt": "2022-02-25T12:37:38Z",
+              "updatedAt": "2022-02-25T12:37:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Q6u9",
+          "commit": {
+            "abbreviatedOid": "4cc8d9c"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-02-25T12:38:57Z",
+          "updatedAt": "2022-02-25T12:38:57Z",
+          "comments": [
+            {
+              "originalPosition": 283,
+              "body": "Not being a native speaker, I have no opinion on the \"write set\" vs \"writeset\" distinction, but I think sticking to either \"digest\" or \"hash\" (see above) throughout would be more consistent.",
+              "createdAt": "2022-02-25T12:38:57Z",
+              "updatedAt": "2022-02-25T12:38:57Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841Rmqq",
+          "commit": {
+            "abbreviatedOid": "b71ed4a"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-02-25T15:21:34Z",
+          "updatedAt": "2022-02-25T15:21:34Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "PR_kwDOG2uaB84z0hDW",
+      "title": "Require Issued At countersigner header parameter",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/2",
+      "state": "MERGED",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-02T11:03:55Z",
+      "updatedAt": "2022-03-03T11:23:20Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "542fb8302d0bdf131bdeeedb9515785a2b8f35ec",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "letmaik/iat",
+      "headRefOid": "86f8b4a2eecf4ac46d8215ce1ff24a11632edcb1",
+      "closedAt": "2022-03-03T11:23:17Z",
+      "mergedAt": "2022-03-03T11:23:17Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "ebc297decfc462b2429d43dbd2dfa16d125d7da2"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB841fds0",
+          "commit": {
+            "abbreviatedOid": "e06c521"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-02T11:21:47Z",
+          "updatedAt": "2022-03-02T11:21:48Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "What does extract mean? It sounds like removal, but that cannot be right, yes?",
+              "createdAt": "2022-03-02T11:21:48Z",
+              "updatedAt": "2022-03-02T11:21:48Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841fi7L",
+          "commit": {
+            "abbreviatedOid": "e06c521"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-02T11:43:04Z",
+          "updatedAt": "2022-03-02T11:43:04Z",
+          "comments": [
+            {
+              "originalPosition": 27,
+              "body": "I meant something in the realm of \"read\" or \"access\". Maybe the step isn't really necessary and can be inlined into the following.",
+              "createdAt": "2022-03-02T11:43:04Z",
+              "updatedAt": "2022-03-02T11:43:04Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOG2uaB84z6ezZ",
+      "title": "work in progress on the first sections, providing an introduction and fixing details ",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/3",
+      "state": "MERGED",
+      "author": "fournet",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-03T20:03:19Z",
+      "updatedAt": "2022-03-04T17:15:23Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "ebc297decfc462b2429d43dbd2dfa16d125d7da2",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "fournet",
+      "headRefOid": "3519f4056e45bf500f89a0b8e3da8e3c962f990c",
+      "closedAt": "2022-03-04T17:15:11Z",
+      "mergedAt": "2022-03-04T17:15:11Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "5f9209a84a2862d4444f7af99efb0b83c40f861d"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB841pGMD",
+          "commit": {
+            "abbreviatedOid": "803347e"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T09:01:41Z",
+          "updatedAt": "2022-03-04T09:13:06Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "Same as in CT, it is the unique identifier to look up all other parameters. I don't see how it can be omitted in receipts. The public key / cert like all the other parameters are communicated out-of-band.",
+              "createdAt": "2022-03-04T09:01:41Z",
+              "updatedAt": "2022-03-04T09:13:06Z"
+            },
+            {
+              "originalPosition": 58,
+              "body": "```suggestion\r\n- The Tree algorithm used for issuing receipts, and its additional global parameters, if any. This document creates a registry (see {{tree-alg-registry}}) and describes an initial set of tree algorithms.\r\n```",
+              "createdAt": "2022-03-04T09:02:30Z",
+              "updatedAt": "2022-03-04T09:13:06Z"
+            },
+            {
+              "originalPosition": 71,
+              "body": "Consider CBOR arrays with fixed structure as C-style structs. If there is no need for extensibility then using a map is typically not done in CBOR (e.g. the top-level COSE structure is defined as such an array). If we do use maps, we have to decide on the data type of the keys (int vs string). @henkbirkholz for additional input.",
+              "createdAt": "2022-03-04T09:05:24Z",
+              "updatedAt": "2022-03-04T09:13:06Z"
+            },
+            {
+              "originalPosition": 143,
+              "body": "I understand consistency with the sig alg, but what does it mean to be consistent with the service identifier? It's opaque after all.",
+              "createdAt": "2022-03-04T09:08:42Z",
+              "updatedAt": "2022-03-04T09:13:06Z"
+            },
+            {
+              "originalPosition": 145,
+              "body": "We do require it, discussed with @ad-l recently. Not making it the root would complicate things too much. Also, the cert is not changing over the lifetime, which is typially not the case for intermediate certs.",
+              "createdAt": "2022-03-04T09:12:03Z",
+              "updatedAt": "2022-03-04T09:13:07Z"
+            },
+            {
+              "originalPosition": 174,
+              "body": "Same reasoning as for the top-level receipts structure. @henkbirkholz Feel free to chime in.",
+              "createdAt": "2022-03-04T09:12:56Z",
+              "updatedAt": "2022-03-04T09:13:07Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pbNp",
+          "commit": {
+            "abbreviatedOid": "78e07e2"
+          },
+          "author": "fournet",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:22:31Z",
+          "updatedAt": "2022-03-04T10:22:31Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "Ok, we should then mention the identifier can be used for securely fetching all parameters. ",
+              "createdAt": "2022-03-04T10:22:31Z",
+              "updatedAt": "2022-03-04T10:22:31Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pbwX",
+          "commit": {
+            "abbreviatedOid": "78e07e2"
+          },
+          "author": "fournet",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:24:40Z",
+          "updatedAt": "2022-03-04T10:24:40Z",
+          "comments": [
+            {
+              "originalPosition": 71,
+              "body": "Ok thanks. Just to confirm: this means the field labels are omitted from the wire format.",
+              "createdAt": "2022-03-04T10:24:40Z",
+              "updatedAt": "2022-03-04T10:24:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pcRf",
+          "commit": {
+            "abbreviatedOid": "78e07e2"
+          },
+          "author": "fournet",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:26:47Z",
+          "updatedAt": "2022-03-04T10:26:47Z",
+          "comments": [
+            {
+              "originalPosition": 143,
+              "body": "I am hoping for a field in the certificate that records the service identity. Not sure which one is best for it. ",
+              "createdAt": "2022-03-04T10:26:47Z",
+              "updatedAt": "2022-03-04T10:26:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pchG",
+          "commit": {
+            "abbreviatedOid": "78e07e2"
+          },
+          "author": "fournet",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:27:46Z",
+          "updatedAt": "2022-03-04T10:27:47Z",
+          "comments": [
+            {
+              "originalPosition": 145,
+              "body": "Why not take a TS certificate chain then, with MAY be self signed? ",
+              "createdAt": "2022-03-04T10:27:46Z",
+              "updatedAt": "2022-03-04T10:27:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pcvT",
+          "commit": {
+            "abbreviatedOid": "0e11f39"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:28:42Z",
+          "updatedAt": "2022-03-04T10:28:42Z",
+          "comments": [
+            {
+              "originalPosition": 100,
+              "body": "```suggestion\r\nEach envelope is authenticated using its `Countersign_structure` map, recalled below.\r\n```",
+              "createdAt": "2022-03-04T10:28:42Z",
+              "updatedAt": "2022-03-04T10:28:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pdM2",
+          "commit": {
+            "abbreviatedOid": "0e11f39"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:30:32Z",
+          "updatedAt": "2022-03-04T10:30:32Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "https://microsoft.github.io/CCF/main/architecture/merkle_tree.html",
+              "createdAt": "2022-03-04T10:30:32Z",
+              "updatedAt": "2022-03-04T10:30:32Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pdbE",
+          "commit": {
+            "abbreviatedOid": "0e11f39"
+          },
+          "author": "achamayou",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:31:24Z",
+          "updatedAt": "2022-03-04T10:31:24Z",
+          "comments": [
+            {
+              "originalPosition": 144,
+              "body": "As discussed yesterday, the nodes (endorsed by the service) sign the root, not the service directly.",
+              "createdAt": "2022-03-04T10:31:24Z",
+              "updatedAt": "2022-03-04T10:31:24Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pfir",
+          "commit": {
+            "abbreviatedOid": "964c3b5"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:40:10Z",
+          "updatedAt": "2022-03-04T10:40:11Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "Let me look up what the syntax is to include non-normative references like that.",
+              "createdAt": "2022-03-04T10:40:10Z",
+              "updatedAt": "2022-03-04T10:40:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841pgjp",
+          "commit": {
+            "abbreviatedOid": "964c3b5"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T10:44:21Z",
+          "updatedAt": "2022-03-04T10:44:21Z",
+          "comments": [
+            {
+              "originalPosition": 196,
+              "body": "This seems too restricted, can we make it 1KB?",
+              "createdAt": "2022-03-04T10:44:21Z",
+              "updatedAt": "2022-03-04T10:44:21Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841poMn",
+          "commit": {
+            "abbreviatedOid": "6db4e91"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T11:17:35Z",
+          "updatedAt": "2022-03-04T11:17:36Z",
+          "comments": [
+            {
+              "originalPosition": 130,
+              "body": "Something like this should work at the top, reference with `{{CCF_Merkle_Tree}}`:\r\n```\r\ninformative:\r\n  CCF_Merkle_Tree:\r\n    target: https://microsoft.github.io/CCF/main/architecture/merkle_tree.html\r\n    title: CCF - Merkle Tree\r\n    author:\r\n      ins: Microsoft Research\r\n```",
+              "createdAt": "2022-03-04T11:17:35Z",
+              "updatedAt": "2022-03-04T11:17:36Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB841ptOo",
+          "commit": {
+            "abbreviatedOid": "ba692b2"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-04T11:40:58Z",
+          "updatedAt": "2022-03-04T11:40:58Z",
+          "comments": [
+            {
+              "originalPosition": 293,
+              "body": "This section needs more work before merging",
+              "createdAt": "2022-03-04T11:40:58Z",
+              "updatedAt": "2022-03-04T11:40:58Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOG2uaB840Cq3j",
+      "title": "Minor tweaks",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/4",
+      "state": "MERGED",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-07T13:25:14Z",
+      "updatedAt": "2022-03-07T15:57:58Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "5f9209a84a2862d4444f7af99efb0b83c40f861d",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "minor-tweaks",
+      "headRefOid": "64d496298bd451449fc48d9003fa757877ad3c4a",
+      "closedAt": "2022-03-07T15:57:55Z",
+      "mergedAt": "2022-03-07T15:57:55Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "b61fce5d7aef4cd5de7dae945f96e830b35ddfc0"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOG2uaB840Li_j",
+      "title": "Grammar suggestion for the abstract",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/5",
+      "state": "MERGED",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-03-09T15:30:29Z",
+      "updatedAt": "2022-04-19T14:52:04Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "52f273acc94bf0c419b11a5eb05411f51b5b5cb4",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "achamayou-grammar-suggestion",
+      "headRefOid": "f0c5d2d7313a7087827f71da7bf43cc8660209c4",
+      "closedAt": "2022-03-09T21:04:26Z",
+      "mergedAt": "2022-03-09T21:04:26Z",
+      "mergedBy": "henkbirkholz",
+      "mergeCommit": {
+        "oid": "4bdc64d1cf4a58f77ca301a4831d368b7c4aa828"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB8417vft",
+          "commit": {
+            "abbreviatedOid": "f658f94"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-03-09T19:14:04Z",
+          "updatedAt": "2022-03-09T19:14:05Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "```suggestion\r\nA transparent and authentic ledger service in support of a supply chain's integrity, transparency, and trust requires all peers that contribute to the ledgers operations to be trustworthy and authentic. In this document, a countersigning variant is specified that enables trust assertions on Merkle-tree based operations for global supply chain ledgers. A generic procedure for producing payloads to be signed and validated is defined and leverages solutions and principles from the Concise Signing and Encryption (COSE) space.\r\n```",
+              "createdAt": "2022-03-09T19:14:04Z",
+              "updatedAt": "2022-03-09T19:14:05Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOG2uaB8418Oti",
+          "commit": {
+            "abbreviatedOid": "f0c5d2d"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2022-03-09T21:03:38Z",
+          "updatedAt": "2022-03-09T21:03:38Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOG2uaB840O-d8",
+      "title": "Minor typo and formatting change",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/6",
+      "state": "MERGED",
+      "author": "achamayou",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The first change is to address the fact that the current .md renders correctly as bullet list on Github but not in other contexts such as https://www.ietf.org/archive/id/draft-birkholz-scitt-receipts-00.html",
+      "createdAt": "2022-03-10T12:15:11Z",
+      "updatedAt": "2022-04-19T14:51:51Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "4bdc64d1cf4a58f77ca301a4831d368b7c4aa828",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "achamayou-typo",
+      "headRefOid": "b531cdaa13daa27ab741b77b2d7f796c89f16eb4",
+      "closedAt": "2022-04-19T14:51:47Z",
+      "mergedAt": "2022-04-19T14:51:47Z",
+      "mergedBy": "letmaik",
+      "mergeCommit": {
+        "oid": "6cf20391b2ce938b1a7495ec2d3a6eea470c791c"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOG2uaB844YIdW",
+          "commit": {
+            "abbreviatedOid": "239c312"
+          },
+          "author": "letmaik",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2022-04-19T14:51:12Z",
+          "updatedAt": "2022-04-19T14:51:27Z",
+          "comments": [
+            {
+              "originalPosition": 5,
+              "body": "I think the comma makes more sense here.\r\n```suggestion\r\nCompared with countersignatures on single COSE envelopes,\r\n```",
+              "createdAt": "2022-04-19T14:51:13Z",
+              "updatedAt": "2022-04-19T14:51:27Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOG2uaB842brnb",
+      "title": "Simplify receipt header parameter",
+      "url": "https://github.com/ietf-scitt/draft-birkholz-scitt-receipts/pull/7",
+      "state": "OPEN",
+      "author": "letmaik",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Allowing both a receipt and an array of receipts as type is ambiguous here since the receipt is an array itself and not wrapped, so distinguishing the two cases wouldn't work. Having a single type also simplifies client code.",
+      "createdAt": "2022-04-19T14:57:16Z",
+      "updatedAt": "2022-04-19T14:57:17Z",
+      "baseRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "baseRefName": "main",
+      "baseRefOid": "6cf20391b2ce938b1a7495ec2d3a6eea470c791c",
+      "headRepository": "ietf-scitt/draft-birkholz-scitt-receipts",
+      "headRefName": "letmaik/receipts-param",
+      "headRefOid": "934d30faa14383fe0c49aaed79c4128ccc8b4bb7",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
