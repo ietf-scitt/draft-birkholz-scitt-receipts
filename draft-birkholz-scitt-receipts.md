@@ -44,7 +44,7 @@ normative:
   RFC9162:
   RFC6234:
   RFC8032:
-  RFC6979:
+  RFC9053:
 
 informative:
   I-D.ietf-cose-countersign:
@@ -433,7 +433,7 @@ IANA is asked to establish a registry of signature algorithm identifiers, named 
 The "Signature Algorithms" registry initially consists of:
 
 | Identifier | Signature Algorithm | Reference |
-| ES256      | Deterministic ECDSA (NIST P-256) with HMAC-SHA256 | {{RFC6979}} |
+| ES256      | ECDSA w/ SHA-256    | {{RFC9053}} |
 {: title="Initial content of Signature Algorithms registry"}
 
 The designated expert(s) should ensure that the proposed algorithm has a public specification and is suitable for use as a cryptographic signature algorithm.
