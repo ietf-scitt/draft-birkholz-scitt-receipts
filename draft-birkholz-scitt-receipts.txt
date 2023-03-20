@@ -5,10 +5,10 @@
 TBD                                                          H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                             M. Riechert
-Expires: 24 April 2023                                A. Delignat-Lavaud
+Expires: 21 September 2023                            A. Delignat-Lavaud
                                                               C. Fournet
                                                                Microsoft
-                                                         21 October 2022
+                                                           20 March 2023
 
 
          Countersigning COSE Envelopes in Transparency Services
@@ -48,11 +48,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 April 2023.
+   This Internet-Draft will expire on 21 September 2023.
 
 Copyright Notice
 
-   Copyright (c) 2022 IETF Trust and the persons identified as the
+   Copyright (c) 2023 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -610,15 +610,14 @@ Table of Contents
 
    The "Signature Algorithms" registry initially consists of:
 
-          +============+===========================+===========+
-          | Identifier | Signature Algorithm       | Reference |
-          +============+===========================+===========+
-          | ES256      | Deterministic ECDSA (NIST | [RFC6979] |
-          |            | P-256) with HMAC-SHA256   |           |
-          +------------+---------------------------+-----------+
+             +============+=====================+===========+
+             | Identifier | Signature Algorithm | Reference |
+             +============+=====================+===========+
+             | ES256      | ECDSA w/ SHA-256    | [RFC9053] |
+             +------------+---------------------+-----------+
 
-             Table 2: Initial content of Signature Algorithms
-                                 registry
+                  Table 2: Initial content of Signature
+                           Algorithms registry
 
    The designated expert(s) should ensure that the proposed algorithm
    has a public specification and is suitable for use as a cryptographic
@@ -638,11 +637,6 @@ Table of Contents
               DOI 10.17487/RFC6234, May 2011,
               <https://www.rfc-editor.org/rfc/rfc6234>.
 
-   [RFC6979]  Pornin, T., "Deterministic Usage of the Digital Signature
-              Algorithm (DSA) and Elliptic Curve Digital Signature
-              Algorithm (ECDSA)", RFC 6979, DOI 10.17487/RFC6979, August
-              2013, <https://www.rfc-editor.org/rfc/rfc6979>.
-
    [RFC8032]  Josefsson, S. and I. Liusvaara, "Edwards-Curve Digital
               Signature Algorithm (EdDSA)", RFC 8032,
               DOI 10.17487/RFC8032, January 2017,
@@ -656,6 +650,10 @@ Table of Contents
               Representation (CBOR)", STD 94, RFC 8949,
               DOI 10.17487/RFC8949, December 2020,
               <https://www.rfc-editor.org/rfc/rfc8949>.
+
+   [RFC9053]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Initial Algorithms", RFC 9053, DOI 10.17487/RFC9053,
+              August 2022, <https://www.rfc-editor.org/rfc/rfc9053>.
 
    [RFC9162]  Laurie, B., Messeri, E., and R. Stradling, "Certificate
               Transparency Version 2.0", RFC 9162, DOI 10.17487/RFC9162,
@@ -672,16 +670,16 @@ Table of Contents
               Birkholz, H., Delignat-Lavaud, A., Fournet, C., and Y.
               Deshpande, "An Architecture for Trustworthy and
               Transparent Digital Supply Chains", Work in Progress,
-              Internet-Draft, draft-birkholz-scitt-architecture-01, 7
-              September 2022, <https://datatracker.ietf.org/doc/html/
-              draft-birkholz-scitt-architecture-01>.
+              Internet-Draft, draft-birkholz-scitt-architecture-02, 24
+              October 2022, <https://datatracker.ietf.org/doc/html/
+              draft-birkholz-scitt-architecture-02>.
 
    [I-D.ietf-cose-countersign]
-              Schaad, J. and R. Housley, "CBOR Object Signing and
-              Encryption (COSE): Countersignatures", Work in Progress,
-              Internet-Draft, draft-ietf-cose-countersign-10, 20
-              September 2022, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-cose-countersign-10>.
+              Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Countersignatures", Work in Progress, Internet-Draft,
+              draft-ietf-cose-countersign-10, 20 September 2022,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-cose-
+              countersign-10>.
 
 Authors' Addresses
 
